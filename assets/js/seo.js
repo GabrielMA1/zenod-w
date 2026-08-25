@@ -1,9 +1,10 @@
 import { siteConfig } from '../../data/site.js';
+import { toAbsoluteSiteUrl } from '../../data/deployment.js';
 import { getVerifiedSpecifications, formatPrice } from '../../data/products.js';
 import { escapeJsonForHtml } from './lib/html.js';
 
 function absolute(path) {
-  return siteConfig.baseUrl ? new URL(path, siteConfig.baseUrl).href : null;
+  return toAbsoluteSiteUrl(path);
 }
 
 export function pageSchemas(page, product = null) {

@@ -1,8 +1,10 @@
+import { siteBaseUrl } from './deployment.js';
+
 export const siteConfig = {
   name: 'ZENO DETAIL',
   shortName: 'ZENO',
   locale: 'en-US',
-  baseUrl: null,
+  baseUrl: siteBaseUrl,
   currency: null,
   storeMode: 'prelaunch',
   legalEntity: null,

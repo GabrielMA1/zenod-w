@@ -1,5 +1,6 @@
 import { getProduct, getPublicVariants, getVerifiedSpecifications, formatPrice, formatMoney } from '../../../data/products.js';
 import { siteConfig } from '../../../data/site.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
 import { galleryMarkup } from '../components/gallery.js';
 import { icon } from '../components/icons.js';
@@ -36,7 +37,7 @@ function buyBoxMarkup(product) {
     : null;
   const canAdd = siteConfig.features.localCart && product.purchasable && variants.length;
   return `<div class="pdp-buy-box" data-product-purchase>
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/shop/">Shop</a></li><li aria-current="page">${escapeHtml(product.shortTitle)}</li></ol></nav>
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="${toSitePath('/')}">Home</a></li><li><a href="${toSitePath('/shop/')}">Shop</a></li><li aria-current="page">${escapeHtml(product.shortTitle)}</li></ol></nav>
     <p class="eyebrow">Automotive drying</p>
     <h1>${escapeHtml(product.title)}</h1>
     <p class="pdp-subtitle">${escapeHtml(product.subtitle)}</p>

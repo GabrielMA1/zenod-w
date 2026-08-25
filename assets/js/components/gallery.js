@@ -1,4 +1,5 @@
 import { escapeHtml } from '../lib/html.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { icon } from './icons.js';
 import { productVisualMarkup } from './product.js';
 
@@ -8,9 +9,9 @@ function mediaLabel(media, index, count) {
 
 function videoMarkup(media) {
   return `<figure class="gallery-video gallery-media">
-    <video controls preload="metadata" ${media.poster ? `poster="${escapeHtml(media.poster)}"` : ''} width="${media.width}" height="${media.height}" aria-label="${escapeHtml(media.alt)}">
-      <source src="${escapeHtml(media.src)}"${media.mimeType ? ` type="${escapeHtml(media.mimeType)}"` : ''}>
-      ${media.captions ? `<track kind="captions" src="${escapeHtml(media.captions)}" srclang="en" label="English" default>` : ''}
+    <video controls preload="metadata" ${media.poster ? `poster="${escapeHtml(toSitePath(media.poster))}"` : ''} width="${media.width}" height="${media.height}" aria-label="${escapeHtml(media.alt)}">
+      <source src="${escapeHtml(toSitePath(media.src))}"${media.mimeType ? ` type="${escapeHtml(media.mimeType)}"` : ''}>
+      ${media.captions ? `<track kind="captions" src="${escapeHtml(toSitePath(media.captions))}" srclang="en" label="English" default>` : ''}
     </video>
   </figure>`;
 }
@@ -19,7 +20,7 @@ function thumbnailMediaMarkup(product, media) {
   if (media.type !== 'video') return productVisualMarkup(product, media, { className: 'gallery-thumbnail__media', sizes: '7rem' });
   const fallback = product.media[0];
   return `<span class="gallery-video-thumbnail">
-    ${media.poster ? `<img src="${escapeHtml(media.poster)}" alt="" width="${media.width}" height="${media.height}" loading="lazy">` : productVisualMarkup(product, fallback, { className: 'gallery-thumbnail__media', sizes: '7rem' })}
+    ${media.poster ? `<img src="${escapeHtml(toSitePath(media.poster))}" alt="" width="${media.width}" height="${media.height}" loading="lazy">` : productVisualMarkup(product, fallback, { className: 'gallery-thumbnail__media', sizes: '7rem' })}
     ${icon('play')}
   </span>`;
 }

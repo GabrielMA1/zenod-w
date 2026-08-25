@@ -1,4 +1,5 @@
 import { primaryNavigation, siteConfig, visibleFooterNavigation } from '../../../data/site.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
 import { icon } from './icons.js';
 
@@ -10,20 +11,20 @@ function currentLink(href, route) {
 }
 
 function navLinksMarkup(route) {
-  return primaryNavigation.map((item) => `<li><a href="${escapeHtml(item.href)}"${currentLink(item.href, route) ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a></li>`).join('');
+  return primaryNavigation.map((item) => `<li><a href="${escapeHtml(toSitePath(item.href))}"${currentLink(item.href, route) ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}</a></li>`).join('');
 }
 
 function footerColumnsMarkup() {
   return Object.entries(visibleFooterNavigation()).map(([heading, links]) => `<div class="footer-column">
     <h2>${escapeHtml(heading)}</h2>
-    <ul>${links.map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`).join('')}</ul>
+    <ul>${links.map((link) => `<li><a href="${escapeHtml(toSitePath(link.href))}">${escapeHtml(link.label)}</a></li>`).join('')}</ul>
   </div>`).join('');
 }
 
 export function announcementMarkup() {
   if (!siteConfig.announcement.enabled || !siteConfig.announcement.text) return '';
   const content = siteConfig.announcement.link
-    ? `<a href="${escapeHtml(siteConfig.announcement.link)}">${escapeHtml(siteConfig.announcement.text)}</a>`
+    ? `<a href="${escapeHtml(toSitePath(siteConfig.announcement.link))}">${escapeHtml(siteConfig.announcement.text)}</a>`
     : escapeHtml(siteConfig.announcement.text);
   return `<aside class="announcement" aria-label="Store announcement"><p>${content}</p></aside>`;
 }
@@ -35,8 +36,8 @@ export function headerMarkup(route) {
 
   return `<header class="site-header" data-site-header>
     <div class="shell header-inner">
-      <a class="brand-lockup" href="/" aria-label="ZENO DETAIL home">
-        <img src="${siteConfig.brandAssets.logoWhite}" alt="ZENO DETAIL" width="1180" height="980">
+      <a class="brand-lockup" href="${toSitePath('/')}" aria-label="ZENO DETAIL home">
+        <img src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="ZENO DETAIL" width="1180" height="980">
       </a>
       <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(route)}</ul></nav>
       <div class="header-actions">
@@ -51,8 +52,8 @@ export function footerMarkup() {
   return `<footer class="site-footer">
     <div class="shell footer-top">
       <div class="footer-brand">
-        <a class="brand-lockup" href="/" aria-label="ZENO DETAIL home">
-          <img src="${siteConfig.brandAssets.logoWhite}" alt="ZENO DETAIL" width="1180" height="980" loading="lazy">
+        <a class="brand-lockup" href="${toSitePath('/')}" aria-label="ZENO DETAIL home">
+          <img src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="ZENO DETAIL" width="1180" height="980" loading="lazy">
         </a>
         <p>Premium car-care essentials, starting with the ZENO Drying Towel.</p>
       </div>
@@ -73,7 +74,7 @@ export function overlayMarkup(route) {
         <button class="icon-button" type="button" data-close-dialog aria-label="Close navigation">${icon('close')}</button>
       </div>
       <nav class="mobile-nav-body" aria-label="Mobile"><ul class="mobile-nav-list">${navLinksMarkup(route)}</ul></nav>
-      <a class="mobile-nav-product" href="/products/drying-towel/">
+      <a class="mobile-nav-product" href="${toSitePath('/products/drying-towel/')}">
         <span>Flagship product</span><strong>ZENO Drying Towel</strong>${icon('arrow')}
       </a>
     </div>

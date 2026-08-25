@@ -12,7 +12,8 @@
     "build": "vite build --configLoader runner",
     "preview": "vite preview --configLoader runner",
     "audit": "node scripts/audit.mjs",
-    "qa": "npm run build && npm run audit"
+    "audit:dist": "node scripts/audit-dist.mjs",
+    "qa": "npm run build && npm run audit && npm run audit:dist"
   },
   "devDependencies": {
     "vite": "^7.1.3"

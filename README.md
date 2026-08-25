@@ -2,7 +2,7 @@
 
 Phase 2 of the ZENO DETAIL storefront is a static-first, multi-page Vite site for a focused one-product catalog. Page HTML, metadata, schema and site infrastructure are generated from centralized JavaScript data before Vite bundles the shared CSS and browser interactions.
 
-This repository has not been deployed and is not connected to a hosting, payment, review, newsletter, contact-form or analytics provider. The local cart stores data in the browser only. It does not transmit orders, collect payment details or create a checkout session.
+This repository includes an automated GitHub Pages preview workflow, but is not connected to a payment, review, newsletter, contact-form or analytics provider. The local cart stores data in the browser only. It does not transmit orders, collect payment details or create a checkout session.
 
 ## Local development and QA
 
@@ -22,9 +22,16 @@ The available commands are:
 | `npm run build` | Regenerate first, then create the multi-page production bundle in `dist/`. |
 | `npm run preview` | Serve the current `dist/` bundle locally. Run `npm run build` first. |
 | `npm run audit` | Regenerate and audit routes, metadata, indexing states, navigation, data integrity, assets, schema parity and accessibility basics. Missing business inputs are reported separately as non-failing notices. |
-| `npm run qa` | Run the production build and full audit. This is the required final local check. |
+| `npm run audit:dist` | Audit the final `dist/` artifact, including deployment-base safety, generated routes, linked assets, metadata, manifest, sitemap and robots directives. |
+| `npm run qa` | Run the production build, source audit and deployment-artifact audit. This is the required final local check. |
 
 After `npm run qa`, also inspect the home page, shop page, product page, cart, mobile navigation and image gallery in a real browser at desktop and mobile widths. Automated checks do not replace visual and interaction review.
+
+## Deployment base paths
+
+Local development defaults to the domain root (`/`). Deployment configuration is centralized in [`data/deployment.js`](./data/deployment.js): `SITE_BASE_PATH` selects the hosted pathname and optional `SITE_BASE_URL` supplies the complete public base URL used by canonical metadata, schema, sitemap and robots output. Vite, static generation and browser-rendered links all consume the same values.
+
+The GitHub Pages preview values live only in [`.github/workflows/pages.yml`](./.github/workflows/pages.yml). Run a matching build by setting those two environment variables before `npm run qa`. When ZENO moves to its real root-hosted domain, use `/` as `SITE_BASE_PATH` and replace `SITE_BASE_URL`; route and asset data remain unchanged.
 
 ## Static-first architecture
 
@@ -34,6 +41,7 @@ Browser JavaScript enhances the generated document; it is not responsible for cr
 
 ```text
 data/
+  deployment.js                   base-path normalization and relative/absolute deployment URL helpers
   site.js                         site identity, store state, feature flags, navigation and categories
   products.js                     product, variant, media, merchandising and SEO data
   pages.js                        route, output, metadata, indexing and feature-gate definitions
@@ -58,6 +66,7 @@ public/                           generated robots, sitemap and web app manifest
 scripts/
   generate-pages.mjs              static page and infrastructure generator
   audit.mjs                       Phase 2 data, output and launch-readiness audit
+  audit-dist.mjs                  final deployment-artifact and base-path audit
   generate-icons.ps1              reproducible raster icon derivative generator
 docs/                              launch requirements and photography handoff
 ```
@@ -191,7 +200,7 @@ The generator emits route-specific titles, descriptions, robots directives, cano
 - FAQ schema is generated only from the answered FAQs rendered for the product.
 - Breadcrumb schema is emitted only after an absolute base URL is configured.
 
-`siteConfig.baseUrl` is intentionally `null`, so generated canonical and Open Graph URLs remain path-based and the sitemap uses route paths. Set the confirmed HTTPS origin in [`data/site.js`](./data/site.js), rerun generation, and verify canonical, Open Graph, breadcrumb, Organization, product and sitemap URLs before deployment. `robots.txt` receives an absolute Sitemap directive only when `baseUrl` exists.
+`siteConfig.baseUrl` is derived from `SITE_BASE_URL`. It remains `null` for ordinary local development, so local output does not invent canonical or Open Graph URLs. A configured deployment emits absolute canonical, Open Graph, breadcrumb, Organization, product, sitemap and robots URLs while preserving the deployment pathname.
 
 Social images are also gated. `siteConfig.brandAssets.socialImageFuturePath` reserves `/assets/images/social/zeno-og.webp`, but no `og:image` or `twitter:image` is emitted until `brandAssets.socialImage` or a product `seo.image` points to an existing approved asset. Configure the production base URL at the same time so the final image URL is absolute.
 
@@ -207,9 +216,9 @@ Canonical brand source files outside this website repository remain untouched. T
 
 ## Deployment constraints
 
-- No deployment has been performed and no hosting provider is configured by this repository.
+- The GitHub Pages workflow is a temporary public preview, not a signal that the store is operationally live.
 - Complete and approve every blocking item in [Launch requirements](./docs/LAUNCH-REQUIREMENTS.md) before changing the store to a live operating state.
-- Set the real HTTPS `baseUrl`; never invent a domain for testing production metadata.
+- Set the real HTTPS `SITE_BASE_URL` and root `SITE_BASE_PATH` when the permanent domain is confirmed.
 - Build with `npm run qa` and deploy the contents of `dist/` only after it passes.
 - The host must serve generated directory routes such as `/products/drying-towel/` directly and map unmatched requests to `404.html` without redirecting every URL to the home page.
 - Preserve the generated `robots.txt`, `sitemap.xml`, manifest, font files and stable asset paths.

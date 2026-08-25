@@ -1,4 +1,5 @@
 import { siteConfig } from '../../../data/site.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
 import { icon } from '../components/icons.js';
 import { productCardMarkup, productVisualMarkup } from '../components/product.js';
@@ -26,11 +27,11 @@ export function homePageMarkup(product) {
         <h1 id="home-title">${escapeHtml(product.heroCopy.heading)}</h1>
         <p class="home-hero__lede">${escapeHtml(product.heroCopy.body)}</p>
         <div class="hero-actions">
-          <a class="button button--blue" href="${escapeHtml(product.slug)}">Shop the Drying Towel ${icon('arrow')}</a>
+          <a class="button button--blue" href="${escapeHtml(toSitePath(product.slug))}">Shop the Drying Towel ${icon('arrow')}</a>
           <a class="text-link text-link--light" href="#why-zeno">Why ZENO ${icon('arrow')}</a>
         </div>
       </div>
-      <a class="home-hero__visual" href="${escapeHtml(product.slug)}" aria-label="View ${escapeHtml(product.title)}">
+      <a class="home-hero__visual" href="${escapeHtml(toSitePath(product.slug))}" aria-label="View ${escapeHtml(product.title)}">
         ${productVisualMarkup(product, product.media[0], { eager: true, className: 'home-hero__art', sizes: '(min-width: 64rem) 58vw, 100vw' })}
         <span class="hero-product-label"><span>01 / Drying</span><strong>${escapeHtml(product.title)}</strong></span>
       </a>
@@ -74,7 +75,7 @@ export function homePageMarkup(product) {
         <p class="eyebrow">Design detail</p>
         <h2 id="edge-title">Blue field.<br>Black edge.<br>Pure ZENO.</h2>
         <p class="lede">A restrained color system gives the towel a clear identity in the garage, on the shelf and in hand.</p>
-        <a class="text-link" href="${escapeHtml(product.slug)}">Explore every view ${icon('arrow')}</a>
+        <a class="text-link" href="${escapeHtml(toSitePath(product.slug))}">Explore every view ${icon('arrow')}</a>
       </div>
       <div class="edge-story__visual">
         ${productVisualMarkup(product, product.media.find((item) => item.id === 'edge'), { className: 'feature-art feature-art--edge', sizes: '(min-width: 64rem) 50vw, 100vw' })}
@@ -100,11 +101,11 @@ export function homePageMarkup(product) {
 
   <section class="brand-chapter section" aria-labelledby="brand-chapter-title">
     <div class="content-shell brand-chapter__inner">
-      <img src="${siteConfig.brandAssets.symbolBlack}" alt="" width="848" height="524" loading="lazy">
+      <img src="${toSitePath(siteConfig.brandAssets.symbolBlack)}" alt="" width="848" height="524" loading="lazy">
       <p class="eyebrow">ZENO DETAIL</p>
       <h2 id="brand-chapter-title">Made for the way enthusiasts care for their cars.</h2>
       <p>ZENO begins where good car care becomes a repeatable ritual: clear products, useful information and a customer experience that respects the detail.</p>
-      <a class="button button--dark" href="/about/">About ZENO ${icon('arrow')}</a>
+      <a class="button button--dark" href="${toSitePath('/about/')}">About ZENO ${icon('arrow')}</a>
     </div>
   </section>
 

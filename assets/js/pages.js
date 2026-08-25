@@ -1,5 +1,6 @@
 import { products, getProduct } from '../../data/products.js';
 import { getPage } from '../../data/pages.js';
+import { stripBasePath } from '../../data/deployment.js';
 import { homePageMarkup } from './pages/home.js';
 import { productPageMarkup } from './pages/product-page.js';
 import { collectionPageMarkup } from './pages/collection-page.js';
@@ -73,5 +74,5 @@ export function initPageInteractions() {
 }
 
 export function pageFromDocument() {
-  return getPage(document.body.dataset.route ?? window.location.pathname);
+  return getPage(document.body.dataset.route ?? stripBasePath(window.location.pathname));
 }

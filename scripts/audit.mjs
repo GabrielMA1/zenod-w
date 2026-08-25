@@ -10,6 +10,14 @@ import {
   products,
 } from '../data/products.js';
 import { categories, footerNavigation, primaryNavigation, siteConfig } from '../data/site.js';
+import {
+  normalizeBasePath,
+  siteBasePath,
+  stripBasePath,
+  toAbsoluteSiteUrl,
+  toSitePath,
+  toSiteSrcset,
+} from '../data/deployment.js';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const failures = [];
@@ -123,15 +131,16 @@ function cleanRoutePath(pathname) {
 }
 
 function pageForPathname(pathname) {
-  return pages.find((page) => page.route === pathname)
-    ?? pages.find((page) => cleanRoutePath(page.route) === cleanRoutePath(pathname));
+  const logicalPathname = stripBasePath(pathname);
+  return pages.find((page) => page.route === logicalPathname)
+    ?? pages.find((page) => cleanRoutePath(page.route) === cleanRoutePath(logicalPathname));
 }
 
 function localUrl(value, pageRoute = '/') {
   if (!value || /^(?:mailto:|tel:|data:|blob:|javascript:)/i.test(value)) return null;
   let parsed;
   try {
-    parsed = new URL(value, new URL(pageRoute, generatedOrigin));
+    parsed = new URL(value, new URL(toSitePath(pageRoute), generatedOrigin));
   } catch {
     return null;
   }
@@ -145,7 +154,7 @@ function localFileForPathname(pathname) {
   } catch {
     return null;
   }
-  const localPath = decoded.replace(/^\/+/, '');
+  const localPath = stripBasePath(decoded).replace(/^\/+/, '');
   const candidates = [resolve(projectRoot, localPath), resolve(projectRoot, 'public', localPath)];
   return candidates.find((candidate) => existsSync(candidate)) ?? null;
 }
@@ -452,7 +461,7 @@ function checkGeneratedPage(page, html) {
 
   const canonicalLinks = [...html.matchAll(/<link\b([^>]*)>/gi)]
     .filter((match) => attribute(match[1], 'rel')?.toLowerCase().split(/\s+/).includes('canonical'));
-  const expectedCanonical = siteConfig.baseUrl ? new URL(page.route, siteConfig.baseUrl).href : null;
+  const expectedCanonical = toAbsoluteSiteUrl(page.route);
   if (canonicalLinks.length !== 1) fail(`${page.output}: expected exactly one canonical link.`);
   else {
     const canonicalHref = attribute(canonicalLinks[0][1], 'href');
@@ -488,13 +497,15 @@ function checkGeneratedPage(page, html) {
   const footerHrefs = anchorHrefs(footer);
   for (const link of primaryNavigation) {
     const expected = link.public !== false && isFeatureEnabled(link.feature);
-    if (expected && !headerHrefs.includes(link.href)) fail(`${page.output}: static header is missing public navigation link ${link.href}.`);
-    if (!expected && headerHrefs.includes(link.href)) fail(`${page.output}: static header exposes inactive navigation link ${link.href}.`);
+    const renderedHref = toSitePath(link.href);
+    if (expected && !headerHrefs.includes(renderedHref)) fail(`${page.output}: static header is missing public navigation link ${renderedHref}.`);
+    if (!expected && headerHrefs.includes(renderedHref)) fail(`${page.output}: static header exposes inactive navigation link ${renderedHref}.`);
   }
   for (const link of Object.values(footerNavigation).flat()) {
     const expected = link.public !== false && isFeatureEnabled(link.feature);
-    if (expected && !footerHrefs.includes(link.href)) fail(`${page.output}: static footer is missing public navigation link ${link.href}.`);
-    if (!expected && footerHrefs.includes(link.href)) fail(`${page.output}: static footer exposes inactive navigation link ${link.href}.`);
+    const renderedHref = toSitePath(link.href);
+    if (expected && !footerHrefs.includes(renderedHref)) fail(`${page.output}: static footer is missing public navigation link ${renderedHref}.`);
+    if (!expected && footerHrefs.includes(renderedHref)) fail(`${page.output}: static footer exposes inactive navigation link ${renderedHref}.`);
   }
 
   for (const phrase of forbiddenConsumerPhrases) {
@@ -508,6 +519,9 @@ function checkGeneratedPage(page, html) {
     if (!href) {
       fail(`${page.output}: anchor is missing href.`);
       continue;
+    }
+    if (siteBasePath !== '/' && href.startsWith('/') && !href.startsWith(siteBasePath)) {
+      fail(`${page.output}: internal link bypasses deployment base ${siteBasePath}: "${href}".`);
     }
     if (!routeOrAssetExists(href, page.route)) fail(`${page.output}: broken local link "${href}".`);
     else if (!anchorExists(href, page.route)) fail(`${page.output}: link target fragment does not exist: "${href}".`);
@@ -753,9 +767,9 @@ function checkNavigation() {
 function normalizeSitemapLocation(value) {
   try {
     const parsed = new URL(value, generatedOrigin);
-    return cleanRoutePath(parsed.pathname);
+    return cleanRoutePath(stripBasePath(parsed.pathname));
   } catch {
-    return cleanRoutePath(value);
+    return cleanRoutePath(stripBasePath(value));
   }
 }
 
@@ -766,7 +780,8 @@ function checkSitemap() {
     return;
   }
   const xml = readFileSync(path, 'utf8');
-  const locations = capture(xml, /<loc>\s*([^<]+?)\s*<\/loc>/gi).map((value) => normalizeSitemapLocation(decodeHtml(value)));
+  const rawLocations = capture(xml, /<loc>\s*([^<]+?)\s*<\/loc>/gi).map(decodeHtml);
+  const locations = rawLocations.map(normalizeSitemapLocation);
   const duplicates = [...new Set(locations.filter((location, index) => locations.indexOf(location) !== index))];
   if (duplicates.length) fail(`Sitemap contains duplicate routes: ${duplicates.join(', ')}.`);
   const actual = new Set(locations);
@@ -775,6 +790,12 @@ function checkSitemap() {
   for (const route of actual) if (!expected.has(route)) fail(`Sitemap contains non-indexable or unknown route ${route}.`);
   for (const page of pages.filter(isInactivePage)) {
     if (actual.has(cleanRoutePath(page.route))) fail(`Inactive ${page.feature} route appears in sitemap: ${page.route}.`);
+  }
+  const expectedLocations = pages.filter(isIndexedPage).map((page) => siteConfig.baseUrl
+    ? toAbsoluteSiteUrl(page.route)
+    : toSitePath(page.route));
+  for (const location of expectedLocations) {
+    if (!rawLocations.includes(location)) fail(`Sitemap is missing deployment-aware URL ${location}.`);
   }
 }
 
@@ -795,6 +816,8 @@ function checkManifest() {
     fail('site.webmanifest must declare at least one icon.');
     return;
   }
+  if (manifest.start_url !== siteBasePath) fail(`site.webmanifest start_url must be ${siteBasePath}.`);
+  if (manifest.scope !== siteBasePath) fail(`site.webmanifest scope must be ${siteBasePath}.`);
   for (const icon of manifest.icons) {
     if (!icon.src) {
       fail('Manifest icon is missing src.');
@@ -802,9 +825,55 @@ function checkManifest() {
     }
     const parsed = localUrl(icon.src);
     if (!parsed || !localFileForPathname(parsed.pathname)) fail(`Manifest icon file does not exist: ${icon.src}.`);
+    if (siteBasePath !== '/' && !icon.src.startsWith(siteBasePath)) fail(`Manifest icon bypasses deployment base ${siteBasePath}: ${icon.src}.`);
     if (!icon.sizes?.trim()) fail(`Manifest icon ${icon.src} is missing sizes.`);
     if (!icon.type?.startsWith('image/')) fail(`Manifest icon ${icon.src} is missing a valid image MIME type.`);
   }
+}
+
+function checkRobots() {
+  const path = resolve(projectRoot, 'public/robots.txt');
+  if (!existsSync(path)) {
+    fail('Missing public/robots.txt.');
+    return;
+  }
+  const robots = readFileSync(path, 'utf8');
+  if (!new RegExp(`^Allow:\\s*${escapeRegExp(siteBasePath)}\\s*$`, 'mi').test(robots)) {
+    fail(`robots.txt must allow the deployment base ${siteBasePath}.`);
+  }
+  const expectedSitemap = toAbsoluteSiteUrl('/sitemap.xml');
+  const sitemapDirectives = capture(robots, /^Sitemap:\s*(\S+)\s*$/gim);
+  if (expectedSitemap && !sitemapDirectives.includes(expectedSitemap)) {
+    fail(`robots.txt is missing Sitemap: ${expectedSitemap}.`);
+  }
+  if (!expectedSitemap && sitemapDirectives.length) {
+    fail('Local robots.txt must not publish an invented absolute sitemap URL.');
+  }
+}
+
+function checkDeploymentPaths() {
+  for (const input of ['w', '/w', '/w/']) {
+    if (normalizeBasePath(input) !== '/w/') fail(`Deployment base normalization failed for "${input}".`);
+  }
+  const expectedPrefix = siteBasePath === '/' ? '' : siteBasePath.slice(0, -1);
+  const cases = [
+    ['/', `${expectedPrefix}/`],
+    ['/shop/', `${expectedPrefix}/shop/`],
+    ['/#why-zeno', `${expectedPrefix}/#why-zeno`],
+    ['/404.html', `${expectedPrefix}/404.html`],
+  ];
+  for (const [logicalPath, expected] of cases) {
+    const rendered = toSitePath(logicalPath);
+    if (rendered !== expected) fail(`Deployment URL helper mapped ${logicalPath} to ${rendered}, expected ${expected}.`);
+    if (stripBasePath(rendered) !== logicalPath) fail(`Deployment URL helper could not restore logical path ${logicalPath}.`);
+    if (toSitePath(rendered) !== rendered) fail(`Deployment URL helper double-prefixed ${rendered}.`);
+  }
+  for (const passthrough of ['#why-zeno', 'https://example.com/path', 'mailto:hello@example.com', 'tel:+15555550123', '//cdn.example.com/file']) {
+    if (toSitePath(passthrough) !== passthrough) fail(`Deployment URL helper changed passthrough URL ${passthrough}.`);
+  }
+  const expectedSrcset = `${expectedPrefix}/assets/example-320.webp 320w, ${expectedPrefix}/assets/example-640.webp 640w`;
+  const renderedSrcset = toSiteSrcset('/assets/example-320.webp 320w, /assets/example-640.webp 640w');
+  if (renderedSrcset !== expectedSrcset) fail(`Deployment srcset helper returned "${renderedSrcset}", expected "${expectedSrcset}".`);
 }
 
 function launchBlockerNotices() {
@@ -874,12 +943,16 @@ for (const page of pages) {
 checkNavigation();
 checkSitemap();
 checkManifest();
+checkRobots();
+checkDeploymentPaths();
 launchBlockerNotices();
 
 const requiredInfrastructure = [
   'package.json',
   'vite.config.js',
+  'data/deployment.js',
   'README.md',
+  '.github/workflows/pages.yml',
   'public/robots.txt',
   'public/site.webmanifest',
   'docs/LAUNCH-REQUIREMENTS.md',

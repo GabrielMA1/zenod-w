@@ -1,5 +1,6 @@
 import { getProduct, formatMoney } from '../../../data/products.js';
 import { siteConfig } from '../../../data/site.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { addLine, canCheckout, checkout, getCart, initializeCommerce, removeLine, subscribe, updateLine } from '../adapters/commerce.js';
 import { escapeHtml } from '../lib/html.js';
 import { productVisualMarkup } from './product.js';
@@ -24,9 +25,9 @@ function lineMarkup(line) {
   const linePrice = formatMoney((variant.price ?? product.price) == null ? null : (variant.price ?? product.price) * line.quantity, product.currency);
 
   return `<li class="cart-line" data-cart-line="${escapeHtml(line.id)}">
-    <a class="cart-line-visual" href="${escapeHtml(product.slug)}">${productVisualMarkup(product, media, { className: 'cart-line__media', sizes: '7rem' })}</a>
+    <a class="cart-line-visual" href="${escapeHtml(toSitePath(product.slug))}">${productVisualMarkup(product, media, { className: 'cart-line__media', sizes: '7rem' })}</a>
     <div class="cart-line-info">
-      <div class="cart-line-heading"><h3><a href="${escapeHtml(product.slug)}">${escapeHtml(product.title)}</a></h3>${linePrice ? `<strong>${escapeHtml(linePrice)}</strong>` : ''}</div>
+      <div class="cart-line-heading"><h3><a href="${escapeHtml(toSitePath(product.slug))}">${escapeHtml(product.title)}</a></h3>${linePrice ? `<strong>${escapeHtml(linePrice)}</strong>` : ''}</div>
       <p class="cart-line-meta">${escapeHtml(variant.title)}${unitPrice ? ` · ${escapeHtml(unitPrice)} each` : ''}</p>
       <div class="cart-line-actions">
         <div class="quantity-control quantity-control--small" role="group" aria-label="Quantity for ${escapeHtml(product.title)}">
@@ -60,10 +61,10 @@ function renderCart(cart) {
 
   if (!lines.length) {
     body.innerHTML = `<div class="cart-empty">
-      <img class="cart-empty-symbol" src="${siteConfig.brandAssets.symbolBlack}" alt="" width="848" height="524">
+      <img class="cart-empty-symbol" src="${toSitePath(siteConfig.brandAssets.symbolBlack)}" alt="" width="848" height="524">
       <h3>Your cart is empty.</h3>
       <p>Explore the ZENO Drying Towel.</p>
-      <a class="button button--dark" href="/products/drying-towel/">Shop the Drying Towel</a>
+      <a class="button button--dark" href="${toSitePath('/products/drying-towel/')}">Shop the Drying Towel</a>
     </div>`;
     footer.hidden = true;
     footer.innerHTML = '';
@@ -83,7 +84,7 @@ function renderCart(cart) {
   footer.innerHTML = `${subtotal ? `<div class="cart-summary-row"><span>Subtotal</span><strong>${escapeHtml(subtotal)}</strong></div>` : ''}
     ${siteConfig.features.shippingReady && siteConfig.shipping.summary ? `<p class="cart-note">${escapeHtml(siteConfig.shipping.summary)}</p>` : ''}
     ${canCheckout() ? '<button class="button button--blue button--wide" type="button" data-checkout>Checkout</button>' : ''}
-    <a class="button button--outline button--wide" href="/products/drying-towel/">Continue shopping</a>`;
+    <a class="button button--outline button--wide" href="${toSitePath('/products/drying-towel/')}">Continue shopping</a>`;
 }
 
 function openCart(trigger = document.activeElement) {

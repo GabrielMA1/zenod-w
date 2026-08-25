@@ -1,4 +1,5 @@
 import { escapeHtml } from '../lib/html.js';
+import { toSitePath } from '../../../data/deployment.js';
 import { productCardMarkup } from '../components/product.js';
 
 export function collectionPageMarkup(page, products) {
@@ -9,7 +10,7 @@ export function collectionPageMarkup(page, products) {
 
   return `<section class="collection-hero surface-dark" aria-labelledby="collection-title">
     <div class="shell collection-hero__inner">
-      <nav class="breadcrumbs breadcrumbs--light" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Shop</li></ol></nav>
+      <nav class="breadcrumbs breadcrumbs--light" aria-label="Breadcrumb"><ol><li><a href="${toSitePath('/')}">Home</a></li><li aria-current="page">Shop</li></ol></nav>
       <p class="eyebrow">Shop ZENO</p>
       <h1 id="collection-title">${escapeHtml(title)}</h1>
       <p>${escapeHtml(intro)}</p>

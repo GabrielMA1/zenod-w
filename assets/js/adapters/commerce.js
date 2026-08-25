@@ -1,5 +1,6 @@
 import { getProduct, getPublicVariants } from '../../../data/products.js';
 import { siteConfig } from '../../../data/site.js';
+import { toSitePath } from '../../../data/deployment.js';
 
 const storageKey = 'zeno-detail-cart-v2';
 const legacyStorageKey = 'zeno-detail-cart-preview-v1';
@@ -101,6 +102,6 @@ export function canCheckout() {
 
 export function checkout() {
   if (!canCheckout()) return false;
-  window.location.assign(siteConfig.commerce.checkoutUrl);
+  window.location.assign(toSitePath(siteConfig.commerce.checkoutUrl));
   return true;
 }

@@ -1,15 +1,37 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
+import { setTimeout as wait } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { pages } from '../data/pages.js';
 import { getProduct } from '../data/products.js';
 import { featureEnabled, siteConfig } from '../data/site.js';
+import {
+  siteBasePath,
+  toAbsoluteSiteUrl,
+  toSitePath,
+  toSiteSrcset,
+} from '../data/deployment.js';
 import { announcementMarkup, footerMarkup, headerMarkup, overlayMarkup } from '../assets/js/components/shell.js';
 import { renderPage } from '../assets/js/pages.js';
 import { pageSchemas } from '../assets/js/seo.js';
 import { escapeHtml } from '../assets/js/lib/html.js';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+async function writeGeneratedFile(destination, content) {
+  const maximumAttempts = 8;
+  for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
+    try {
+      await writeFile(destination, content, 'utf8');
+      return;
+    } catch (error) {
+      const retryable = ['EBUSY', 'EPERM'].includes(error?.code);
+      if (!retryable || attempt === maximumAttempts - 1) throw error;
+      await wait(Math.min(50 * (2 ** attempt), 1000));
+    }
+  }
+}
 
 function pageIsPublic(page) {
   return page.public !== false && !page.noindex && featureEnabled(page.feature);
@@ -18,9 +40,9 @@ function pageIsPublic(page) {
 function pageHtml(page) {
   const product = page.product ? getProduct(page.product) : page.type === 'home' || page.type === 'faq' ? getProduct('zeno-drying-towel') : null;
   const noindex = !pageIsPublic(page);
-  const canonical = siteConfig.baseUrl ? new URL(page.route, siteConfig.baseUrl).href : null;
+  const canonical = toAbsoluteSiteUrl(page.route);
   const socialImage = product?.seo?.image ?? siteConfig.brandAssets.socialImage;
-  const socialImageUrl = socialImage && siteConfig.baseUrl ? new URL(socialImage, siteConfig.baseUrl).href : socialImage;
+  const socialImageUrl = socialImage ? toAbsoluteSiteUrl(socialImage) ?? toSitePath(socialImage) : null;
   const criticalMedia = ['home', 'product'].includes(page.type) ? product?.media?.[0] : null;
   const contextAttributes = [
     `data-page="${escapeHtml(page.type)}"`, `data-page-id="${escapeHtml(page.id)}"`, `data-route="${escapeHtml(page.route)}"`,
@@ -52,7 +74,7 @@ function pageHtml(page) {
     <link rel="icon" href="/assets/images/brand/favicon-16.png" sizes="16x16" type="image/png">
     <link rel="apple-touch-icon" href="/assets/images/brand/apple-touch-icon-180.png">
     <link rel="manifest" href="/site.webmanifest">
-    ${criticalMedia?.src ? `<link rel="preload" as="image" href="${escapeHtml(criticalMedia.src)}"${criticalMedia.srcset ? ` imagesrcset="${escapeHtml(criticalMedia.srcset)}"` : ''} imagesizes="(min-width: 64rem) 58vw, 100vw">` : ''}
+    ${criticalMedia?.src ? `<link rel="preload" as="image" href="${escapeHtml(toSitePath(criticalMedia.src))}"${criticalMedia.srcset ? ` imagesrcset="${escapeHtml(toSiteSrcset(criticalMedia.srcset))}"` : ''} imagesizes="(min-width: 64rem) 58vw, 100vw">` : ''}
     <link rel="stylesheet" href="/assets/css/main.css">
     ${pageSchemas(page, product)}
     <script type="module" src="/assets/js/app.js"></script>
@@ -73,29 +95,29 @@ function pageHtml(page) {
 for (const page of pages) {
   const destination = resolve(projectRoot, page.output);
   mkdirSync(dirname(destination), { recursive: true });
-  writeFileSync(destination, pageHtml(page), 'utf8');
+  await writeGeneratedFile(destination, pageHtml(page));
 }
 
 const sitemapRoutes = pages.filter(pageIsPublic).map((page) => page.route);
 const sitemap = siteConfig.baseUrl
-  ? `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapRoutes.map((route) => `  <url><loc>${new URL(route, siteConfig.baseUrl).href}</loc></url>`).join('\n')}\n</urlset>\n`
-  : `<?xml version="1.0" encoding="UTF-8"?>\n<!-- Add data/site.js baseUrl to emit production-absolute sitemap URLs. -->\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapRoutes.map((route) => `  <url><loc>${route}</loc></url>`).join('\n')}\n</urlset>\n`;
-writeFileSync(resolve(projectRoot, 'public/sitemap.xml'), sitemap, 'utf8');
+  ? `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapRoutes.map((route) => `  <url><loc>${toAbsoluteSiteUrl(route)}</loc></url>`).join('\n')}\n</urlset>\n`
+  : `<?xml version="1.0" encoding="UTF-8"?>\n<!-- Set SITE_BASE_URL to emit production-absolute sitemap URLs. -->\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapRoutes.map((route) => `  <url><loc>${toSitePath(route)}</loc></url>`).join('\n')}\n</urlset>\n`;
+await writeGeneratedFile(resolve(projectRoot, 'public/sitemap.xml'), sitemap);
 
-const robots = `User-agent: *\nAllow: /\n${siteConfig.baseUrl ? `\nSitemap: ${new URL('/sitemap.xml', siteConfig.baseUrl).href}\n` : ''}`;
-writeFileSync(resolve(projectRoot, 'public/robots.txt'), robots, 'utf8');
+const robots = `User-agent: *\nAllow: ${siteBasePath}\n${siteConfig.baseUrl ? `\nSitemap: ${toAbsoluteSiteUrl('/sitemap.xml')}\n` : ''}`;
+await writeGeneratedFile(resolve(projectRoot, 'public/robots.txt'), robots);
 
 const manifest = {
   name: siteConfig.name,
   short_name: siteConfig.shortName,
   description: 'Premium automotive car-care products.',
-  start_url: '/', display: 'standalone', background_color: '#f4f6f7', theme_color: '#090c0f',
+  start_url: siteBasePath, scope: siteBasePath, display: 'standalone', background_color: '#f4f6f7', theme_color: '#090c0f',
   icons: [
-    { src: '/assets/images/brand/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-    { src: '/assets/images/brand/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-    { src: '/assets/images/brand/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+    { src: toSitePath('/assets/images/brand/icon-192.png'), sizes: '192x192', type: 'image/png', purpose: 'any' },
+    { src: toSitePath('/assets/images/brand/icon-512.png'), sizes: '512x512', type: 'image/png', purpose: 'any' },
+    { src: toSitePath('/assets/images/brand/icon-maskable-512.png'), sizes: '512x512', type: 'image/png', purpose: 'maskable' },
   ],
 };
-writeFileSync(resolve(projectRoot, 'public/site.webmanifest'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+await writeGeneratedFile(resolve(projectRoot, 'public/site.webmanifest'), `${JSON.stringify(manifest, null, 2)}\n`);
 
 console.log(`Generated ${pages.length} static HTML pages, metadata and site infrastructure files.`);

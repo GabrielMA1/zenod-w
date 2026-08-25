@@ -3,6 +3,7 @@
   "short_name": "ZENO",
   "description": "Premium automotive car-care products.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f4f6f7",
   "theme_color": "#090c0f",

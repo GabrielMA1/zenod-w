@@ -2,6 +2,7 @@ import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
+import { siteBasePath, siteBaseUrl } from './data/deployment.js';
 import { pages } from './data/pages.js';
 import { products } from './data/products.js';
 import { siteConfig } from './data/site.js';
@@ -56,7 +57,11 @@ const htmlEntries = Object.fromEntries(
 
 export default defineConfig({
   root: projectRoot,
+  base: siteBasePath,
   publicDir: 'public',
+  define: {
+    __SITE_BASE_URL__: JSON.stringify(siteBaseUrl),
+  },
   plugins: [copyStableAssets()],
   build: {
     outDir: 'dist',
