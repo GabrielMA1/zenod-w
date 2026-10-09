@@ -1,7 +1,7 @@
 import { escapeHtml } from '../lib/html.js';
 import { toSitePath } from '../../../data/deployment.js';
 import { icon } from './icons.js';
-import { productVisualMarkup } from './product.js';
+import { hasIllustratedMedia, productVisualMarkup } from './product.js';
 
 function mediaLabel(media, index, count) {
   return `${media.caption || media.alt || 'Product view'}, ${index + 1} of ${count}`;
@@ -35,7 +35,7 @@ export function galleryMarkup(product) {
         ${media.map((item, index) => `<div class="gallery-slide" data-gallery-slide="${escapeHtml(item.id)}" ${index ? 'hidden' : ''}>
           ${item.type === 'video' ? videoMarkup(item) : `<button class="gallery-zoom-trigger" type="button" data-gallery-zoom aria-label="Enlarge ${escapeHtml(item.caption || product.title)}">
             ${productVisualMarkup(product, item, { eager: index === 0, className: 'gallery-media', sizes: '(min-width: 64rem) 58vw, 100vw' })}
-            <span class="gallery-zoom-label">${icon('zoom')} Enlarge</span>
+            <span class="gallery-zoom-label">${icon('zoom')}<span>Enlarge</span></span>
           </button>`}
         </div>`).join('')}
       </div>
@@ -43,6 +43,7 @@ export function galleryMarkup(product) {
       <button class="gallery-arrow gallery-arrow--next" type="button" data-gallery-next aria-label="Next image">${icon('chevronRight')}</button>
       <p class="gallery-count" data-gallery-count>${escapeHtml(mediaLabel(media[0], 0, media.length))}</p>
     </div>
+    ${hasIllustratedMedia(product) ? '<p class="gallery-note">Illustrated views. Product photography will replace them before launch.</p>' : ''}
     <div class="gallery-thumbnails" role="tablist" aria-label="Choose a product view">
       ${media.map((item, index) => `<button class="gallery-thumbnail" type="button" role="tab" data-gallery-thumbnail="${escapeHtml(item.id)}" aria-label="${escapeHtml(mediaLabel(item, index, media.length))}" aria-selected="${index === 0}" ${index === 0 ? 'aria-current="true"' : ''}>
         ${thumbnailMediaMarkup(product, item)}

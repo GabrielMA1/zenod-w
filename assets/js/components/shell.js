@@ -30,8 +30,8 @@ export function announcementMarkup() {
 }
 
 export function headerMarkup(route) {
-  const cartButton = siteConfig.features.localCart ? `<button class="icon-button header-cart" type="button" data-open-cart aria-label="Open cart, 0 items" aria-controls="cart-dialog">
-    ${icon('bag')}<span class="cart-count" data-cart-count hidden>0</span>
+  const cartButton = siteConfig.features.localCart ? `<button class="header-button header-cart" type="button" data-open-cart aria-label="Open cart, 0 items" aria-controls="cart-dialog">
+    Cart<span class="cart-count" data-cart-count hidden>0</span>
   </button>` : '';
 
   return `<header class="site-header" data-site-header>
@@ -42,7 +42,7 @@ export function headerMarkup(route) {
       <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(route)}</ul></nav>
       <div class="header-actions">
         ${cartButton}
-        <button class="icon-button mobile-menu-button" type="button" data-open-mobile-menu aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu-dialog">${icon('menu')}</button>
+        <button class="header-button mobile-menu-button" type="button" data-open-mobile-menu aria-expanded="false" aria-controls="mobile-menu-dialog">Menu</button>
       </div>
     </div>
   </header>`;
@@ -61,7 +61,6 @@ export function footerMarkup() {
     </div>
     <div class="shell footer-bottom">
       <p>© ${new Date().getFullYear()} ZENO DETAIL.</p>
-      <p>Automotive care, refined.</p>
     </div>
   </footer>`;
 }
@@ -70,13 +69,11 @@ export function overlayMarkup(route) {
   return `<dialog class="mobile-drawer" id="mobile-menu-dialog" aria-labelledby="mobile-menu-title">
     <div class="drawer-panel">
       <div class="drawer-header">
-        <span id="mobile-menu-title" class="eyebrow">Menu</span>
+        <h2 id="mobile-menu-title" class="label">Menu</h2>
         <button class="icon-button" type="button" data-close-dialog aria-label="Close navigation">${icon('close')}</button>
       </div>
       <nav class="mobile-nav-body" aria-label="Mobile"><ul class="mobile-nav-list">${navLinksMarkup(route)}</ul></nav>
-      <a class="mobile-nav-product" href="${toSitePath('/products/drying-towel/')}">
-        <span>Flagship product</span><strong>ZENO Drying Towel</strong>${icon('arrow')}
-      </a>
+      <a class="button button--wide mobile-nav-product" href="${toSitePath('/products/drying-towel/')}">Shop the Drying Towel ${icon('arrow')}</a>
     </div>
   </dialog>
   ${siteConfig.features.localCart ? `<dialog class="drawer cart-drawer" id="cart-dialog" aria-labelledby="cart-title">

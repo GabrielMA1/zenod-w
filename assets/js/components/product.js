@@ -1,6 +1,6 @@
 import { categories, siteConfig } from '../../../data/site.js';
 import { toSitePath, toSiteSrcset } from '../../../data/deployment.js';
-import { formatMoney, formatPrice, getPublicVariants } from '../../../data/products.js';
+import { formatMoney, formatPrice, getPublicVariants, getVerifiedSpecifications } from '../../../data/products.js';
 import { escapeHtml, attributes, classes } from '../lib/html.js';
 import { icon } from './icons.js';
 
@@ -10,6 +10,17 @@ function sourceMarkup(media) {
     sources.avif?.length ? `<source type="image/avif" srcset="${escapeHtml(sources.avif.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}">` : '',
     sources.webp?.length ? `<source type="image/webp" srcset="${escapeHtml(sources.webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}">` : '',
   ].join('');
+}
+
+// Until approved photography exists, each media slot is drawn as a flat, clearly
+// illustrative diagram of the towel: blue field, black edge, white mark.
+function illustrationMarkup(variant) {
+  const mark = `<img class="product-art__mark" src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="" width="1180" height="980">`;
+  if (variant === 'folded') {
+    return '<span class="product-art__folded" aria-hidden="true"><span></span><span></span></span>';
+  }
+  if (variant === 'texture') return '<span class="product-art__towel" aria-hidden="true"></span>';
+  return `<span class="product-art__towel" aria-hidden="true">${mark}</span>`;
 }
 
 export function productVisualMarkup(product, media = product.media[0], options = {}) {
@@ -36,13 +47,34 @@ export function productVisualMarkup(product, media = product.media[0], options =
     </figure>`;
   }
 
-  const index = String((product.media.findIndex((item) => item.id === media?.id) + 1) || 1).padStart(2, '0');
-  return `<figure class="${className} product-art product-art--${escapeHtml(variant)}" role="img" aria-label="${escapeHtml(media?.alt ?? product.title)}">
-    <span class="product-art__field" aria-hidden="true"></span>
-    <span class="product-art__towel" aria-hidden="true"><span class="product-art__edge"></span></span>
-    <img class="product-art__mark" src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="" width="1180" height="980" aria-hidden="true">
-    <span class="product-art__code" aria-hidden="true">DRY / ${index}</span>
+  return `<figure class="${className} product-art product-art--${escapeHtml(variant)}" role="img" aria-label="${escapeHtml(`Illustration: ${media?.alt ?? product.title}`)}">
+    ${illustrationMarkup(variant)}
   </figure>`;
+}
+
+export function hasIllustratedMedia(product) {
+  return product.media.some((media) => media.type === 'image' && !media.src);
+}
+
+export function swatchMarkup(product) {
+  if (!product.color) return '';
+  return `<p class="swatch"><span class="swatch__chip" aria-hidden="true"></span>${escapeHtml(product.color)}</p>`;
+}
+
+// The verified specifications, set like the sewn label inside the towel.
+export function productLabelMarkup(product, options = {}) {
+  const specifications = getVerifiedSpecifications(product);
+  if (!specifications.length) return '';
+  const pending = options.showPending
+    ? product.specifications
+      .filter((specification) => !specification.verified || !specification.value)
+      .map((specification) => (/^[A-Z]{2,}$/.test(specification.label) ? specification.label : specification.label.toLowerCase()))
+    : [];
+  return `<div class="product-label">
+    <img class="product-label__mark" src="${toSitePath(siteConfig.brandAssets.logoBlack)}" alt="" width="1180" height="980" loading="lazy">
+    <dl>${specifications.map((specification) => `<div><dt>${escapeHtml(specification.label)}</dt><dd>${escapeHtml(specification.value)}</dd></div>`).join('')}</dl>
+    ${pending.length ? `<p class="product-label__pending">Still to be confirmed: ${escapeHtml(pending.join(', '))}. They will be listed here once verified.</p>` : ''}
+  </div>`;
 }
 
 export function quantityControlMarkup(value = 1, context = 'product') {
@@ -55,7 +87,7 @@ export function quantityControlMarkup(value = 1, context = 'product') {
 
 export function productCardMarkup(product, options = {}) {
   const category = categories.find((item) => item.id === product.categoryId);
-  const primaryMedia = product.media.find((item) => item.id === 'folded') ?? product.media[0];
+  const primaryMedia = product.media.find((item) => item.id === (options.mediaId ?? 'front')) ?? product.media[0];
   const primaryVariant = getPublicVariants(product)[0] ?? null;
   const priceAmount = primaryVariant?.price ?? product.price;
   const compareAtAmount = primaryVariant?.compareAt ?? product.compareAt;
@@ -64,22 +96,21 @@ export function productCardMarkup(product, options = {}) {
     ? formatMoney(compareAtAmount, product.currency)
     : null;
   const canQuickAdd = siteConfig.features.localCart && product.purchasable && Boolean(price);
+  const headingLevel = options.headingLevel ?? 2;
 
-  return `<article class="product-card ${options.featured ? 'product-card--featured' : ''}" data-product-card="${escapeHtml(product.id)}">
-    <a class="product-card__visual" href="${escapeHtml(toSitePath(product.slug))}" aria-label="View ${escapeHtml(product.title)}">
-      ${productVisualMarkup(product, primaryMedia, { className: 'product-card__art', sizes: '(min-width: 64rem) 48vw, 100vw' })}
+  return `<article class="product-listing" data-product-card="${escapeHtml(product.id)}">
+    <a class="product-listing__visual" href="${escapeHtml(toSitePath(product.slug))}" tabindex="-1" aria-label="View ${escapeHtml(product.title)}">
+      ${productVisualMarkup(product, primaryMedia, { className: 'product-listing__art', sizes: '(min-width: 64rem) 48vw, 100vw' })}
     </a>
-    <div class="product-card__body">
-      <p class="eyebrow">${escapeHtml(category?.eyebrow ?? 'Automotive care')}</p>
-      <h2><a href="${escapeHtml(toSitePath(product.slug))}">${escapeHtml(product.title)}</a></h2>
+    <div class="product-listing__body">
+      <p class="label">${escapeHtml(category?.eyebrow ?? 'Automotive care')}</p>
+      <h${headingLevel} class="product-listing__title"><a href="${escapeHtml(toSitePath(product.slug))}">${escapeHtml(product.title)}</a></h${headingLevel}>
       <p>${escapeHtml(product.shortDescription)}</p>
-      <ul class="inline-facts" aria-label="Product highlights">
-        ${product.benefits.map((benefit) => `<li>${icon('check')}<span>${escapeHtml(benefit.title)}</span></li>`).join('')}
-      </ul>
-      <div class="product-card__action">
+      ${swatchMarkup(product)}
+      <div class="product-listing__action">
         ${price ? `<strong class="product-price"><span>${escapeHtml(price)}</span>${compareAt ? `<del>${escapeHtml(compareAt)}</del>` : ''}</strong>` : ''}
-        <a class="button button--dark" href="${escapeHtml(toSitePath(product.slug))}">View the towel ${icon('arrow')}</a>
-        ${canQuickAdd ? `<button class="button button--outline" type="button" data-add-to-cart="${escapeHtml(product.id)}">Quick add</button>` : ''}
+        <a class="button" href="${escapeHtml(toSitePath(product.slug))}">View the towel ${icon('arrow')}</a>
+        ${canQuickAdd ? `<button class="button button--quiet" type="button" data-add-to-cart="${escapeHtml(product.id)}">Quick add</button>` : ''}
       </div>
     </div>
   </article>`;
