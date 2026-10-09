@@ -37,14 +37,29 @@
       </a>
       <nav class="primary-nav" aria-label="Primary"><ul><li><a href="/shop/">Shop</a></li><li><a href="/products/drying-towel/">Drying Towel</a></li><li><a href="/#why-zeno">Why ZENO</a></li><li><a href="/about/">About</a></li><li><a href="/faq/">FAQ</a></li></ul></nav>
       <div class="header-actions">
-        <button class="icon-button header-cart" type="button" data-open-cart aria-label="Open cart, 0 items" aria-controls="cart-dialog">
-    <svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1 12H5L6 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="cart-count" data-cart-count hidden>0</span>
+        <button class="header-button header-cart" type="button" data-open-cart aria-label="Open cart, 0 items" aria-controls="cart-dialog">
+    Cart<span class="cart-count" data-cart-count hidden>0</span>
   </button>
-        <button class="icon-button mobile-menu-button" type="button" data-open-mobile-menu aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu-dialog"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <button class="header-button mobile-menu-button" type="button" data-open-mobile-menu aria-expanded="false" aria-controls="mobile-menu-dialog">Menu</button>
       </div>
     </div>
   </header>
-    <main id="main-content"><section class="not-found surface-dark" aria-labelledby="not-found-title"><div class="content-shell"><span class="not-found__code">404</span><p class="eyebrow">ZENO DETAIL</p><h1 id="not-found-title">Page not found.</h1><p>We couldn’t find the page you requested.</p><div class="hero-actions"><a class="button button--blue" href="/">Back home</a><a class="text-link text-link--light" href="/products/drying-towel/">Shop the Drying Towel <svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M14 7l5 5-5 5"/></svg></a></div></div></section></main>
+    <main id="main-content"><section class="not-found" aria-labelledby="not-found-title">
+    <div class="towel-field towel-field--hero towel-field--short">
+    <div class="towel-field__surface">
+      <div class="home-hero__copy">
+        <p class="label">404</p>
+        <h1 id="not-found-title">Page not found.</h1>
+        <p class="home-hero__lede">We couldn’t find the page you requested.</p>
+        <div class="actions">
+          <a class="button" href="/">Back home</a>
+          <a class="text-link" href="/products/drying-towel/">Shop the Drying Towel</a>
+        </div>
+      </div>
+      <img class="towel-field__mark" src="/assets/images/brand/zeno-symbol-white.svg" alt="" width="848" height="524">
+    </div>
+  </div>
+  </section></main>
     <footer class="site-footer">
     <div class="shell footer-top">
       <div class="footer-brand">
@@ -63,19 +78,16 @@
     </div>
     <div class="shell footer-bottom">
       <p>© 2026 ZENO DETAIL.</p>
-      <p>Automotive care, refined.</p>
     </div>
   </footer>
     <dialog class="mobile-drawer" id="mobile-menu-dialog" aria-labelledby="mobile-menu-title">
     <div class="drawer-panel">
       <div class="drawer-header">
-        <span id="mobile-menu-title" class="eyebrow">Menu</span>
+        <h2 id="mobile-menu-title" class="label">Menu</h2>
         <button class="icon-button" type="button" data-close-dialog aria-label="Close navigation"><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
       <nav class="mobile-nav-body" aria-label="Mobile"><ul class="mobile-nav-list"><li><a href="/shop/">Shop</a></li><li><a href="/products/drying-towel/">Drying Towel</a></li><li><a href="/#why-zeno">Why ZENO</a></li><li><a href="/about/">About</a></li><li><a href="/faq/">FAQ</a></li></ul></nav>
-      <a class="mobile-nav-product" href="/products/drying-towel/">
-        <span>Flagship product</span><strong>ZENO Drying Towel</strong><svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
-      </a>
+      <a class="button button--wide mobile-nav-product" href="/products/drying-towel/">Shop the Drying Towel <svg class="" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M14 7l5 5-5 5"/></svg></a>
     </div>
   </dialog>
   <dialog class="drawer cart-drawer" id="cart-dialog" aria-labelledby="cart-title">

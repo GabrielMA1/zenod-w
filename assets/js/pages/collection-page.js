@@ -8,18 +8,17 @@ export function collectionPageMarkup(page, products) {
     ? 'A soft microfiber towel designed for the final step after washing your vehicle.'
     : 'Premium microfiber for vehicle drying, finished in blue with black edging.';
 
-  return `<section class="collection-hero surface-dark" aria-labelledby="collection-title">
-    <div class="shell collection-hero__inner">
-      <nav class="breadcrumbs breadcrumbs--light" aria-label="Breadcrumb"><ol><li><a href="${toSitePath('/')}">Home</a></li><li aria-current="page">Shop</li></ol></nav>
-      <p class="eyebrow">Shop ZENO</p>
+  return `<section class="page-intro" aria-labelledby="collection-title">
+    <div class="shell">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="${toSitePath('/')}">Home</a></li><li aria-current="page">Shop</li></ol></nav>
       <h1 id="collection-title">${escapeHtml(title)}</h1>
-      <p>${escapeHtml(intro)}</p>
+      <p class="lede">${escapeHtml(intro)}</p>
     </div>
   </section>
-  <section class="section collection-feature" id="catalog" aria-labelledby="catalog-title">
+  <section class="collection" id="catalog" aria-labelledby="catalog-title">
     <div class="shell">
       <h2 class="sr-only" id="catalog-title">Products</h2>
-      ${products.map((product) => productCardMarkup(product, { featured: true })).join('')}
+      ${products.map((product) => productCardMarkup(product)).join('')}
     </div>
   </section>`;
 }

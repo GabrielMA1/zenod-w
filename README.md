@@ -48,7 +48,7 @@ data/
 assets/
   css/
     main.css                      local font and stylesheet entry point
-    tokens.css                    color, type, spacing, radius, shadow, container and motion tokens
+    tokens.css                    color, type, spacing, radius, container and motion tokens
     base.css                      document defaults and accessibility foundations
     components.css                shell, controls, cart, product cards and gallery components
     pages.css                     home, collection, product and content-page layouts
@@ -75,15 +75,16 @@ The main page renderer is intentionally split by responsibility. [`assets/js/pag
 
 ## Design system and self-hosted type
 
-[`assets/css/tokens.css`](./assets/css/tokens.css) is the source of truth for the graphite, white and controlled-blue palette; fluid type scale; spacing; radii; borders; shadows; containers; header height; easing and duration. Component and page CSS should consume these custom properties instead of introducing unrelated values.
+The visual system is taken from the product itself: **a ZENO blue field bound by a black edge**. [`assets/css/tokens.css`](./assets/css/tokens.css) is the source of truth and documents the rules:
 
-[`assets/css/main.css`](./assets/css/main.css) loads all styles in this order:
+- **Blue field** (`--zeno-blue`) is the towel surface. It appears as a full field only three times: the home hero (where the black header forms the towel's top edge), the About product band and the 404 page.
+- **Black edge** (`--edge`) is the binding: header, footer, field edges, and every control a visitor takes hold of (buttons, quantity, active thumbnails, drawer edge).
+- Everything else sits on a quiet panel grey so those two colours carry the identity. There are no gradients, glows or shadows.
+- Corners are nearly square (`--radius`) except the towel's own sewn corner (`--radius-towel`).
+- Verified specifications are set as the sewn-in **product label**, which also lists, honestly, the specifications still awaiting verification.
+- Until approved photography exists, media slots render as flat **illustrations** (blue field, black edge, white mark) and are labelled as illustrations both visually and in their accessible names.
 
-1. Manrope Variable for body and interface type.
-2. Barlow Condensed 600 and 700 for display type.
-3. Tokens, base rules, components and page layouts.
-
-The fonts are bundled by Vite from `@fontsource-variable/manrope` and `@fontsource/barlow-condensed`; there is no runtime font request to Google Fonts or another third party. Both packages declare the SIL Open Font License 1.1. Package versions and sources are recorded in [`package.json`](./package.json) and `package-lock.json`; the installed packages also include their upstream `LICENSE` files.
+[`assets/css/main.css`](./assets/css/main.css) loads one self-hosted variable family, **Archivo** (`@fontsource-variable/archivo`, SIL Open Font License 1.1), using its width axis for two voices: expanded width (`--wide`) for headings and the single small-caps label style, echoing the wide ZENO wordmark; normal width for body and interface text. Styles load in order: tokens, base, components, pages. There is no runtime font request to a third party.
 
 ## Store state and feature flags
 

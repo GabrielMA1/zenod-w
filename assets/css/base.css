@@ -5,29 +5,25 @@
 }
 
 html {
-  background: var(--ink-950);
+  background: var(--edge);
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-height) + 1.5rem);
-  scrollbar-gutter: stable;
+  scroll-padding-top: calc(var(--header-height) + 1rem);
 }
 
 body {
   min-width: 0;
   margin: 0;
   overflow-x: clip;
-  background: var(--gray-050);
-  color: var(--ink-900);
-  font-family: var(--font-sans);
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font);
   font-size: var(--step-0);
-  font-variation-settings: 'wght' 450;
-  line-height: 1.62;
-  text-rendering: optimizeLegibility;
+  font-weight: 400;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-body.is-locked {
-  overflow: hidden;
-}
+body.is-locked { overflow: hidden; }
 
 img,
 svg,
@@ -36,9 +32,7 @@ picture {
   max-width: 100%;
 }
 
-img {
-  height: auto;
-}
+img { height: auto; }
 
 button,
 input,
@@ -48,34 +42,22 @@ textarea {
   font: inherit;
 }
 
-button,
-summary,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  border: 0;
-}
+button { border: 0; }
 
 a {
   color: inherit;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.2em;
-}
-
-a:hover {
-  text-decoration-color: var(--blue-500);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
 }
 
 :focus-visible {
-  outline: 3px solid var(--blue-600);
-  outline-offset: 4px;
+  outline: 3px solid var(--zeno-blue);
+  outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--blue-200);
-  color: var(--ink-950);
+  background: var(--zeno-blue-tint);
+  color: var(--text);
 }
 
 h1,
@@ -86,105 +68,58 @@ p,
 figure,
 blockquote,
 dl,
-dd {
-  margin-top: 0;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  color: inherit;
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 0.91;
-  text-wrap: balance;
-}
-
-h1 { font-size: var(--step-5); }
-h2 { font-size: var(--step-4); }
-h3 { font-size: var(--step-2); line-height: 1.02; }
-
-p { text-wrap: pretty; }
-
+dd,
 ul,
 ol {
   margin-top: 0;
 }
 
-[hidden] {
-  display: none !important;
+/* Display voice: Archivo at the wordmark's width, sentence case, never shouting. */
+h1,
+h2,
+h3 {
+  font-stretch: var(--wide);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
 }
 
+h1 { margin-bottom: 1.25rem; font-size: var(--step-4); }
+h2 { margin-bottom: 1rem; font-size: var(--step-3); }
+h3 { margin-bottom: 0.5rem; font-size: var(--step-1); letter-spacing: -0.01em; line-height: 1.2; }
+
+p { text-wrap: pretty; }
+
+[hidden] { display: none !important; }
+
 .shell {
-  width: min(calc(100% - clamp(2rem, 6vw, 6rem)), var(--container));
+  width: min(100% - 2 * var(--gutter), var(--container));
   margin-inline: auto;
 }
 
 .content-shell {
-  width: min(calc(100% - clamp(2rem, 6vw, 6rem)), var(--content));
+  width: min(100% - 2 * var(--gutter), 60rem);
   margin-inline: auto;
 }
 
-.section {
-  padding-block: clamp(5rem, 8vw, 9rem);
-}
-
-.section--dark,
-.surface-dark {
-  background: var(--ink-950);
-  color: var(--white);
-}
-
-.section--white {
-  background: var(--white);
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 1rem;
-  color: var(--blue-700);
-  font-size: var(--step--2);
-  font-variation-settings: 'wght' 750;
-  letter-spacing: 0.18em;
-  line-height: 1.2;
+/* The one small-caps voice: echoes the spaced "DETAIL" under the wordmark.
+   Used once per block at most, for naming what follows. */
+.label {
+  margin-bottom: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-stretch: var(--wide);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
-.eyebrow::before {
-  width: 1.7rem;
-  height: 2px;
-  flex: 0 0 auto;
-  background: currentColor;
-  content: '';
-}
-
-.section--dark .eyebrow,
-.surface-dark .eyebrow {
-  color: var(--blue-400);
-}
-
 .lede {
-  max-width: 42rem;
-  color: var(--ink-600);
+  max-width: var(--measure);
   font-size: var(--step-1);
-  line-height: 1.58;
-}
-
-.section-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.5fr);
-  gap: var(--space-6);
-  align-items: end;
-  margin-bottom: clamp(2.8rem, 5vw, 4.8rem);
-}
-
-.section-heading h2,
-.section-heading p {
-  margin-bottom: 0;
+  line-height: 1.5;
 }
 
 .sr-only {
@@ -206,22 +141,15 @@ ol {
   left: 0.75rem;
   padding: 0.8rem 1rem;
   transform: translateY(-160%);
-  border-radius: var(--radius-sm);
-  background: var(--white);
-  box-shadow: var(--shadow-md);
-  color: var(--ink-950);
-  font-variation-settings: 'wght' 750;
-  transition: transform var(--duration) var(--ease);
+  background: var(--ground-raised);
+  color: var(--text);
+  font-weight: 600;
 }
 
-.skip-link:focus {
-  transform: translateY(0);
-}
+.skip-link:focus { transform: translateY(0); }
 
 @media (max-width: 48rem) {
-  :root { --header-height: 4.25rem; }
-  .section-heading { grid-template-columns: 1fr; gap: var(--space-4); }
-  .section { padding-block: 4.75rem; }
+  :root { --header-height: 4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
