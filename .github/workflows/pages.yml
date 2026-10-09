@@ -15,9 +15,11 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# The site is served from the custom domain root (see CNAME), so every asset,
+# canonical URL, sitemap entry and schema URL must be built for that origin.
 env:
-  SITE_BASE_PATH: /w/
-  SITE_BASE_URL: https://zd-com-w.github.io/w/
+  SITE_BASE_PATH: /
+  SITE_BASE_URL: https://zenodetail.com/
 
 jobs:
   build:
@@ -56,6 +58,8 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
 
     environment:
       name: github-pages
@@ -65,3 +69,61 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Smoke-test the live site
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          set -u
+          base="${SITE_URL:-$SITE_BASE_URL}"
+          base="${base%/}"
+          echo "Verifying $base (expected commit ${GITHUB_SHA})"
+
+          # Pages can take a few minutes to propagate; retry until the new
+          # build is served or give up after ~10 minutes.
+          for attempt in $(seq 1 20); do
+            home=$(curl -fsSL --max-time 20 "$base/?v=${GITHUB_SHA}" || true)
+            if grep -q 'class="towel-field' <<<"$home" && grep -q '<link rel="canonical" href="https://zenodetail.com/"' <<<"$home"; then
+              break
+            fi
+            echo "Attempt $attempt: new build not served yet; waiting 30s"
+            home=""
+            sleep 30
+          done
+          [ -n "$home" ] || { echo "::error::Live home page never served the current build."; exit 1; }
+
+          css=$(grep -o 'href="/assets/app-[^"]*\.css"' <<<"$home" | head -1 | cut -d'"' -f2)
+          js=$(grep -o 'src="/assets/app-[^"]*\.js"' <<<"$home" | head -1 | cut -d'"' -f2)
+          [ -n "$css" ] && [ -n "$js" ] || { echo "::error::Home page is missing its bundled CSS or JS."; exit 1; }
+
+          failed=0
+          check() {
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base$1")
+            echo "$code $1"
+            [ "$code" = "200" ] || failed=1
+          }
+          for path in "$css" "$js" /shop/ /products/drying-towel/ /about/ /faq/ \
+                      /robots.txt /sitemap.xml /site.webmanifest \
+                      /assets/images/brand/zeno-logo-web-white.svg /assets/images/brand/favicon.svg; do
+            check "$path"
+          done
+
+          fonts=$(curl -fsSL --max-time 20 "$base$css" | grep -o '/assets/archivo-[^)]*\.woff2' | sort -u)
+          for font in $fonts; do check "$font"; done
+          [ -n "$fonts" ] || { echo "::error::Stylesheet references no Archivo font."; failed=1; }
+
+          product=$(curl -fsSL --max-time 20 "$base/products/drying-towel/?v=${GITHUB_SHA}")
+          grep -q 'data-add-to-cart="zeno-drying-towel"' <<<"$product" || { echo "::error::Product page has no add-to-cart control."; failed=1; }
+
+          missing=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base/this-route-does-not-exist/")
+          echo "$missing /this-route-does-not-exist/ (expect 404)"
+          [ "$missing" = "404" ] || failed=1
+
+          [ "$failed" = "0" ] || { echo "::error::Live site verification failed."; exit 1; }
+          echo "Live site verified."
+

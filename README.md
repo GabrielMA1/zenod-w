@@ -2,7 +2,7 @@
 
 Phase 2 of the ZENO DETAIL storefront is a static-first, multi-page Vite site for a focused one-product catalog. Page HTML, metadata, schema and site infrastructure are generated from centralized JavaScript data before Vite bundles the shared CSS and browser interactions.
 
-This repository includes an automated GitHub Pages preview workflow, but is not connected to a payment, review, newsletter, contact-form or analytics provider. The local cart stores data in the browser only. It does not transmit orders, collect payment details or create a checkout session.
+This repository deploys automatically to GitHub Pages at [zenodetail.com](https://zenodetail.com/) on every push to `main`, but is not connected to a payment, review, newsletter, contact-form or analytics provider. The local cart stores data in the browser only. It does not transmit orders, collect payment details or create a checkout session.
 
 ## Local development and QA
 
@@ -31,7 +31,9 @@ After `npm run qa`, also inspect the home page, shop page, product page, cart, m
 
 Local development defaults to the domain root (`/`). Deployment configuration is centralized in [`data/deployment.js`](./data/deployment.js): `SITE_BASE_PATH` selects the hosted pathname and optional `SITE_BASE_URL` supplies the complete public base URL used by canonical metadata, schema, sitemap and robots output. Vite, static generation and browser-rendered links all consume the same values.
 
-The GitHub Pages preview values live only in [`.github/workflows/pages.yml`](./.github/workflows/pages.yml). Run a matching build by setting those two environment variables before `npm run qa`. When ZENO moves to its real root-hosted domain, use `/` as `SITE_BASE_PATH` and replace `SITE_BASE_URL`; route and asset data remain unchanged.
+The deployed values live only in [`.github/workflows/pages.yml`](./.github/workflows/pages.yml): the site is served from the root of the custom domain in [`CNAME`](./CNAME), so `SITE_BASE_PATH` is `/` and `SITE_BASE_URL` is `https://zenodetail.com/`. Run a matching build by setting those two environment variables before `npm run qa`. If the domain changes, update `CNAME`, the Pages custom-domain setting and both variables together; route and asset data remain unchanged.
+
+After each deployment, the workflow's `verify` job fetches the live site and fails if the current build is not being served: it checks the home page, the main routes, the bundled CSS, JavaScript and fonts, brand assets, robots, sitemap and manifest, the add-to-cart control, and that unknown routes return 404.
 
 ## Static-first architecture
 
@@ -217,9 +219,9 @@ Canonical brand source files outside this website repository remain untouched. T
 
 ## Deployment constraints
 
-- The GitHub Pages workflow is a temporary public preview, not a signal that the store is operationally live.
+- The site is publicly reachable, but the store is still in `prelaunch`: no checkout, prices or provider integrations are live until the launch requirements are met.
+- GitHub Pages must use **GitHub Actions** as its build source. If it is set to deploy from a branch, GitHub's built-in Jekyll build also publishes the raw repository on every push and races the Vite build.
 - Complete and approve every blocking item in [Launch requirements](./docs/LAUNCH-REQUIREMENTS.md) before changing the store to a live operating state.
-- Set the real HTTPS `SITE_BASE_URL` and root `SITE_BASE_PATH` when the permanent domain is confirmed.
 - Build with `npm run qa` and deploy the contents of `dist/` only after it passes.
 - The host must serve generated directory routes such as `/products/drying-towel/` directly and map unmatched requests to `404.html` without redirecting every URL to the home page.
 - Preserve the generated `robots.txt`, `sitemap.xml`, manifest, font files and stable asset paths.
