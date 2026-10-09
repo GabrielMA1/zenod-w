@@ -43,7 +43,7 @@ export function galleryMarkup(product) {
       <button class="gallery-arrow gallery-arrow--next" type="button" data-gallery-next aria-label="Next image">${icon('chevronRight')}</button>
       <p class="gallery-count" data-gallery-count>${escapeHtml(mediaLabel(media[0], 0, media.length))}</p>
     </div>
-    ${hasIllustratedMedia(product) ? '<p class="gallery-note">Illustrated views. Product photography will replace them before launch.</p>' : ''}
+    ${hasIllustratedMedia(product) ? '<p class="gallery-note">Illustrated views, not photographs.</p>' : ''}
     <div class="gallery-thumbnails" role="tablist" aria-label="Choose a product view">
       ${media.map((item, index) => `<button class="gallery-thumbnail" type="button" role="tab" data-gallery-thumbnail="${escapeHtml(item.id)}" aria-label="${escapeHtml(mediaLabel(item, index, media.length))}" aria-selected="${index === 0}" ${index === 0 ? 'aria-current="true"' : ''}>
         ${thumbnailMediaMarkup(product, item)}
