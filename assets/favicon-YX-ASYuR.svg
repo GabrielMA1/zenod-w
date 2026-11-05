@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Zeno symbol">
+  <rect width="512" height="512" rx="80" fill="#090c0f"/>
+  <g transform="translate(76 145) scale(0.4245283019)" fill="#48c7f2">
+    <path d="M805 0 L39 158 L498 176 L377 295 L489 285 Z"/>
+    <path d="M848 296 L283 350 L417 218 L313 224 L0 524 Z"/>
+  </g>
+</svg>
