@@ -38,6 +38,16 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
+      - name: Check Pages publication source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mode=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type')
+          if [ "$mode" != "workflow" ]; then
+            echo "::error::Set Settings > Pages > Build and deployment > Source to GitHub Actions. Branch publishing can overwrite the production build."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 

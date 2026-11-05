@@ -59,3 +59,5 @@ The previous [launch requirements](docs/LAUNCH-REQUIREMENTS.md) and [photography
 See [Redesign validation](docs/REDESIGN-VALIDATION.md) for the measured results and their limits.
 
 Publishing uses the existing GitHub Pages workflow on `main`, targeting `https://zenodetail.com/`. The workflow verifies the deployed commit through a build-revision meta tag and checks both language versions, assets and the custom 404. Website publication does not enable checkout.
+
+In the repository’s **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. A branch-based Pages source starts a second publisher that serves the unbundled repository and can overwrite the Vite artifact. Keep the Actions source selected so the tested `dist/` output is the only publication source.
