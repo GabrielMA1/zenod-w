@@ -2,10 +2,11 @@
 // public page (plus the strings the browser renders at runtime) must have an exact entry in
 // every published language. Mirrors the token rules of localizeMarkup in data/localization.js.
 import { localeIds, locales } from '../data/locales.js';
-import { dictionaries } from '../data/localization.js';
+import { dictionaries } from '../data/dictionaries.js';
 import { pages } from '../data/pages.js';
 import { featureEnabled, footerNavigation } from '../data/site.js';
 import { renderPage } from '../assets/js/pages.js';
+import { imageManifest } from '../data/media.js';
 import { announcementMarkup, footerMarkup, headerMarkup, overlayMarkup } from '../assets/js/components/shell.js';
 
 // Strings the browser renders after load (bag drawer, search, announcements).
@@ -67,6 +68,11 @@ function covered(text, dictionary) {
 export function englishStrings() {
   // Feature-gated navigation labels are included so enabling a feature never exposes English.
   const strings = new Set([...runtimeStrings, ...Object.keys(footerNavigation), ...Object.values(footerNavigation).flat().map((link) => link.label)]);
+  // Every image slot's alt text and caption, so approving a final image never exposes English.
+  for (const slot of [...Object.values(imageManifest.slots), ...Object.values(imageManifest.library)]) {
+    if (slot.alt) strings.add(slot.alt);
+    if (slot.caption) strings.add(slot.caption);
+  }
   for (const page of pages.filter((item) => item.locale === 'en')) {
     const markup = [
       `<title>${page.title}</title><meta name="description" content="${page.description}">`,

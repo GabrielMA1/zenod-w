@@ -11,26 +11,54 @@
   "library": {
     "drying-towel": {
       "path": "assets/images/editorial/drying-towel",
-      "width": 1024, "height": 1024, "widths": [480, 768, 1024],
-      "generated": true, "product": true,
+      "width": 1024,
+      "height": 1024,
+      "widths": [
+        480,
+        768,
+        1024
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the blue ZENO DETAIL microfiber drying towel with black edging"
     },
     "towel-detail": {
       "path": "assets/images/editorial/towel-detail",
-      "width": 1024, "height": 1024, "widths": [480, 768, 1024],
-      "generated": true, "product": true,
+      "width": 1024,
+      "height": 1024,
+      "widths": [
+        480,
+        768,
+        1024
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of blue microfiber, black edging and the ZENO DETAIL logo"
     },
     "drying-moment": {
       "path": "assets/images/editorial/drying-moment",
-      "width": 1536, "height": 1024, "widths": [480, 960, 1536],
-      "generated": true, "product": true,
+      "width": 1536,
+      "height": 1024,
+      "widths": [
+        480,
+        960,
+        1536
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the ZENO DETAIL towel on a freshly washed car"
     },
     "workshop-car": {
       "path": "assets/images/editorial/workshop-car",
-      "width": 1536, "height": 1024, "widths": [480, 960, 1536],
-      "generated": true, "product": false,
+      "width": 1536,
+      "height": 1024,
+      "widths": [
+        480,
+        960,
+        1536
+      ],
+      "generated": true,
+      "product": false,
       "alt": "Graphite estate car in a workshop, with natural daylight reflected on clean paint"
     }
   },
@@ -39,118 +67,351 @@
       "priority": 1,
       "location": "Home page, first screen, left of the product tag (desktop) / first element (mobile)",
       "destination": "assets/images/campaign/zeno-home-hero",
-      "ratio": [3, 2], "minSource": [1536, 1024], "widths": [640, 1024, 1536, 2048],
-      "focal": [0.68, 0.42],
-      "status": "awaiting-user-image", "fallback": "drying-moment",
-      "generated": true, "product": true,
+      "ratio": [
+        3,
+        2
+      ],
+      "minSource": [
+        1536,
+        1024
+      ],
+      "widths": [
+        640,
+        1024,
+        1536,
+        2048
+      ],
+      "focal": [
+        0.68,
+        0.42
+      ],
+      "status": "awaiting-user-image",
+      "fallback": "drying-moment",
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the blue ZENO DETAIL drying towel folded on the bonnet of a freshly washed graphite car"
     },
     "product-folded": {
       "priority": 1,
       "location": "Product gallery image 1, shop listing, bag thumbnail, home close-up (small)",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-folded",
-      "ratio": [1, 1], "minSource": [1024, 1024], "widths": [480, 768, 1024, 1536],
-      "focal": [0.5, 0.5], "gallery": 1, "caption": "Folded",
-      "status": "awaiting-user-image", "fallback": "drying-towel",
-      "generated": true, "product": true,
+      "ratio": [
+        1,
+        1
+      ],
+      "minSource": [
+        1024,
+        1024
+      ],
+      "widths": [
+        480,
+        768,
+        1024,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "gallery": 1,
+      "caption": "Folded",
+      "status": "awaiting-user-image",
+      "fallback": "drying-towel",
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the blue ZENO DETAIL microfiber drying towel, folded, with black edging and the ZENO DETAIL label"
     },
     "product-edge-label": {
       "priority": 1,
       "location": "Product gallery image 2, home close-up (large)",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-edge-label",
-      "ratio": [1, 1], "minSource": [1024, 1024], "widths": [480, 768, 1024, 1536],
-      "focal": [0.55, 0.55], "gallery": 2, "caption": "Edge and label",
-      "status": "awaiting-user-image", "fallback": "towel-detail",
-      "generated": true, "product": true,
+      "ratio": [
+        1,
+        1
+      ],
+      "minSource": [
+        1024,
+        1024
+      ],
+      "widths": [
+        480,
+        768,
+        1024,
+        1536
+      ],
+      "focal": [
+        0.55,
+        0.55
+      ],
+      "gallery": 2,
+      "caption": "Edge and label",
+      "status": "awaiting-user-image",
+      "fallback": "towel-detail",
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the black edging and ZENO DETAIL label on blue microfiber"
     },
     "product-on-paint": {
       "priority": 2,
       "location": "Product gallery image 3",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-on-paint",
-      "ratio": [1, 1], "minSource": [1024, 1024], "widths": [480, 768, 1024, 1536],
-      "focal": [0.5, 0.5], "gallery": 3, "caption": "On paint",
-      "status": "awaiting-user-image", "fallback": "drying-moment", "fallbackFocal": [0.74, 0.4],
-      "generated": true, "product": true,
+      "ratio": [
+        1,
+        1
+      ],
+      "minSource": [
+        1024,
+        1024
+      ],
+      "widths": [
+        480,
+        768,
+        1024,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "gallery": 3,
+      "caption": "On paint",
+      "status": "awaiting-user-image",
+      "fallback": "drying-moment",
+      "fallbackFocal": [
+        0.74,
+        0.4
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the ZENO DETAIL towel resting on wet graphite paint"
     },
     "product-texture": {
       "priority": 2,
       "location": "Product gallery image 4 (added automatically once implemented)",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-texture",
-      "ratio": [1, 1], "minSource": [1024, 1024], "widths": [480, 768, 1024, 1536],
-      "focal": [0.5, 0.5], "gallery": 4, "caption": "Microfiber close-up",
-      "status": "awaiting-user-image", "fallback": null,
-      "generated": true, "product": true,
+      "ratio": [
+        1,
+        1
+      ],
+      "minSource": [
+        1024,
+        1024
+      ],
+      "widths": [
+        480,
+        768,
+        1024,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "gallery": 4,
+      "caption": "Microfiber close-up",
+      "status": "awaiting-user-image",
+      "fallback": null,
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of the blue microfiber pile of the ZENO Drying Towel in close-up"
     },
     "drying-in-use": {
       "priority": 2,
       "location": "Home page drying routine section; product gallery image 5 once implemented",
       "destination": "assets/images/campaign/zeno-drying-in-use",
-      "ratio": [3, 2], "minSource": [1536, 1024], "widths": [640, 1024, 1536, 2048],
-      "focal": [0.45, 0.5], "gallery": 5, "galleryOnlyWhenImplemented": true, "caption": "In use",
-      "status": "awaiting-user-image", "fallback": "workshop-car", "fallbackFocal": [0.72, 0.6],
-      "generated": true, "product": true,
+      "ratio": [
+        3,
+        2
+      ],
+      "minSource": [
+        1536,
+        1024
+      ],
+      "widths": [
+        640,
+        1024,
+        1536,
+        2048
+      ],
+      "focal": [
+        0.45,
+        0.5
+      ],
+      "gallery": 5,
+      "galleryOnlyWhenImplemented": true,
+      "caption": "In use",
+      "status": "awaiting-user-image",
+      "fallback": "workshop-car",
+      "fallbackFocal": [
+        0.72,
+        0.6
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of a hand drying the roof of a washed graphite car with the blue ZENO DETAIL towel"
     },
     "guide-drying": {
       "priority": 3,
       "location": "Cover of the guide 'How to dry your car after washing' and its list thumbnail",
       "destination": "assets/images/guides/zeno-guide-drying",
-      "ratio": [3, 2], "minSource": [1536, 1024], "widths": [480, 960, 1536],
-      "focal": [0.5, 0.5],
-      "status": "needs-generation", "fallback": "workshop-car", "fallbackFocal": [0.72, 0.55],
-      "generated": true, "product": false,
+      "ratio": [
+        3,
+        2
+      ],
+      "minSource": [
+        1536,
+        1024
+      ],
+      "widths": [
+        480,
+        960,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "status": "needs-generation",
+      "fallback": "workshop-car",
+      "fallbackFocal": [
+        0.72,
+        0.55
+      ],
+      "generated": true,
+      "product": false,
       "alt": "Water beading on the bonnet of a freshly rinsed graphite car in a daylight wash bay"
     },
     "guide-microfiber-care": {
       "priority": 3,
       "location": "Cover of the guide 'A better routine for your microfiber' and its list thumbnail",
       "destination": "assets/images/guides/zeno-guide-microfiber-care",
-      "ratio": [3, 2], "minSource": [1536, 1024], "widths": [480, 960, 1536],
-      "focal": [0.5, 0.5],
-      "status": "needs-generation", "fallback": "drying-towel", "fallbackFocal": [0.5, 0.55],
-      "generated": true, "product": true,
-      "alt": "Product visualisation of clean, folded ZENO DETAIL towels on a shelf next to a laundry basket"
+      "ratio": [
+        3,
+        2
+      ],
+      "minSource": [
+        1536,
+        1024
+      ],
+      "widths": [
+        480,
+        960,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "status": "needs-generation",
+      "fallback": "drying-towel",
+      "fallbackFocal": [
+        0.5,
+        0.55
+      ],
+      "generated": true,
+      "product": true,
+      "alt": "Product visualisation of a clean, folded ZENO DETAIL towel on a shelf beside a laundry basket"
     },
     "guide-choosing": {
       "priority": 3,
       "location": "Cover of the guide 'What matters in a car drying towel?' and its list thumbnail",
       "destination": "assets/images/guides/zeno-guide-choosing",
-      "ratio": [3, 2], "minSource": [1536, 1024], "widths": [480, 960, 1536],
-      "focal": [0.5, 0.5],
-      "status": "needs-generation", "fallback": "towel-detail", "fallbackFocal": [0.6, 0.55],
-      "generated": true, "product": true,
+      "ratio": [
+        3,
+        2
+      ],
+      "minSource": [
+        1536,
+        1024
+      ],
+      "widths": [
+        480,
+        960,
+        1536
+      ],
+      "focal": [
+        0.5,
+        0.5
+      ],
+      "status": "needs-generation",
+      "fallback": "towel-detail",
+      "fallbackFocal": [
+        0.6,
+        0.55
+      ],
+      "generated": true,
+      "product": true,
       "alt": "Product visualisation of a hand feeling the blue microfiber pile at the edge of the ZENO DETAIL towel"
     },
     "social-default": {
       "priority": 4,
       "location": "Open Graph / social preview image for every page",
       "destination": "assets/images/social/zeno-og",
-      "ratio": [1200, 630], "minSource": [1200, 630], "widths": [1200],
-      "status": "interim", "fallback": null,
+      "ratio": [
+        1200,
+        630
+      ],
+      "minSource": [
+        1200,
+        630
+      ],
+      "widths": [
+        1200
+      ],
+      "status": "interim",
+      "fallback": null,
       "interimFile": "assets/images/social/zeno-og-interim.jpg",
-      "generated": true, "product": true,
+      "generated": true,
+      "product": true,
       "alt": "ZENO DETAIL drying towel with the ZENO DETAIL logo"
     },
     "product-flat": {
       "priority": 5,
       "location": "Product gallery: the complete towel laid flat from above",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-flat",
-      "ratio": [1, 1], "minSource": [1024, 1024], "widths": [480, 768, 1024, 1536],
-      "status": "blocked", "blockedBy": "Verified towel dimensions: a full overhead view shows the towel's proportions",
-      "fallback": null, "generated": true, "product": true,
+      "ratio": [
+        1,
+        1
+      ],
+      "minSource": [
+        1024,
+        1024
+      ],
+      "widths": [
+        480,
+        768,
+        1024,
+        1536
+      ],
+      "status": "blocked",
+      "blockedBy": "Verified towel dimensions: a full overhead view shows the towel's proportions",
+      "fallback": null,
+      "generated": true,
+      "product": true,
       "alt": "The ZENO Drying Towel laid flat"
     },
     "product-packaging": {
       "priority": 5,
       "location": "Product gallery: what the customer receives",
       "destination": "assets/images/products/drying-towel/zeno-drying-towel-packaging",
-      "ratio": [4, 5], "minSource": [1024, 1280], "widths": [480, 768, 1024],
-      "status": "blocked", "blockedBy": "Final production packaging must exist and be photographed for real",
-      "fallback": null, "generated": false, "product": true,
+      "ratio": [
+        4,
+        5
+      ],
+      "minSource": [
+        1024,
+        1280
+      ],
+      "widths": [
+        480,
+        768,
+        1024
+      ],
+      "status": "blocked",
+      "blockedBy": "Final production packaging must exist and be photographed for real",
+      "fallback": null,
+      "generated": false,
+      "product": true,
       "alt": "The ZENO Drying Towel in its packaging"
     }
   }

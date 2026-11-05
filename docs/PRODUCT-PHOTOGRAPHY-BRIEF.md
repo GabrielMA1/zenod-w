@@ -1,5 +1,7 @@
 # ZENO Drying Towel — product photography brief
 
+> **Update, November 2026.** Website image slots, destinations and filenames are now defined in `data/image-manifest.json` (product slots: `product-folded`, `product-edge-label`, `product-on-paint`, `product-texture`, `drying-in-use`; blocked until facts exist: `product-flat`, `product-packaging`). Process delivered photographs with `npm run images:process -- <slot> <file> --photo`. Where this brief names `products[].media[]` fields or `zeno-drying-towel-hero/front/branding` files, read the manifest slot instead; the capture, retouching and claim-safety standards below still apply.
+
 > **Production handoff.** This brief may be given directly to a photographer, retoucher or renderer. It defines the required evidence and crops; it does not authorize new product claims. Shoot the approved production towel, not a pre-production substitute, unless the business owner signs off on the difference in writing.
 
 ## Truth baseline and stop conditions

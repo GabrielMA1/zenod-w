@@ -1,22 +1,23 @@
 import { stripBasePath, toSitePath } from './deployment.js';
-import ro from './translations/ro.json' with { type: 'json' };
-import de from './translations/de.json' with { type: 'json' };
-import es from './translations/es.json' with { type: 'json' };
-import it from './translations/it.json' with { type: 'json' };
-import pt from './translations/pt.json' with { type: 'json' };
-import fr from './translations/fr.json' with { type: 'json' };
-import pl from './translations/pl.json' with { type: 'json' };
-import nl from './translations/nl.json' with { type: 'json' };
 import { localeForPath, logicalRoute, currentMarket, localeIds, marketCurrency } from './locales.js';
 
-export const dictionaries = { ro, de, es, it, pt, fr, pl, nl };
+const translationKeys = new Map();
+const translatedValues = new Map();
+const knownTranslations = new Map();
+// Dictionaries are registered rather than imported so the browser downloads only the
+// current language (assets/js/app.js). Node tooling registers every language through
+// data/dictionaries.js.
+export const dictionaries = {};
+export function registerDictionary(locale, dictionary) {
+  dictionaries[locale] = dictionary;
+  translationKeys.delete(locale);
+  translatedValues.delete(locale);
+  knownTranslations.delete(locale);
+}
 export function currentLocale() {
   return typeof window === 'undefined' ? 'en' : localeForPath(stripBasePath(window.location.pathname));
 }
 const escapeRegExp = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const translationKeys = new Map();
-const translatedValues = new Map();
-const knownTranslations = new Map();
 function patternFor(value, locale) {
   if (!translationKeys.has(locale)) {
     translationKeys.set(locale, Object.keys(dictionaries[locale]).sort((a, b) => b.length - a.length));

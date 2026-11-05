@@ -63,7 +63,7 @@ export const siteConfig = {
 
 export const primaryNavigation = [
   { label: 'Drying towel', href: '/products/drying-towel/' },
-  { label: 'Care guides', href: '/journal/' },
+  { label: 'Guides', href: '/journal/' },
   { label: 'Delivery', href: '/shipping-delivery/', feature: 'shippingInfoReady' },
   { label: 'About', href: '/about/' },
   { label: 'FAQ', href: '/faq/' },

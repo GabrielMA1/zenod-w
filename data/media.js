@@ -64,11 +64,13 @@ export function publishedImageFiles() {
     const { avif, webp } = filesFor(entry.path, entry.widths);
     files.push(...avif.map((item) => item.src), ...webp.map((item) => item.src));
   }
-  for (const slot of Object.values(manifest.slots)) {
+  for (const [slotId, entry] of Object.entries(manifest.slots)) {
+    const slot = { ...entry, slotId };
     if (slot.status === 'implemented' && slot.widths) {
       const { avif, webp } = filesFor(slot.destination, slot.widths);
       files.push(...avif.map((item) => item.src), ...webp.map((item) => item.src));
     }
+    if (slot.status === 'implemented' && slot.slotId === 'social-default') files.push(`/${slot.destination}-1200.jpg`);
     if (slot.status === 'interim' && slot.interimFile) files.push(`/${slot.interimFile}`);
   }
   return [...new Set(files)];

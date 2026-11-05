@@ -1,3 +1,4 @@
+import '../data/dictionaries.js';
 import { locales, localeIds, defaultMarket, marketStorageKey, languageStorageKey } from '../data/locales.js';
 import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';

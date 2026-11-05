@@ -1,3 +1,4 @@
+import '../data/dictionaries.js';
 import { locales } from '../data/locales.js';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';

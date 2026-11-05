@@ -44,7 +44,7 @@ export function headerMarkup(route, locale = 'en') {
     ${brandMarkup()}
     <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(stripLocale(route))}</ul></nav>
     <div class="header-actions">
-      <div class="prefs">${preferencesToggleMarkup(locale)}</div>
+      <div class="prefs">${preferencesToggleMarkup(locale, 'prefs-toggle', { region: false })}</div>
       <button class="icon-button" type="button" data-open-search aria-label="Search the store" aria-controls="search-dialog">${icon('search')}</button>
       <button class="bag-button" type="button" data-open-cart aria-label="Bag" aria-controls="cart-dialog">${icon('bag')}<span class="bag-button__label">Bag</span><span class="bag-count" data-cart-count hidden>0</span></button>
       <button class="icon-button menu-button" type="button" data-open-mobile-menu aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu-dialog">${icon('menu')}</button>

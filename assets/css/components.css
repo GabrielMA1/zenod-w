@@ -405,7 +405,8 @@ html[data-market="EU"] [data-market-row="EU"] dt { color: var(--ink); }
 .prose h2 { margin-top: var(--space-7); font-size: var(--text-xl); }
 .prose h2:first-child { margin-top: 0; }
 .prose h3 { margin-top: var(--space-5); }
-.prose p { color: #34363a; }
+.prose > p,
+.prose > section > p { color: #34363a; }
 
 /* Two-part section: a short heading column beside the content. */
 .split { display: grid; gap: var(--space-5) var(--space-7); }

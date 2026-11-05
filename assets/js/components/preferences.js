@@ -10,10 +10,10 @@ import { marketTextMarkup } from './market.js';
 const separator = '<span class="prefs-summary__sep" aria-hidden="true">·</span>';
 
 // "English · Europe · EUR €" — the current choice, shown discreetly in the header and footer.
-export function preferencesSummaryMarkup(locale) {
+export function preferencesSummaryMarkup(locale, { region = true } = {}) {
   return `<span class="prefs-summary"><span lang="${locale}">${escapeHtml(locales[locale].label)}</span>${marketTextMarkup({
-    EU: `${separator}<span>Europe</span>${separator}<span>EUR €</span>`,
-    RO: `${separator}<span>Romania</span>${separator}<span>RON lei</span>`,
+    EU: `${separator}${region ? `<span>Europe</span>${separator}` : ''}<span>EUR €</span>`,
+    RO: `${separator}${region ? `<span>Romania</span>${separator}` : ''}<span>RON lei</span>`,
   })}</span>`;
 }
 
@@ -57,9 +57,9 @@ export function preferencesPanelMarkup(locale) {
   </div>`;
 }
 
-export function preferencesToggleMarkup(locale, className = 'prefs-toggle') {
+export function preferencesToggleMarkup(locale, className = 'prefs-toggle', { region = true } = {}) {
   return `<button class="${className}" type="button" aria-expanded="false" aria-controls="preferences-panel" data-preferences-toggle>
-    <span class="sr-only">Language and region:</span>${preferencesSummaryMarkup(locale)}${icon('chevronDown')}
+    <span class="sr-only">Language and region:</span>${preferencesSummaryMarkup(locale, { region })}${icon('chevronDown')}
   </button>`;
 }
 
