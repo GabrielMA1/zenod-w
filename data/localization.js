@@ -1,13 +1,15 @@
 import { stripBasePath, toSitePath } from './deployment.js';
-import { romanian } from './romanian.js';
+import ro from './translations/ro.json' with { type: 'json' };
 import de from './translations/de.json' with { type: 'json' };
 import es from './translations/es.json' with { type: 'json' };
 import it from './translations/it.json' with { type: 'json' };
 import pt from './translations/pt.json' with { type: 'json' };
 import fr from './translations/fr.json' with { type: 'json' };
-import { localeForPath, logicalRoute, currentMarket, localeIds } from './locales.js';
+import pl from './translations/pl.json' with { type: 'json' };
+import nl from './translations/nl.json' with { type: 'json' };
+import { localeForPath, logicalRoute, currentMarket, localeIds, marketCurrency } from './locales.js';
 
-export const dictionaries = { ro: romanian, de, es, it, pt, fr };
+export const dictionaries = { ro, de, es, it, pt, fr, pl, nl };
 export function currentLocale() {
   return typeof window === 'undefined' ? 'en' : localeForPath(stripBasePath(window.location.pathname));
 }
@@ -67,7 +69,7 @@ export function localizeMarkup(markup, locale = currentLocale()) {
 }
 export function localizedProduct(product, locale = currentLocale(), market = currentMarket(locale)) {
   if (!product) return null;
-  const protectedKeys = new Set(['id','handle','categoryId','placeholderVariant','src','zoomSrc','image','status','slug','currency','type','icon','mimeType','aspectRatio','key']);
+  const protectedKeys = new Set(['id','slot','handle','categoryId','placeholderVariant','src','zoomSrc','image','status','slug','currency','type','icon','mimeType','aspectRatio','key','focal','sources']);
   const localize = (value, key) => {
     if (protectedKeys.has(key)) return value;
     if (typeof value === 'string') return translate(value, locale);
@@ -75,7 +77,7 @@ export function localizedProduct(product, locale = currentLocale(), market = cur
     if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([name, child]) => [name, localize(child, name)]));
     return value;
   };
-  const currency = market === 'RO' ? 'RON' : 'EUR';
+  const currency = marketCurrency(market);
   return {
     ...localize(product), locale, market, currency,
     slug: locale === 'en' ? product.slug : `/${locale}${product.slug}`,

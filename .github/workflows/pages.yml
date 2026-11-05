@@ -155,7 +155,7 @@ jobs:
                       /assets/images/brand/zeno-logo-web-white.svg /assets/images/brand/favicon.svg; do
             check "$path"
           done
-          for language in en ro de es it pt fr; do
+          for language in en ro de fr es it pt pl nl; do
             prefix=""
             [ "$language" = "en" ] || prefix="/$language"
             for route in / /shop/ /products/drying-towel/ /about/ /faq/ /shipping-delivery/ /journal/ \
@@ -163,7 +163,7 @@ jobs:
               check "$prefix$route"
             done
             translated=$(curl -fsSL --max-time 20 "$base$prefix/products/drying-towel/?v=${GITHUB_SHA}")
-            grep -Fq "<html lang=\"$language\">" <<<"$translated" || { echo "::error::$language product has the wrong language."; failed=1; }
+            grep -Fq "<html lang=\"$language\"" <<<"$translated" || { echo "::error::$language product has the wrong language."; failed=1; }
             grep -Fq 'hreflang="en" href="https://zenodetail.com/products/drying-towel/"' <<<"$translated" || { echo "::error::$language product is missing its English alternate."; failed=1; }
           done
 
@@ -175,7 +175,7 @@ jobs:
           grep -q 'data-add-to-cart="zeno-drying-towel"' <<<"$product" || { echo "::error::Product page has no add-to-cart control."; failed=1; }
 
           romanian=$(curl -fsSL --max-time 20 "$base/ro/products/drying-towel/?v=${GITHUB_SHA}")
-          grep -q '<html lang="ro">' <<<"$romanian" || { echo "::error::Romanian product page has the wrong language."; failed=1; }
+          grep -q '<html lang="ro"' <<<"$romanian" || { echo "::error::Romanian product page has the wrong language."; failed=1; }
           grep -q 'hreflang="en" href="https://zenodetail.com/products/drying-towel/"' <<<"$romanian" || { echo "::error::Romanian product page has no English alternate."; failed=1; }
 
           missing=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base/this-route-does-not-exist/")

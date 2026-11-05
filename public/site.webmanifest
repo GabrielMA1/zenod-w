@@ -1,12 +1,12 @@
 {
   "name": "ZENO DETAIL",
   "short_name": "ZENO",
-  "description": "Premium automotive car-care products.",
+  "description": "Car-care accessories from ZENO DETAIL.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f6f7",
-  "theme_color": "#090c0f",
+  "background_color": "#efeeeb",
+  "theme_color": "#17181a",
   "icons": [
     {
       "src": "/assets/images/brand/icon-192.png",

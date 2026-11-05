@@ -1,118 +1,105 @@
-import { categories, siteConfig } from '../../../data/site.js';
+import { siteConfig } from '../../../data/site.js';
 import { toSitePath, toSiteSrcset } from '../../../data/deployment.js';
-import { formatMoney, formatPrice, getPublicVariants, getVerifiedSpecifications } from '../../../data/products.js';
+import { getPublicVariants, getVerifiedSpecifications } from '../../../data/products.js';
 import { escapeHtml, attributes, classes } from '../lib/html.js';
 import { icon } from './icons.js';
+import { priceMarkup, deliveryMarkup } from './market.js';
 
 function sourceMarkup(media, sizes) {
   const sources = media.sources ?? {};
-  return [
-    sources.avif?.length ? `<source type="image/avif" srcset="${escapeHtml(sources.avif.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}" sizes="${escapeHtml(sizes)}">` : '',
-    sources.webp?.length ? `<source type="image/webp" srcset="${escapeHtml(sources.webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}" sizes="${escapeHtml(sizes)}">` : '',
-  ].join('');
+  return sources.avif?.length
+    ? `<source type="image/avif" srcset="${escapeHtml(sources.avif.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}" sizes="${escapeHtml(sizes)}">`
+    : '';
 }
 
-// Until approved photography exists, each media slot is drawn as a flat, clearly
-// illustrative diagram of the towel: blue field, black edge, white mark.
-function illustrationMarkup(variant) {
-  const mark = `<img class="product-art__mark" src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="" width="1180" height="980">`;
-  if (variant === 'folded') {
-    return '<span class="product-art__folded" aria-hidden="true"><span></span><span></span></span>';
-  }
-  if (variant === 'texture') return '<span class="product-art__towel" aria-hidden="true"></span>';
-  return `<span class="product-art__towel" aria-hidden="true">${mark}</span>`;
-}
-
+// A product media item (from data/products.js) cropped into a fixed-ratio frame.
 export function productVisualMarkup(product, media = product.media[0], options = {}) {
-  const variant = media?.placeholderVariant ?? media?.id ?? 'hero';
   const eager = Boolean(options.eager);
-  const className = classes('product-visual', options.className);
   const sizes = options.sizes ?? '(min-width: 64rem) 50vw, 100vw';
-
-  if (media?.src) {
-    return `<figure class="${className}">
-      <picture>
-        ${sourceMarkup(media, sizes)}
-        <img class="product-photo" ${attributes({
-          src: toSitePath(media.src),
-          srcset: toSiteSrcset(media.srcset),
-          sizes,
-          alt: media.alt,
-          width: media.width,
-          height: media.height,
-          loading: eager ? 'eager' : 'lazy',
-          fetchpriority: eager ? 'high' : null,
-          decoding: eager ? 'sync' : 'async',
-        })}>
-      </picture>
-    </figure>`;
-  }
-
-  return `<figure class="${className} product-art product-art--${escapeHtml(variant)}" role="img" aria-label="${escapeHtml(`Illustration: ${media?.alt ?? product.title}`)}">
-    ${illustrationMarkup(variant)}
-  </figure>`;
+  const focal = media.focal ?? [0.5, 0.5];
+  const webp = media.sources?.webp ?? [];
+  return `<span class="${classes('product-visual', options.className)}" style="--focal: ${Math.round(focal[0] * 100)}% ${Math.round(focal[1] * 100)}%">
+    <picture>${sourceMarkup(media, sizes)}<img ${attributes({
+      src: toSitePath(media.src),
+      srcset: webp.length ? webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', ') : toSiteSrcset(media.srcset),
+      sizes, alt: options.alt ?? media.alt, width: media.width, height: media.height,
+      loading: eager ? 'eager' : 'lazy', fetchpriority: eager ? 'high' : null, decoding: eager ? 'sync' : 'async',
+    })}></picture>
+  </span>`;
 }
 
 export function hasIllustratedMedia(product) {
-  return product.media.some((media) => media.type === 'image' && (media.generated || !media.src));
+  return product.media.some((media) => media.type === 'image' && media.generated);
 }
 
-export function swatchMarkup(product) {
-  if (!product.color) return '';
-  return `<p class="swatch"><span class="swatch__chip" aria-hidden="true"></span>${escapeHtml(product.color)}</p>`;
+export function availabilityMarkup() {
+  return siteConfig.features.checkoutReady
+    ? '<p class="status status--open"><span class="status__dot" aria-hidden="true"></span>Available to order</p>'
+    : '<p class="status"><span class="status__dot" aria-hidden="true"></span>Ordering opens soon</p>';
 }
 
-// The verified specifications, set like the sewn label inside the towel.
-export function productLabelMarkup(product, options = {}) {
+function tagFacts(product) {
+  const verified = Object.fromEntries(getVerifiedSpecifications(product).map((item) => [item.key, item.value]));
+  return [
+    ['Fabric weight', verified.gsm],
+    ['Colour', verified.color],
+    ['Use', 'Drying your car after washing'],
+  ].filter(([, value]) => value);
+}
+
+// The black plate echoing the label sewn on the towel: mark, name, facts, price, action.
+export function productTagMarkup(product, { headingLevel = 2, actions = '', className = '', titleId } = {}) {
+  const href = escapeHtml(toSitePath(product.slug));
+  return `<div class="${classes('product-tag', className)}">
+    <img class="product-tag__mark" src="${toSitePath(siteConfig.brandAssets.symbolWhite)}" alt="" width="848" height="524">
+    <h${headingLevel} class="product-tag__name"${titleId ? ` id="${titleId}"` : ''}><a href="${href}">${escapeHtml(product.title)}</a></h${headingLevel}>
+    <dl class="product-tag__facts">${tagFacts(product).map(([term, value]) => `<div><dt>${escapeHtml(term)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>
+    <div class="product-tag__buy">
+      <p class="product-tag__price">${priceMarkup(product)}</p>
+      ${availabilityMarkup()}
+    </div>
+    <p class="product-tag__delivery">${icon('truck')}${deliveryMarkup()}</p>
+    ${actions}
+  </div>`;
+}
+
+export function specificationsMarkup(product) {
   const specifications = getVerifiedSpecifications(product);
   if (!specifications.length) return '';
-  const pending = options.showPending
-    ? product.specifications
-      .filter((specification) => !specification.verified || !specification.value)
-      .map((specification) => (/^[A-Z]{2,}$/.test(specification.label) ? specification.label : specification.label.toLowerCase()))
-    : [];
-  return `<div class="product-label">
-    <img class="product-label__mark" src="${toSitePath(siteConfig.brandAssets.logoBlack)}" alt="" width="1180" height="980" loading="lazy">
-    <dl>${specifications.map((specification) => `<div><dt>${escapeHtml(specification.label)}</dt><dd>${escapeHtml(specification.value)}</dd></div>`).join('')}</dl>
-    ${pending.length ? `<p class="product-label__pending">Still to be confirmed: ${escapeHtml(pending.join(', '))}. They will be listed here once verified.</p>` : ''}
-  </div>`;
+  const pending = product.specifications.some((item) => ['dimensions', 'blend', 'weave'].includes(item.key) && (!item.verified || !item.value));
+  return `<dl class="spec-list">${specifications.map((item) => `<div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join('')}</dl>
+    ${pending ? '<p class="spec-note">Dimensions, fibre blend and weave are not listed yet. They will be published before ordering opens.</p>' : ''}`;
 }
 
 export function quantityControlMarkup(value = 1, context = 'product') {
-  return `<div class="quantity-control" data-quantity-control role="group" aria-label="Quantity for ${escapeHtml(context)}">
-    <button type="button" data-quantity-decrease aria-label="Decrease quantity" ${value <= 1 ? 'disabled' : ''}>−</button>
-    <output class="quantity-value" data-quantity-value aria-live="polite">${Number(value) || 1}</output>
-    <button type="button" data-quantity-increase aria-label="Increase quantity">+</button>
+  return `<div class="quantity" data-quantity-control role="group" aria-label="Quantity for ${escapeHtml(context)}">
+    <button type="button" data-quantity-decrease aria-label="Decrease quantity" ${value <= 1 ? 'disabled' : ''}>${icon('minus')}</button>
+    <output class="quantity__value" data-quantity-value aria-live="polite">${Number(value) || 1}</output>
+    <button type="button" data-quantity-increase aria-label="Increase quantity">${icon('plus')}</button>
   </div>`;
 }
 
-export function productCardMarkup(product, options = {}) {
-  const category = categories.find((item) => item.id === product.categoryId);
-  const primaryMedia = product.media.find((item) => item.id === (options.mediaId ?? 'front')) ?? product.media[0];
-  const primaryVariant = getPublicVariants(product)[0] ?? null;
-  const priceAmount = primaryVariant?.price ?? product.price;
-  const compareAtAmount = primaryVariant?.compareAt ?? product.compareAt;
-  const price = formatPrice(product, primaryVariant);
-  const compareAt = Number.isFinite(compareAtAmount) && Number.isFinite(priceAmount) && compareAtAmount > priceAmount
-    ? formatMoney(compareAtAmount, product.currency)
-    : null;
-  const canQuickAdd = siteConfig.features.localCart && product.purchasable && Boolean(price);
-  const headingLevel = options.headingLevel ?? 2;
+export function canAddToBag(product) {
+  return Boolean(siteConfig.features.localCart && product.purchasable && getPublicVariants(product).length);
+}
 
-  return `<article class="product-listing" data-product-card="${escapeHtml(product.id)}">
-    <a class="product-listing__visual" href="${escapeHtml(toSitePath(product.slug))}" tabindex="-1">
-      ${productVisualMarkup(product, primaryMedia, { className: 'product-listing__art', sizes: '(min-width: 64rem) 48vw, 100vw' })}<span class="visual-caption">Product visualisation</span>
-    </a>
-    <div class="product-listing__body">
-      <p class="eyebrow">THE ORIGINAL / ${escapeHtml(category?.eyebrow ?? 'Automotive care')}</p>
-      <h${headingLevel} class="product-listing__title"><a href="${escapeHtml(toSitePath(product.slug))}">${escapeHtml(product.title)}</a></h${headingLevel}>
-      <p>${escapeHtml(product.shortDescription)}</p>
-      ${swatchMarkup(product)}
-      <div class="product-listing__action">
-        ${price ? `<strong class="product-price"><span>${escapeHtml(price)}</span>${compareAt ? `<del>${escapeHtml(compareAt)}</del>` : ''}</strong>` : ''}
-        <a class="button" href="${escapeHtml(toSitePath(product.slug))}">Explore the towel ${icon('arrow')}</a>
-        ${canQuickAdd ? `<button class="button button--quiet" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to bag ${icon('bag')}</button>` : ''}
-      </div>
-    </div>
+export function productListingMarkup(product, { headingLevel = 2 } = {}) {
+  const href = escapeHtml(toSitePath(product.slug));
+  const media = product.media[0];
+  return `<article class="listing" data-product-card="${escapeHtml(product.id)}">
+    <a class="listing__visual" href="${href}" tabindex="-1" aria-label="${escapeHtml(product.title)}">${productVisualMarkup(product, media, { className: 'listing__media', sizes: '(min-width: 64rem) 52vw, 100vw', eager: true })}</a>
+    ${productTagMarkup(product, {
+      headingLevel,
+      className: 'listing__tag',
+      actions: productActionsMarkup(product),
+    })}
   </article>`;
+}
+
+export function productActionsMarkup(product, { primaryLabel = 'View the towel' } = {}) {
+  const href = escapeHtml(toSitePath(product.slug));
+  return `<div class="product-tag__actions">
+    <a class="button button--primary" href="${href}">${primaryLabel}</a>
+    ${canAddToBag(product) ? `<button class="button button--on-ink" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to bag</button>` : ''}
+  </div>`;
 }

@@ -1,11 +1,11 @@
 @import url('./tokens.css');
 @import url('./base.css');
+@import url('./shell.css');
 @import url('./components.css');
 @import url('./pages.css');
-@import url('./storefront.css');
 
-/* One variable family, two voices: expanded width for display (echoing the
-   wide ZENO wordmark), normal width for reading and interface text. */
+/* One variable family, two voices: wide for display (echoing the ZENO wordmark),
+   normal width for reading and interface text. Self-hosted; latin and latin-ext. */
 @font-face {
   font-family: 'Archivo Variable';
   font-style: normal;

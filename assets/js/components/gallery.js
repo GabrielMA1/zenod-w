@@ -8,7 +8,7 @@ function mediaLabel(media, index, count) {
 }
 
 function videoMarkup(media) {
-  return `<figure class="gallery-video gallery-media">
+  return `<figure class="gallery__video">
     <video controls preload="metadata" ${media.poster ? `poster="${escapeHtml(toSitePath(media.poster))}"` : ''} width="${media.width}" height="${media.height}" aria-label="${escapeHtml(media.alt)}">
       <source src="${escapeHtml(toSitePath(media.src))}"${media.mimeType ? ` type="${escapeHtml(media.mimeType)}"` : ''}>
       ${media.captions ? `<track kind="captions" src="${escapeHtml(toSitePath(media.captions))}" srclang="en" label="English" default>` : ''}
@@ -16,47 +16,36 @@ function videoMarkup(media) {
   </figure>`;
 }
 
-function thumbnailMediaMarkup(product, media) {
-  if (media.type !== 'video') return productVisualMarkup(product, media, { className: 'gallery-thumbnail__media', sizes: '7rem' });
-  const fallback = product.media[0];
-  return `<span class="gallery-video-thumbnail">
-    ${media.poster ? `<img src="${escapeHtml(toSitePath(media.poster))}" alt="" width="${media.width}" height="${media.height}" loading="lazy">` : productVisualMarkup(product, fallback, { className: 'gallery-thumbnail__media', sizes: '7rem' })}
-    ${icon('play')}
-  </span>`;
-}
-
 export function galleryMarkup(product) {
-  const media = product.media.filter((item) => item.type === 'image' && (item.src || item.status === 'placeholder'));
+  const media = product.media.filter((item) => item.type === 'image' && item.src);
   if (product.video?.enabled && product.video.src) media.push(product.video);
+  const many = media.length > 1;
 
-  return `<section class="product-gallery" data-product-gallery aria-label="${escapeHtml(product.title)} media">
-    <div class="gallery-stage">
-      <div class="gallery-stage__track" data-gallery-stage aria-live="polite">
-        ${media.map((item, index) => `<div class="gallery-slide" data-gallery-slide="${escapeHtml(item.id)}" ${index ? 'hidden' : ''}>
-          ${item.type === 'video' ? videoMarkup(item) : `<button class="gallery-zoom-trigger" type="button" data-gallery-zoom aria-label="Enlarge ${escapeHtml(item.caption || product.title)}">
-            ${productVisualMarkup(product, item, { eager: index === 0, className: 'gallery-media', sizes: '(min-width: 64rem) 58vw, 100vw' })}
-            <span class="gallery-zoom-label">${icon('zoom')}<span>Enlarge</span></span>
-          </button>`}
-        </div>`).join('')}
-      </div>
-      <button class="gallery-arrow gallery-arrow--previous" type="button" data-gallery-previous aria-label="Previous image">${icon('chevronLeft')}</button>
-      <button class="gallery-arrow gallery-arrow--next" type="button" data-gallery-next aria-label="Next image">${icon('chevronRight')}</button>
-      <p class="gallery-count" data-gallery-count>${escapeHtml(mediaLabel(media[0], 0, media.length))}</p>
+  return `<section class="gallery" data-product-gallery aria-label="${escapeHtml(product.title)} images">
+    <div class="gallery__stage" data-gallery-stage>
+      ${media.map((item, index) => `<div class="gallery__slide" data-gallery-slide="${escapeHtml(item.id)}" ${index ? 'hidden' : ''}>
+        ${item.type === 'video' ? videoMarkup(item) : `<button class="gallery__zoom" type="button" data-gallery-zoom aria-label="Enlarge ${escapeHtml(item.caption || product.title)}">
+          ${productVisualMarkup(product, item, { eager: index === 0, className: 'gallery__media', sizes: '(min-width: 64rem) 52vw, 100vw' })}
+          <span class="gallery__zoom-hint">${icon('zoom')}<span>Enlarge</span></span>
+        </button>`}
+      </div>`).join('')}
+      ${many ? `<button class="gallery__arrow gallery__arrow--previous" type="button" data-gallery-previous aria-label="Previous image">${icon('chevronLeft')}</button>
+      <button class="gallery__arrow gallery__arrow--next" type="button" data-gallery-next aria-label="Next image">${icon('chevronRight')}</button>` : ''}
+      <p class="gallery__count" data-gallery-count aria-live="polite">${escapeHtml(mediaLabel(media[0], 0, media.length))}</p>
     </div>
-    ${hasIllustratedMedia(product) ? '<p class="gallery-note">Product visualisations. Final product details may vary.</p>' : ''}
-    <div class="gallery-thumbnails" role="tablist" aria-label="Choose a product view">
-      ${media.map((item, index) => `<button class="gallery-thumbnail" type="button" role="tab" data-gallery-thumbnail="${escapeHtml(item.id)}" aria-label="${escapeHtml(mediaLabel(item, index, media.length))}" aria-selected="${index === 0}" ${index === 0 ? 'aria-current="true"' : ''}>
-        ${thumbnailMediaMarkup(product, item)}
-        <span>${escapeHtml(item.caption)}</span>
+    ${many ? `<div class="gallery__thumbs" aria-label="Choose a product view">
+      ${media.map((item, index) => `<button class="gallery__thumb" type="button" data-gallery-thumbnail="${escapeHtml(item.id)}" aria-label="${escapeHtml(mediaLabel(item, index, media.length))}" ${index === 0 ? 'aria-current="true"' : ''}>
+        ${productVisualMarkup(product, item, { className: 'gallery__thumb-media', sizes: '6rem', alt: '' })}
       </button>`).join('')}
-    </div>
-    <dialog class="zoom-dialog" data-gallery-dialog aria-label="Enlarged product view">
-      <div class="zoom-dialog__panel">
-        <button class="icon-button zoom-dialog__close" type="button" data-close-gallery aria-label="Close enlarged image">${icon('close')}</button>
-        ${media.filter((item) => item.type === 'image').map((item, index) => `<div class="zoom-media" data-zoom-media="${escapeHtml(item.id)}" ${index ? 'hidden' : ''}>
-          ${productVisualMarkup(product, item.zoomSrc ? { ...item, src: item.zoomSrc } : item, { className: 'zoom-media__visual', sizes: '95vw' })}
-          <p>${escapeHtml(item.caption)}</p>
-        </div>`).join('')}
+    </div>` : ''}
+    ${hasIllustratedMedia(product) ? '<p class="gallery__note">Product visualisations. Final product details may vary.</p>' : ''}
+    <dialog class="zoom" data-gallery-dialog aria-label="Enlarged product view">
+      <div class="zoom__panel">
+        <button class="icon-button zoom__close" type="button" data-close-gallery aria-label="Close enlarged image">${icon('close')}</button>
+        ${media.filter((item) => item.type === 'image').map((item, index) => `<figure class="zoom__media" data-zoom-media="${escapeHtml(item.id)}" ${index ? 'hidden' : ''}>
+          <img src="${escapeHtml(toSitePath(item.zoomSrc || item.src))}" alt="${escapeHtml(item.alt)}" width="${item.width}" height="${item.height}" loading="lazy" decoding="async">
+          <figcaption>${escapeHtml(item.caption)}</figcaption>
+        </figure>`).join('')}
       </div>
     </dialog>
   </section>`;
@@ -76,9 +65,7 @@ export function initGalleries() {
       activeIndex = (index + slides.length) % slides.length;
       slides.forEach((slide, slideIndex) => { slide.hidden = slideIndex !== activeIndex; });
       thumbnails.forEach((thumbnail, thumbnailIndex) => {
-        const active = thumbnailIndex === activeIndex;
-        thumbnail.setAttribute('aria-selected', String(active));
-        if (active) thumbnail.setAttribute('aria-current', 'true');
+        if (thumbnailIndex === activeIndex) thumbnail.setAttribute('aria-current', 'true');
         else thumbnail.removeAttribute('aria-current');
       });
       zoomMedia.forEach((item, itemIndex) => { item.hidden = itemIndex !== activeIndex; });
@@ -90,11 +77,11 @@ export function initGalleries() {
     thumbnails.forEach((thumbnail, index) => {
       thumbnail.addEventListener('click', () => select(index));
       thumbnail.addEventListener('keydown', (event) => {
-        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
         event.preventDefault();
         if (event.key === 'Home') select(0, true);
         else if (event.key === 'End') select(slides.length - 1, true);
-        else select(activeIndex + (event.key === 'ArrowRight' ? 1 : -1), true);
+        else select(activeIndex + (['ArrowRight', 'ArrowDown'].includes(event.key) ? 1 : -1), true);
       });
     });
 
@@ -104,7 +91,7 @@ export function initGalleries() {
     const stage = gallery.querySelector('[data-gallery-stage]');
     stage?.addEventListener('touchstart', (event) => { touchStartX = event.changedTouches[0]?.clientX ?? null; }, { passive: true });
     stage?.addEventListener('touchend', (event) => {
-      if (touchStartX == null) return;
+      if (touchStartX == null || slides.length < 2) return;
       const distance = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
       if (Math.abs(distance) > 44) select(activeIndex + (distance < 0 ? 1 : -1));
       touchStartX = null;

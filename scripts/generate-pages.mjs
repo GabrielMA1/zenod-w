@@ -1,4 +1,4 @@
-import { locales, localeIds } from '../data/locales.js';
+import { locales, localeIds, defaultMarket, marketStorageKey, languageStorageKey } from '../data/locales.js';
 import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -40,8 +40,17 @@ function pageIsPublic(page) {
   return page.public !== false && !page.noindex && featureEnabled(page.feature);
 }
 
+// Runs before first paint: applies an explicitly chosen market (URL or saved) so prices and
+// market-specific text never flash the default region. Without JavaScript the default shows.
+const marketBootstrap = `<script>(function(){var d=document.documentElement,m=null;try{m=new URLSearchParams(location.search).get('market')}catch(e){}if(m!=='RO'&&m!=='EU'){try{m=localStorage.getItem('${marketStorageKey}')}catch(e){m=null}}if((m==='RO'||m==='EU')&&m!==d.getAttribute('data-market')){d.setAttribute('data-market',m);d.setAttribute('data-market-pending','')}})();</script>`;
+
+// English home only: a visitor who arrives from outside the site and previously chose another
+// language in the preferences selector returns to it. First visits, crawlers and internal
+// navigation are never redirected; every direct language URL is always respected.
+const languageBootstrap = `<script>(function(){try{var l=localStorage.getItem('${languageStorageKey}'),r=document.referrer,s=false;try{s=!!r&&new URL(r).origin===location.origin}catch(e){}if(l&&l!=='en'&&${JSON.stringify(localeIds.filter((id) => id !== 'en'))}.indexOf(l)>-1&&!s){location.replace('${siteBasePath}'+l+'/'+location.search+location.hash)}}catch(e){}})();</script>`;
+
 function pageHtml(page) {
-  const product = page.product ? getProduct(page.product, page.locale) : page.type === 'home' || page.type === 'faq' ? getProduct('zeno-drying-towel', page.locale) : null;
+  const product = page.product ? getProduct(page.product, page.locale) : page.type === 'faq' ? getProduct('zeno-drying-towel', page.locale) : null;
   const noindex = !pageIsPublic(page);
   const canonical = toAbsoluteSiteUrl(page.route);
   const socialImage = (page.type === 'product' ? product?.seo?.image : null) ?? siteConfig.brandAssets.socialImage;
@@ -54,14 +63,17 @@ function pageHtml(page) {
     `data-page="${escapeHtml(page.type)}"`, `data-page-id="${escapeHtml(page.id)}"`, `data-route="${escapeHtml(page.route)}"`,
     page.collection ? `data-collection="${escapeHtml(page.collection)}"` : '',
     page.product ? `data-product="${escapeHtml(page.product)}"` : '',
+    page.public === false ? 'data-public="false"' : '',
   ].filter(Boolean).join(' ');
 
   return localizeMarkup(`<!doctype html>
-<html lang="${page.locale}">
+<html lang="${page.locale}" data-market="${defaultMarket(page.locale)}">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#090c0f">
+    ${page.type === 'home' && page.locale === 'en' ? languageBootstrap : ''}
+    ${marketBootstrap}
+    <meta name="theme-color" content="#17181a">
     ${buildRevision ? `<meta name="build-revision" content="${buildRevision}">` : ''}
     <title>${escapeHtml(page.title)}</title>
     <meta name="description" content="${escapeHtml(page.description)}">
@@ -92,8 +104,8 @@ function pageHtml(page) {
     ${announcementMarkup()}
     ${headerMarkup(page.public === false ? '/' : page.route, page.locale)}
     <main id="main-content">${renderPage(page)}</main>
-    ${footerMarkup()}
-    ${overlayMarkup(page.route)}
+    ${footerMarkup(page.public === false ? '/' : page.route, page.locale)}
+    ${overlayMarkup(page.public === false ? '/' : page.route, page.locale)}
     <div class="sr-only" aria-live="polite" aria-atomic="true" id="site-live-region"></div>
   </body>
 </html>
@@ -118,8 +130,8 @@ await writeGeneratedFile(resolve(projectRoot, 'public/robots.txt'), robots);
 const manifest = {
   name: siteConfig.name,
   short_name: siteConfig.shortName,
-  description: 'Premium automotive car-care products.',
-  start_url: siteBasePath, scope: siteBasePath, display: 'standalone', background_color: '#f4f6f7', theme_color: '#090c0f',
+  description: 'Car-care accessories from ZENO DETAIL.',
+  start_url: siteBasePath, scope: siteBasePath, display: 'standalone', background_color: '#efeeeb', theme_color: '#17181a',
   icons: [
     { src: toSitePath('/assets/images/brand/icon-192.png'), sizes: '192x192', type: 'image/png', purpose: 'any' },
     { src: toSitePath('/assets/images/brand/icon-512.png'), sizes: '512x512', type: 'image/png', purpose: 'any' },

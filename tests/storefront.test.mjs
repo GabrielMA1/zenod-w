@@ -69,8 +69,8 @@ test("every route has a static, translated counterpart and reciprocal language m
       new URL("../" + ro.output, import.meta.url),
       "utf8",
     );
-    assert.match(enHtml, /<html lang="en">/);
-    assert.match(roHtml, /<html lang="ro">/);
+    assert.match(enHtml, /<html lang="en"[\s>]/);
+    assert.match(roHtml, /<html lang="ro"[\s>]/);
     if (toAbsoluteSiteUrl("/")) {
       for (const html of [enHtml, roHtml]) {
         assert.ok(
@@ -152,7 +152,7 @@ test('every supported language has static pages and reciprocal language alternat
   for (const locale of localeIds) {
     for (const page of pages.filter(item => item.locale === locale)) {
       const html = readFileSync(new URL('../' + page.output, import.meta.url), 'utf8');
-      assert.ok(html.includes(`<html lang="${locale}">`), page.output);
+      assert.match(html, new RegExp(`<html lang="${locale}"[\\s>]`), page.output);
       if (toAbsoluteSiteUrl('/')) {
         for (const alternate of localeIds) {
           assert.ok(html.includes(`hreflang="${alternate}" href="${toAbsoluteSiteUrl(localePath(page.route, alternate))}"`), page.output + ' → ' + alternate);
