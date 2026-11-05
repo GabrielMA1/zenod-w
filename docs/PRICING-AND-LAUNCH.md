@@ -4,10 +4,10 @@ The owner requested a price target 25% below an equivalent Flash Detail product,
 
 | Storefront | Price |
 | --- | --- |
-| English, default `/` | €18.00 |
+| English, default `/` | €22.85 |
 | Romanian, `/ro/` | 90.00 RON |
 
-These are independently configured regional prices in `data/products.js`, not a live currency conversion. The €18 proposal uses a simple approximate 5 RON/EUR positioning assumption; it is not an exchange-rate quotation. The owner’s example did not verify the competitor’s current listing, specification or delivered price.
+These are independently configured regional prices in `data/products.js`, not a live currency conversion. The owner selected the European price of €22.85; it is not an exchange-rate quotation or verified competitor comparison. The owner’s example did not verify the competitor’s current listing, specification or delivered price.
 
 Reading `https://flashdetail.ro/` was blocked by the cloud network policy (proxy CONNECT 403). Required domain entries `flashdetail.ro` and `www.flashdetail.ro` were saved to the environment draft. The competitor’s live design and prices have **not** been inspected. After access is applied, compare the matching towel’s dimensions, material, quantity, taxes and delivered cost. Recalculate the target as `comparable current price × 0.75` and check it against landed cost, payment fees, shipping contribution and the required margin. Do not present a competitor’s price as ZENO’s former price: `compareAt` remains null and no discount percentage or competitor claim is published.
 
@@ -33,7 +33,7 @@ No payment or order data is collected by the current store. The public site is d
 
 ## European price increase requested
 
-The owner requested keeping Romania at 90 RON and increasing the other-European-market EUR price to slightly below comparable premium towels. The suggested target is 5–10% below a verified like-for-like delivered retail price, subject to costs and margin. No higher EUR figure has been published without source data; the existing €18 remains until the comparison is completed.
+The owner requested keeping Romania at 90 RON and increasing the other-European-market EUR price to slightly below comparable premium towels. The suggested target is 5–10% below a verified like-for-like delivered retail price, subject to costs and margin. The owner subsequently selected €22.85 for Europe, while Romania remains 90 RON. Competitor research remains unverified; no comparative discount claim is made.
 
 The owner requested using Flash Detail at flashdetail.ro / flashdetail.com as a specification reference. The latest attempt to read flashdetail.ro returned proxy CONNECT 403. Both domains, their www variants, search providers and comparison sites are saved in the cloud settings draft; the restarted executor still reports an enforced policy with no custom domains. Review, save and publish the pending environment configuration to enable research.
 

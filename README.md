@@ -24,7 +24,7 @@ npm run preview
 
 | File | Purpose |
 | --- | --- |
-| `data/products.js` | Product facts, media and regional prices. Current display prices: €18 / 90 RON. A higher EUR price awaits verified competitor research. |
+| `data/products.js` | Product facts, media and regional prices. Current display prices: €22.85 / 90 RON, as selected by the owner. |
 | `data/site.js` | Navigation, brand assets and integration/launch feature gates. |
 | `data/pages.js` | Routes generated for all seven languages. |
 | `data/romanian.js` | Romanian UI, product and guide copy. |

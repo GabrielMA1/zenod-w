@@ -17,11 +17,11 @@ import {
 test("regional prices change currency without changing product and variant identities", () => {
   const en = getProduct("zeno-drying-towel", "en");
   const ro = getProduct("zeno-drying-towel", "ro");
-  assert.equal(en.price, 18);
+  assert.equal(en.price, 22.85);
   assert.equal(en.currency, "EUR");
   assert.equal(ro.price, 90);
   assert.equal(ro.currency, "RON");
-  assert.match(formatPrice(en), /€18\.00/);
+  assert.match(formatPrice(en), /€22\.85/);
   assert.match(formatPrice(ro), /90,00\sRON/);
   assert.equal(ro.id, en.id);
   assert.deepEqual(
@@ -175,13 +175,13 @@ test('market prices are independent of language and cannot mutate product IDs or
   for (const locale of localeIds) {
     const eu = localizedProduct(products[0], locale, 'EU');
     const ro = localizedProduct(products[0], locale, 'RO');
-    assert.equal(eu.currency, 'EUR'); assert.equal(eu.price, 18);
+    assert.equal(eu.currency, 'EUR'); assert.equal(eu.price, 22.85);
     assert.equal(ro.currency, 'RON'); assert.equal(ro.price, 90);
     assert.equal(ro.title, eu.title);
     assert.equal(ro.id, eu.id);
     assert.deepEqual(ro.variants.map(item => item.id), eu.variants.map(item => item.id));
     assert.equal(ro.variants[0].price, 90);
-    assert.equal(eu.variants[0].price, 18);
+    assert.equal(eu.variants[0].price, 22.85);
     assert.equal(eu.compareAt, null);
   }
   assert.equal(JSON.stringify(products), original);
