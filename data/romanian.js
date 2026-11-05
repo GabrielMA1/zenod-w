@@ -2,6 +2,15 @@ import { articles } from "./journal.js";
 import { romanianArticles } from "./journal.ro.js";
 
 export const romanian = {
+  "ZENO 850 GSM Drying Towel | Microfiber Car Care": "Prosop de uscare ZENO 850 GSM | Microfibră pentru mașina ta",
+  "Discover the 850 GSM ZENO Drying Towel: blue microfiber with black edging.": "Descoperă prosopul de uscare ZENO de 850 GSM: microfibră albastră cu margini negre.",
+
+  "850 GSM microfiber for vehicle drying": "Microfibră de 850 GSM pentru uscarea mașinii",
+  "An 850 GSM microfiber towel designed for drying vehicles after washing. Finished in blue with black edging and ZENO branding.": "Un prosop din microfibră de 850 GSM pentru uscarea mașinii după spălare. Albastru, cu margini negre și sigla ZENO.",
+  "An 850 GSM microfiber drying towel made for the final step of a careful wash.": "Un prosop de uscare din microfibră de 850 GSM pentru ultima etapă a unei spălări atente.",
+  "What does 850 GSM mean?": "Ce înseamnă 850 GSM?",
+  "GSM means grams per square metre. The fabric weight specified for this towel is 850 GSM.": "GSM înseamnă grame pe metru pătrat. Gramajul specificat pentru acest prosop este de 850 GSM.",
+
   "Product video": "Video de produs",
   "ZENO Drying Towel product-use video": "Video de utilizare a prosopului ZENO",
   "2-pack": "Set de 2",

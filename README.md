@@ -38,7 +38,7 @@ npm run preview
 | `scripts/generate-pages.mjs` | Static HTML, metadata, language alternates, sitemap and manifest. |
 | `assets/js/seo.js` | Organization, WebSite, Product, FAQ, Article and Breadcrumb structured data. |
 
-Generated HTML is checked in. Regenerate it after editing data/templates, using the same deployment variables as the intended build. Every language contains its content in the initial HTML. Language and market are independent choices in the header menu. Direct Romanian URLs default to the Romanian market; other direct language URLs default to the European market. Explicit market selections persist across language changes, reloads and navigation. The market determines the displayed currency and price; bag storage retains stable IDs and quantities. The optional `?market=RO` or `?market=EU` URL parameter also works when browser storage is unavailable. Canonical URLs exclude this display parameter.
+HTML is generated from data and templates. Development and QA regenerate HTML inputs; the publication procedure commits compiled HTML and assets for branch-based hosting. Every language contains its content in the initial HTML. Language and market are independent choices in the header menu. Direct Romanian URLs default to the Romanian market; other direct language URLs default to the European market. Explicit market selections persist across language changes, reloads and navigation. The market determines the displayed currency and price; bag storage retains stable IDs and quantities. The optional `?market=RO` or `?market=EU` URL parameter also works when browser storage is unavailable. Canonical URLs exclude this display parameter.
 
 ## Images and SEO
 
@@ -60,6 +60,16 @@ The previous [launch requirements](docs/LAUNCH-REQUIREMENTS.md) and [photography
 
 See [Redesign validation](docs/REDESIGN-VALIDATION.md) for the measured results and their limits.
 
-Publishing uses the existing GitHub Pages workflow on `main`, targeting `https://zenodetail.com/`. The workflow verifies the deployed commit through a build-revision meta tag and checks all language versions, assets and the custom 404. Website publication does not enable checkout.
+## Publication
 
-In the repository’s **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. A branch-based Pages source starts a second publisher that serves the unbundled repository and can overwrite the Vite artifact. Keep the Actions source selected so the tested `dist/` output is the only publication source.
+The repository supports its existing **Pages branch source at `main` / root**, as well as the optional GitHub Actions source. Only one publisher runs in either mode. The configured custom domain remains `https://zenodetail.com/`.
+
+For the current branch source:
+
+1. Commit source changes locally, without pushing yet.
+2. Run `npm run publish:branch`. It requires a clean checkout, runs all QA, builds with the source revision, and copies the compiled production files to the publishing root. Source code and assets remain in their existing folders. The script cleans only obsolete bundle files it previously owned.
+3. Commit the generated release files, then push the source and release commits together. The built-in Pages branch publisher serves the compiled release, with `.nojekyll` enabled.
+
+The release manifest records the source revision and file checksums. CI validates that the release was built from its preceding source commit before running the normal audits and live-domain checks. The published HTML carries that source revision; the enclosing artifact commit has its own Git hash. Running generation or QA rewrites generated HTML, so finish a publishing session by preparing and committing a fresh branch release.
+
+If Pages is changed to **GitHub Actions** later, the same workflow builds and deploys `dist/` directly. The separate branch-artifact preparation is then optional. Website publication does not enable Stripe checkout.

@@ -16,7 +16,7 @@ export function homePageMarkup(product) {
     <div class="hero-foot shell"><span>CAR CARE. WITH CHARACTER.</span><a href="#the-essential">SCROLL TO DISCOVER <span aria-hidden="true">↓</span></a><span class="hero-edition">THE DRYING COLLECTION / 01</span></div>
   </section>
   <section class="benefit-strip" aria-label="The ZENO essentials"><div class="shell">
-    <div>${icon("drop")}<span>Soft microfiber for vehicle drying</span></div><div>${icon("surface")}<span>Free delivery in Romania</span></div><div>${icon("edge")}<a href="${toSitePath('/shipping-delivery/')}">Delivery across Europe ${icon('arrow')}</a></div>
+    <div>${icon("drop")}<span>850 GSM microfiber for vehicle drying</span></div><div>${icon("surface")}<span>Free delivery in Romania</span></div><div>${icon("edge")}<a href="${toSitePath('/shipping-delivery/')}">Delivery across Europe ${icon('arrow')}</a></div>
   </div></section>
   <section class="signature-section section-space" id="the-essential" aria-labelledby="signature-title"><div class="shell">
     <div class="section-heading"><div><p class="eyebrow">LESS CLUTTER. MORE PURPOSE.</p><h2 id="signature-title">One essential.<br>Every wash.</h2></div><a class="text-link" href="${toSitePath("/shop/")}">Explore the collection ${icon("arrow")}</a></div>

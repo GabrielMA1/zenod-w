@@ -203,3 +203,25 @@ test('market URL overrides saved preferences and gracefully handles unavailable 
     assert.equal(currentMarket('de'), 'EU');
   } finally { delete globalThis.window; }
 });
+
+test('branch publication validates its source revision and rejects changed files or unsafe paths', async () => {
+  const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { digest, releasePath, validateBranchRelease } = await import('../scripts/branch-release.mjs');
+  const root = mkdtempSync(join(tmpdir(), 'zeno-release-'));
+  const revision = 'a'.repeat(40);
+  try {
+    mkdirSync(join(root,'assets'));
+    const names = ['index.html','404.html','robots.txt','sitemap.xml','site.webmanifest'];
+    for (const name of names) writeFileSync(join(root,name), name === 'index.html' ? `<meta name="build-revision" content="${revision}"><script src="/assets/app-12345678.js"></script>` : 'test');
+    writeFileSync(join(root,'.nojekyll'),'');
+    writeFileSync(join(root,'.pages-release.json'),JSON.stringify({sourceRevision:revision,files:Object.fromEntries(names.map(name=>[name,digest(join(root,name))]))}));
+    assert.equal(validateBranchRelease(root,revision),revision);
+    assert.throws(()=>validateBranchRelease(root,'b'.repeat(40)),/fresh branch release/);
+    assert.throws(()=>releasePath(root,'assets/../../private'),/Invalid release path/);
+    assert.throws(()=>releasePath(root,'.git/config'),/Unsupported release path/);
+    writeFileSync(join(root,'index.html'),'changed');
+    assert.throws(()=>validateBranchRelease(root,revision),/Release content changed/);
+  } finally { rmSync(root,{recursive:true,force:true}); }
+});

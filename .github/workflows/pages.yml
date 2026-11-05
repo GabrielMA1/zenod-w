@@ -24,10 +24,15 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      publication_mode: ${{ steps.source.outputs.mode }}
+      expected_revision: ${{ steps.source.outputs.revision }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -39,22 +44,39 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Check Pages publication source
+        id: source
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mode=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type')
-          if [ "$mode" != "workflow" ]; then
-            echo "::error::Set Settings > Pages > Build and deployment > Source to GitHub Actions. Branch publishing can overwrite the production build."
+          configuration=$(gh api "repos/${GITHUB_REPOSITORY}/pages")
+          mode=$(jq -r '.build_type' <<<"$configuration")
+          revision="$GITHUB_SHA"
+          if [ "$mode" = "legacy" ]; then
+            branch=$(jq -r '.source.branch' <<<"$configuration")
+            pages_source_path=$(jq -r '.source.path' <<<"$configuration")
+            if [ "$branch" != "$GITHUB_REF_NAME" ] || [ "$pages_source_path" != "/" ]; then
+              echo "::error::This branch release supports the current branch at repository root; Pages is configured for $branch:$pages_source_path."
+              exit 1
+            fi
+            revision=$(node --input-type=module -e 'import {execFileSync} from "node:child_process"; import {validateBranchRelease} from "./scripts/branch-release.mjs"; console.log(validateBranchRelease(process.cwd(),execFileSync("git",["rev-parse","HEAD^"],{encoding:"utf8"}).trim()))')
+          elif [ "$mode" != "workflow" ]; then
+            echo "::error::Unknown Pages publication mode: $mode"
             exit 1
           fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build for GitHub Pages
+        env:
+          SITE_SOURCE_REVISION: ${{ steps.source.outputs.revision }}
         run: npm run build
 
       - name: Audit generated source
+        env:
+          SITE_SOURCE_REVISION: ${{ steps.source.outputs.revision }}
         run: npm run audit
 
       - name: Audit deployable artifact
@@ -64,11 +86,13 @@ jobs:
         run: npm test
 
       - name: Upload Pages artifact
+        if: steps.source.outputs.mode == 'workflow'
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
   deploy:
+    if: needs.build.outputs.publication_mode == 'workflow'
     needs: build
     runs-on: ubuntu-latest
     outputs:
@@ -84,24 +108,26 @@ jobs:
         uses: actions/deploy-pages@v5
 
   verify:
-    needs: deploy
+    if: always() && needs.build.result == 'success' && (needs.deploy.result == 'success' || needs.deploy.result == 'skipped')
+    needs: [build, deploy]
     runs-on: ubuntu-latest
 
     steps:
       - name: Smoke-test the live site
         env:
           SITE_URL: ${{ needs.deploy.outputs.page_url }}
+          EXPECTED_REVISION: ${{ needs.build.outputs.expected_revision }}
         run: |
           set -u
           base="${SITE_URL:-$SITE_BASE_URL}"
           base="${base%/}"
-          echo "Verifying $base (expected commit ${GITHUB_SHA})"
+          echo "Verifying $base (expected source revision ${EXPECTED_REVISION})"
 
           # Pages can take a few minutes to propagate; retry until the new
           # build is served or give up after ~10 minutes.
           for attempt in $(seq 1 20); do
             home=$(curl -fsSL --max-time 20 "$base/?v=${GITHUB_SHA}" || true)
-            if grep -Fq "name=\"build-revision\" content=\"${GITHUB_SHA}\"" <<<"$home" && grep -q '<link rel="canonical" href="https://zenodetail.com/"' <<<"$home"; then
+            if grep -Fq "name=\"build-revision\" content=\"${EXPECTED_REVISION}\"" <<<"$home" && grep -q '<link rel="canonical" href="https://zenodetail.com/"' <<<"$home"; then
               break
             fi
             echo "Attempt $attempt: new build not served yet; waiting 30s"

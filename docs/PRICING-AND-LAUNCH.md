@@ -39,4 +39,8 @@ The owner requested using Flash Detail at flashdetail.ro / flashdetail.com as a 
 
 Record the exact listing URL, observation date, regular/current price, tax treatment, dimensions, GSM, weave, blend and delivered cost before selecting a comparator. Candidate ranges for research include Gyeon SilkDryer EVO, CARPRO DHydrate and The Rag Company drying towels; none is claimed to be the best or a verified match yet. Specifications published by another seller describe that seller’s product. Confirm matching ZENO supply before presenting them as verified ZENO attributes.
 
-The owner subsequently reported that flashdetail.com is under maintenance for Black Friday and deferred the Flash Detail specification lookup. Keep dimensions, GSM, blend and weave unset until that reference is available and matched to ZENO supply. European price research can use other accessible retailers independently.
+The owner subsequently reported that flashdetail.com is under maintenance for Black Friday and deferred the Flash Detail specification lookup. Dimensions, blend and weave remain pending. The owner subsequently selected 850 GSM as the product specification; it is recorded as owner-provided, not independently laboratory-verified. European price research can use other accessible retailers independently.
+
+## Owner-provided GSM specification
+
+The current specification is **850 GSM**, supplied by the owner. It is published in every language, including the product subtitle, description, verified-specification table and Product/FAQ structured data. This source records owner approval rather than an independent test. GSM describes fabric mass per area; no absorption-capacity, scratch-safety or durability result is inferred from it. Confirm the supplied inventory matches 850 GSM before activating sales.

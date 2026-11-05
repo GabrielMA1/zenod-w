@@ -11,7 +11,7 @@ Language and market are independent. Romanian direct URLs default to RON; other 
 Validation:
 
 - Production build, source audit and distribution audit passed for all 161 routes. Coverage includes static content, navigation, assets, schemas, canonical URLs, reciprocal language alternates and absence of long English fallback passages in translated public content.
-- All seven Node regression tests passed. They cover regional amounts and stable identities, safe translation, every language counterpart, persistent bag behavior, market independence, URL preference priority and unavailable-storage fallback.
+- All eight Node regression tests passed. They cover regional amounts and stable identities, safe translation, every language counterpart, persistent bag behavior, market independence, URL preference priority, unavailable-storage fallback and branch-release integrity.
 - The comprehensive desktop/mobile run passed 155 checks across all seven languages, including all public pages, search, gallery/zoom, bag operations, independent language/market changes and 320-pixel layouts. Its 28 accessibility views had zero violations.
 - After startup optimization, 29 focused checks passed across all seven languages on desktop and mobile, with zero violations in 14 product-page accessibility views.
 - Fourteen additional menu checks passed at 320 and 390 pixels: menu boundaries, keyboard Escape, outside-click dismissal and both market options in every language. The expanded menu now stays inside the viewport.
@@ -25,8 +25,8 @@ Current screenshots, comprehensive browser results, menu results and Lighthouse 
 
 ## Publication and outstanding inputs
 
-The GitHub Pages workflow checks that the repository Pages source is **GitHub Actions** before publishing, then verifies the served build revision and all 70 public routes. A branch-based Pages source starts a competing publisher and can overwrite the tested Vite output. A successful Git push alone does not verify production publication.
+The GitHub Pages workflow supports both the existing `main` / root branch source and the GitHub Actions source. In branch mode, a clean source commit is built and tested locally; a second commit contains the compiled HTML, bundles, metadata, `.nojekyll` and a checksummed release manifest. Both commits are pushed together, so the branch publisher receives the compiled release. CI checks its source parent and file integrity, then verifies the served source revision and all public routes. The custom deployment job runs only in Actions mode, preventing competing publishers. A push alone still does not establish a successful live-domain verification.
 
 Stripe is selected but not connected. Payments, actual non-Romanian shipping quotes, stock and seller information still require configuration; warehouse and office details are pending. See [Pricing and ordering handoff](PRICING-AND-LAUNCH.md).
 
-The higher European EUR price awaits accessible retailer research; no current competitor prices have been claimed. The owner reported Flash Detail maintenance and deferred its specification lookup. Dimensions, GSM, weave and blend remain unset. Research domains are saved in the cloud configuration draft, but direct research requests remain blocked until that network configuration is applied.
+The higher European EUR price awaits accessible retailer research; no current competitor prices have been claimed. The owner reported Flash Detail maintenance and deferred its specification lookup. The owner supplied 850 GSM; dimensions, weave and blend remain unset. Research domains are saved in the cloud configuration draft, but direct research requests remain blocked until that network configuration is applied.

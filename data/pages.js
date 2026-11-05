@@ -42,8 +42,8 @@ const basePages = [
   {
     route: '/products/drying-towel/', output: 'products/drying-towel/index.html', id: 'drying-towel',
     type: 'product', product: 'zeno-drying-towel',
-    title: 'ZENO Drying Towel | Microfiber Car Drying Towel',
-    description: 'Discover the ZENO Drying Towel, made from soft microfiber and finished in blue with black edging.',
+    title: 'ZENO 850 GSM Drying Towel | Microfiber Car Care',
+    description: 'Discover the 850 GSM ZENO Drying Towel: blue microfiber with black edging.',
     heading: 'ZENO Drying Towel', intro: 'Premium microfiber for vehicle drying.',
   },
   {

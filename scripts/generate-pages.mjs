@@ -19,7 +19,8 @@ import { pageSchemas } from '../assets/js/seo.js';
 import { escapeHtml } from '../assets/js/lib/html.js';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const buildRevision = /^[a-f0-9]{40}$/i.test(process.env.GITHUB_SHA ?? '') ? process.env.GITHUB_SHA : null;
+const sourceRevision = process.env.SITE_SOURCE_REVISION ?? process.env.GITHUB_SHA;
+const buildRevision = /^[a-f0-9]{40}$/i.test(sourceRevision ?? '') ? sourceRevision : null;
 
 async function writeGeneratedFile(destination, content) {
   const maximumAttempts = 8;
