@@ -13,7 +13,7 @@ Reading `https://flashdetail.ro/` was blocked by the cloud network policy (proxy
 
 ## What works now
 
-The product can be added to a browser-local bag. Quantity changes, subtotals, removal and persistence work in both languages. Switching languages preserves product IDs and quantities and displays the corresponding regional price.
+The product can be added to a browser-local bag. Quantity changes, subtotals, removal and persistence work in both languages. Switching languages preserves product IDs, quantities and the selected market. Language no longer determines price: the independent market selector controls EUR versus RON. A Romanian-speaking customer in another European destination can use Romanian with EUR; a German-speaking customer in Romania can use German with RON. In a real checkout, derive prices and shipping from the validated delivery country, not a client-supplied market or price.
 
 ## Approved delivery and payment choices
 
@@ -30,3 +30,13 @@ The current repository has no order-processing backend or connected payment prov
 5. Test order success, cancellation, failure and confirmation against the chosen provider before enabling `commerceReady` and `checkoutReady`.
 
 No payment or order data is collected by the current store. The public site is deployed through the repository’s existing GitHub Pages workflow. Publication of the storefront does not activate payment or order collection.
+
+## European price increase requested
+
+The owner requested keeping Romania at 90 RON and increasing the other-European-market EUR price to slightly below comparable premium towels. The suggested target is 5–10% below a verified like-for-like delivered retail price, subject to costs and margin. No higher EUR figure has been published without source data; the existing €18 remains until the comparison is completed.
+
+The owner requested using Flash Detail at flashdetail.ro / flashdetail.com as a specification reference. The latest attempt to read flashdetail.ro returned proxy CONNECT 403. Both domains, their www variants, search providers and comparison sites are saved in the cloud settings draft; the restarted executor still reports an enforced policy with no custom domains. Review, save and publish the pending environment configuration to enable research.
+
+Record the exact listing URL, observation date, regular/current price, tax treatment, dimensions, GSM, weave, blend and delivered cost before selecting a comparator. Candidate ranges for research include Gyeon SilkDryer EVO, CARPRO DHydrate and The Rag Company drying towels; none is claimed to be the best or a verified match yet. Specifications published by another seller describe that seller’s product. Confirm matching ZENO supply before presenting them as verified ZENO attributes.
+
+The owner subsequently reported that flashdetail.com is under maintenance for Black Friday and deferred the Flash Detail specification lookup. Keep dimensions, GSM, blend and weave unset until that reference is available and matched to ZENO supply. European price research can use other accessible retailers independently.

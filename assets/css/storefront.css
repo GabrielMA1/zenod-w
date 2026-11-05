@@ -2000,3 +2000,44 @@ summary {
     animation: none;
   }
 }
+
+/* Language and market are independent choices. */
+.locale-switch > div {
+  width: 16rem;
+  max-width: calc(100vw - 2.5rem);
+  max-height: 70dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.locale-menu-label {
+  margin: 0.5rem 0.7rem;
+  font-weight: 650;
+}
+.market-switch {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding: 1rem 0.7rem 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.market-switch select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem;
+  font: inherit;
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+}
+@media (max-width: 48rem) {
+  .header-inner { position: relative; }
+  .header-actions, .locale-switch { position: static; }
+  .locale-switch > div {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+  }
+}

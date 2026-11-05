@@ -1,3 +1,4 @@
+import { locales } from '../data/locales.js';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -409,7 +410,7 @@ function checkProductSchema(page, html, nodes) {
   for (const offer of offers) {
     if (Number(offer.price) !== Number(price)) fail(`${page.output}: Product schema offer price does not match visible product data.`);
     if (offer.priceCurrency !== product.currency) fail(`${page.output}: Product schema offer currency does not match product data.`);
-    const formatted = price == null ? null : formatMoney(price, product.currency, page.locale === 'ro' ? 'ro-RO' : 'en-IE');
+    const formatted = price == null ? null : formatMoney(price, product.currency, locales[page.locale].format);
     if (formatted && !bodyText.includes(formatted) && !bodyText.includes(String(price))) {
       fail(`${page.output}: Product schema offer price is not visible on the page.`);
     }
@@ -483,6 +484,16 @@ function checkGeneratedPage(page, html) {
   const header = staticElementContent(html, 'header');
   const footer = staticElementContent(html, 'footer');
   const main = staticElementContent(html, 'main');
+  if (page.locale !== 'en' && page.public !== false && !page.noindex && !isInactivePage(page)) {
+    const english = staticElementContent(htmlByRoute.get(page.logicalRoute) ?? '', 'main') ?? '';
+    const translatedText = normalizeText(main);
+    for (const match of english.matchAll(/<(p|h1|h2|h3|dt|dd|a)\b[^>]*>([\s\S]*?)<\/\1>/gi)) {
+      const phrase = normalizeText(match[2]);
+      if (phrase.length >= 32 && /[a-z]{3}/i.test(phrase) && translatedText.includes(phrase)) {
+        fail(`${page.output}: English fallback remains in translated content: "${phrase}".`);
+      }
+    }
+  }
   if ((html.match(/<header\b/gi)?.length ?? 0) !== 1) fail(`${page.output}: generated HTML must contain exactly one header.`);
   if ((html.match(/<footer\b/gi)?.length ?? 0) !== 1) fail(`${page.output}: generated HTML must contain exactly one footer.`);
   if ((html.match(/<main\b/gi)?.length ?? 0) !== 1) fail(`${page.output}: generated HTML must contain exactly one main landmark.`);

@@ -1,3 +1,4 @@
+import { locales, logicalRoute as stripLocale, currentMarket } from '../../../data/locales.js';
 import { primaryNavigation, siteConfig, visibleFooterNavigation } from '../../../data/site.js';
 import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
@@ -6,7 +7,7 @@ import { localePath } from '../../../data/localization.js';
 import { initSearch, searchDialogMarkup } from './search.js';
 
 function currentLink(href, route) {
-  route = route.replace(/^\/ro(?=\/|$)/, '') || '/';
+  route = stripLocale(route);
   const target = href.split('#')[0] || '/';
   if (target === '/shop/' && ['/shop/', '/collections/all-products/', '/collections/drying/'].includes(route)) return true;
   if (href === '/' && route === '/') return true;
@@ -33,11 +34,11 @@ export function announcementMarkup() {
 }
 
 export function headerMarkup(route, locale = 'en') {
-  const logicalRoute = route.replace(/^\/ro(?=\/|$)/, '') || '/';
+  const logicalRoute = stripLocale(route);
   return `<header class="site-header" data-site-header><div class="shell header-inner">
     <a class="brand-wordmark" href="${toSitePath('/')}" aria-label="ZENO DETAIL home"><img src="${toSitePath(siteConfig.brandAssets.symbolWhite)}" alt="" width="848" height="524"><span>ZENO <small>DETAIL</small></span></a>
     <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(logicalRoute)}</ul></nav>
-    <div class="header-actions"><details class="locale-switch"><summary>${locale === 'ro' ? 'RO / RON' : 'EN / EUR'}<span aria-hidden="true">⌄</span></summary><div><a href="${localePath(logicalRoute, 'en')}" data-language-link hreflang="en" lang="en" ${locale === 'en' ? 'aria-current="true"' : ''}>English · EUR</a><a href="${localePath(logicalRoute, 'ro')}" data-language-link hreflang="ro" lang="ro" ${locale === 'ro' ? 'aria-current="true"' : ''}>Română · RON</a></div></details>
+    <div class="header-actions"><details class="locale-switch"><summary>${locale.toUpperCase()} / <span data-market-currency>${currentMarket(locale) === 'RO' ? 'RON' : 'EUR'}</span><span aria-hidden="true">⌄</span></summary><div><p class="locale-menu-label">Language</p>${Object.entries(locales).map(([id, item]) => `<a href="${localePath(logicalRoute, id)}" data-language-link hreflang="${id}" lang="${id}" ${locale === id ? 'aria-current="true"' : ''}>${item.label}</a>`).join('')}<label class="market-switch"><span>Delivery region</span><select data-market-select><option value="EU" ${currentMarket(locale) === 'EU' ? 'selected' : ''}>Europe · EUR</option><option value="RO" ${currentMarket(locale) === 'RO' ? 'selected' : ''}>Romania · RON</option></select></label></div></details>
       <button class="icon-button search-trigger" type="button" data-open-search aria-label="Search the store" aria-controls="search-dialog">${icon('search')}</button>
       <button class="header-button header-cart" type="button" data-open-cart aria-label="Bag, 0 items" aria-controls="cart-dialog">${icon('bag')}<span class="bag-label">Bag</span><span class="cart-count" data-cart-count hidden>0</span></button>
       <button class="icon-button mobile-menu-button" type="button" data-open-mobile-menu aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu-dialog">${icon('menu')}</button>
@@ -76,6 +77,16 @@ export function initShell() {
   const mobileDialog = document.querySelector('#mobile-menu-dialog');
   const menuTrigger = document.querySelector('[data-open-mobile-menu]');
   const header = document.querySelector('[data-site-header]');
+  const localeMenu = document.querySelector('.locale-switch');
+  document.addEventListener('click', (event) => {
+    if (localeMenu?.open && !localeMenu.contains(event.target)) localeMenu.open = false;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && localeMenu?.open) {
+      localeMenu.open = false;
+      localeMenu.querySelector('summary')?.focus();
+    }
+  });
 
   function syncBodyLock() {
     document.body.classList.toggle('is-locked', Boolean(document.querySelector('dialog[open]')));

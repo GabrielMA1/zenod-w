@@ -146,3 +146,60 @@ test("the bag persists stable IDs, survives a language change, and cannot create
     delete globalThis.window;
   }
 });
+
+test('every supported language has static pages and reciprocal language alternates', async () => {
+  const { localeIds } = await import('../data/locales.js');
+  for (const locale of localeIds) {
+    for (const page of pages.filter(item => item.locale === locale)) {
+      const html = readFileSync(new URL('../' + page.output, import.meta.url), 'utf8');
+      assert.ok(html.includes(`<html lang="${locale}">`), page.output);
+      if (toAbsoluteSiteUrl('/')) {
+        for (const alternate of localeIds) {
+          assert.ok(html.includes(`hreflang="${alternate}" href="${toAbsoluteSiteUrl(localePath(page.route, alternate))}"`), page.output + ' → ' + alternate);
+        }
+      }
+      if (page.type === 'product') {
+        const schemas = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+        assert.equal(schemas.find(item => item['@type'] === 'Product').name, getProduct('zeno-drying-towel', locale).name);
+        assert.equal(schemas.find(item => item['@type'] === 'Product').offers, undefined);
+      }
+    }
+  }
+});
+
+test('market prices are independent of language and cannot mutate product IDs or base data', async () => {
+  const { localizedProduct, translate } = await import('../data/localization.js');
+  const { products } = await import('../data/products.js');
+  const { localeIds } = await import('../data/locales.js');
+  const original = JSON.stringify(products);
+  for (const locale of localeIds) {
+    const eu = localizedProduct(products[0], locale, 'EU');
+    const ro = localizedProduct(products[0], locale, 'RO');
+    assert.equal(eu.currency, 'EUR'); assert.equal(eu.price, 18);
+    assert.equal(ro.currency, 'RON'); assert.equal(ro.price, 90);
+    assert.equal(ro.title, eu.title);
+    assert.equal(ro.id, eu.id);
+    assert.deepEqual(ro.variants.map(item => item.id), eu.variants.map(item => item.id));
+    assert.equal(ro.variants[0].price, 90);
+    assert.equal(eu.variants[0].price, 18);
+    assert.equal(eu.compareAt, null);
+  }
+  assert.equal(JSON.stringify(products), original);
+  assert.equal(translate(translate('Material', 'it'), 'it'), 'Materiale');
+  assert.equal(translate(translate('Product', 'es'), 'es'), 'Producto');
+  assert.equal(translate(translate('Contact', 'pt'), 'pt'), 'Contacto');
+});
+
+test('market URL overrides saved preferences and gracefully handles unavailable browser storage', async () => {
+  const { currentMarket } = await import('../data/locales.js');
+  globalThis.window = { location: { href: 'https://zenodetail.com/de/?market=RO' }, localStorage: { getItem: () => 'EU' } };
+  try {
+    assert.equal(currentMarket('de'), 'RO');
+    window.location.href = 'https://zenodetail.com/ro/';
+    assert.equal(currentMarket('ro'), 'EU');
+    window.localStorage.getItem = () => { throw Error('Storage blocked'); };
+    assert.equal(currentMarket('ro'), 'RO');
+    window.location.href = 'https://zenodetail.com/de/?market=INVALID';
+    assert.equal(currentMarket('de'), 'EU');
+  } finally { delete globalThis.window; }
+});

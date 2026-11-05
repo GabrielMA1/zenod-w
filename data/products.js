@@ -1,3 +1,4 @@
+import { locales } from './locales.js';
 import { localizedProduct, currentLocale } from './localization.js';
 
 export const products = [
@@ -138,12 +139,12 @@ export function getVerifiedSpecifications(product) {
   return product.specifications.filter((specification) => specification.verified && specification.value);
 }
 
-export function formatMoney(amount, currency, locale = currency === 'RON' ? 'ro-RO' : 'en-IE') {
+export function formatMoney(amount, currency, locale = typeof window !== 'undefined' ? locales[currentLocale()].format : currency === 'RON' ? 'ro-RO' : 'en-IE') {
   if (amount == null || !currency) return null;
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
 }
 
 export function formatPrice(product, variant = null) {
   const selectedVariant = variant ?? getPublicVariants(product)[0] ?? null;
-  return formatMoney(selectedVariant?.price ?? product.price, product.currency);
+  return formatMoney(selectedVariant?.price ?? product.price, product.currency, locales[product.locale ?? 'en'].format);
 }

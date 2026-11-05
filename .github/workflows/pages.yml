@@ -120,12 +120,20 @@ jobs:
             echo "$code $1"
             [ "$code" = "200" ] || failed=1
           }
-          for path in "$css" "$js" /shop/ /products/drying-towel/ /about/ /faq/ /journal/ \
-                      /ro/ /ro/shop/ /ro/products/drying-towel/ /ro/about/ /ro/faq/ /ro/journal/ \
-                      /shipping-delivery/ /ro/shipping-delivery/ \
-                      /robots.txt /sitemap.xml /site.webmanifest \
+          for path in "$css" "$js" /robots.txt /sitemap.xml /site.webmanifest \
                       /assets/images/brand/zeno-logo-web-white.svg /assets/images/brand/favicon.svg; do
             check "$path"
+          done
+          for language in en ro de es it pt fr; do
+            prefix=""
+            [ "$language" = "en" ] || prefix="/$language"
+            for route in / /shop/ /products/drying-towel/ /about/ /faq/ /shipping-delivery/ /journal/ \
+                         /journal/how-to-dry-your-car/ /journal/microfiber-towel-care/ /journal/choosing-a-drying-towel/; do
+              check "$prefix$route"
+            done
+            translated=$(curl -fsSL --max-time 20 "$base$prefix/products/drying-towel/?v=${GITHUB_SHA}")
+            grep -Fq "<html lang=\"$language\">" <<<"$translated" || { echo "::error::$language product has the wrong language."; failed=1; }
+            grep -Fq 'hreflang="en" href="https://zenodetail.com/products/drying-towel/"' <<<"$translated" || { echo "::error::$language product is missing its English alternate."; failed=1; }
           done
 
           fonts=$(curl -fsSL --max-time 20 "$base$css" | grep -o '/assets/archivo-[^)]*\.woff2' | sort -u)

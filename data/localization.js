@@ -1,93 +1,85 @@
-import { stripBasePath, toSitePath } from "./deployment.js";
-import { romanian } from "./romanian.js";
+import { stripBasePath, toSitePath } from './deployment.js';
+import { romanian } from './romanian.js';
+import de from './translations/de.json' with { type: 'json' };
+import es from './translations/es.json' with { type: 'json' };
+import it from './translations/it.json' with { type: 'json' };
+import pt from './translations/pt.json' with { type: 'json' };
+import fr from './translations/fr.json' with { type: 'json' };
+import { localeForPath, logicalRoute, currentMarket, localeIds } from './locales.js';
 
+export const dictionaries = { ro: romanian, de, es, it, pt, fr };
 export function currentLocale() {
-  return typeof window !== "undefined" &&
-    /^\/ro(?:\/|$)/.test(stripBasePath(window.location.pathname))
-    ? "ro"
-    : "en";
+  return typeof window === 'undefined' ? 'en' : localeForPath(stripBasePath(window.location.pathname));
 }
-
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const translationPattern = new RegExp(
-  Object.keys(romanian)
-    .sort((a, b) => b.length - a.length)
-    .map(escapeRegExp)
-    .join("|"),
-  "g",
-);
-
+const escapeRegExp = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const translationKeys = new Map();
+const translatedValues = new Map();
+const knownTranslations = new Map();
+function patternFor(value, locale) {
+  if (!translationKeys.has(locale)) {
+    translationKeys.set(locale, Object.keys(dictionaries[locale]).sort((a, b) => b.length - a.length));
+  }
+  const relevant = translationKeys.get(locale).filter(key => value.includes(key));
+  if (!relevant.length) return null;
+  const terms = relevant.map(key =>
+    `${/^[\p{L}\p{N}_]/u.test(key) ? '(?<![\\p{L}\\p{N}_])' : ''}${escapeRegExp(key)}${/[\p{L}\p{N}_]$/u.test(key) ? '(?![\\p{L}\\p{N}_])' : ''}`);
+  return new RegExp(terms.join('|'), 'gu');
+}
 export function translate(value, locale = currentLocale()) {
-  if (locale !== "ro" || typeof value !== "string") return value;
-  return value.replace(translationPattern, (match) => romanian[match]);
+  const dictionary = dictionaries[locale];
+  if (!dictionary || typeof value !== 'string') return value;
+  if (Object.hasOwn(dictionary, value)) return dictionary[value];
+  if (!knownTranslations.has(locale)) knownTranslations.set(locale, new Set(Object.values(dictionary)));
+  if (knownTranslations.get(locale).has(value)) return value;
+  if (/^(?:RON|EUR)?[0-9.,\s€]+(?:RON|EUR)?$/.test(value)) return value;
+  if (!/[A-Za-z]/.test(value) || /^(?:https?:\/\/|\/assets\/)/.test(value)) return value;
+  if (!translatedValues.has(locale)) translatedValues.set(locale, new Map());
+  const cache = translatedValues.get(locale);
+  if (cache.has(value)) return cache.get(value);
+  const pattern = patternFor(value, locale);
+  const result = pattern ? value.replace(pattern, match => dictionary[match]) : value;
+  if (cache.size >= 1000) cache.clear();
+  cache.set(value, result);
+  return result;
 }
 
 export function localePath(path, locale = currentLocale()) {
-  const logical = stripBasePath(path).replace(/^\/ro(?=\/|$)/, "") || "/";
-  return toSitePath(locale === "ro" ? `/ro${logical}` : logical);
+  const logical = logicalRoute(stripBasePath(path));
+  return toSitePath(locale !== 'en' && localeIds.includes(locale) ? `/${locale}${logical}` : logical);
 }
-
 export function localizeMarkup(markup, locale = currentLocale()) {
-  if (locale !== "ro") return markup;
-  const translated = markup
-    .split(/(<script\b[\s\S]*?<\/script>)/g)
-    .map((part) => {
-      if (part.startsWith("<script")) return part;
-      return part.replace(/<[^>]+>|[^<]+/g, (token) => {
-        if (!token.startsWith("<")) return translate(token, locale);
-        return token.replace(
-          /(aria-label|alt|title|placeholder|content)="([^"]*)"/g,
-          (_, name, value) => `${name}="${translate(value, locale)}"`,
-        );
-      });
-    })
-    .join("");
-  return translated.replace(/<a\b[^>]*>/g, (tag) => {
-    if (tag.includes("data-language-link")) return tag;
+  if (locale === 'en') return markup;
+  const translated = markup.split(/(<script\b[\s\S]*?<\/script>)/g).map(part => {
+    if (part.startsWith('<script')) return part;
+    return part.replace(/<[^>]+>|[^<]+/g, token => {
+      if (!token.startsWith('<')) return translate(token, locale);
+      return token.replace(/(aria-label|alt|title|placeholder|content)="([^"]*)"/g,
+        (_, name, value) => `${name}="${translate(value, locale)}"`);
+    });
+  }).join('');
+  return translated.replace(/<a\b[^>]*>/g, tag => {
+    if (tag.includes('data-language-link')) return tag;
     return tag.replace(/href="(\/[^\"]*)"/, (_, path) => {
-      if (stripBasePath(path).startsWith("/assets/")) return `href="${path}"`;
+      if (stripBasePath(path).startsWith('/assets/')) return `href="${path}"`;
       return `href="${localePath(path, locale)}"`;
     });
   });
 }
-
-export function localizedProduct(product, locale = currentLocale()) {
+export function localizedProduct(product, locale = currentLocale(), market = currentMarket(locale)) {
   if (!product) return null;
-  if (locale !== "ro") return product;
+  const protectedKeys = new Set(['id','handle','categoryId','placeholderVariant','src','zoomSrc','image','status','slug','currency','type','icon','mimeType','aspectRatio','key']);
   const localize = (value, key) => {
-    if (
-      [
-        "id",
-        "handle",
-        "categoryId",
-        "placeholderVariant",
-        "src",
-        "zoomSrc",
-        "image",
-        "status",
-      ].includes(key)
-    )
-      return value;
-    if (typeof value === "string") return translate(value, locale);
-    if (Array.isArray(value)) return value.map((item) => localize(item));
-    if (value && typeof value === "object")
-      return Object.fromEntries(
-        Object.entries(value).map(([name, child]) => [
-          name,
-          localize(child, name),
-        ]),
-      );
+    if (protectedKeys.has(key)) return value;
+    if (typeof value === 'string') return translate(value, locale);
+    if (Array.isArray(value)) return value.map(item => localize(item));
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([name, child]) => [name, localize(child, name)]));
     return value;
   };
-  const result = localize(product);
-  result.slug = `/ro${product.slug}`;
-  result.price = product.regionalPrices?.RON ?? null;
-  result.currency = "RON";
-  result.variants = result.variants.map((variant) => ({
-    ...variant,
-    price:
-      product.variants.find((item) => item.id === variant.id)?.regionalPrices
-        ?.RON ?? (variant.id === "single" ? result.price : null),
-  }));
-  return result;
+  const currency = market === 'RO' ? 'RON' : 'EUR';
+  return {
+    ...localize(product), locale, market, currency,
+    slug: locale === 'en' ? product.slug : `/${locale}${product.slug}`,
+    price: product.regionalPrices?.[currency] ?? null,
+    variants: product.variants.map(variant => ({ ...localize(variant), price: variant.regionalPrices?.[currency] ?? null })),
+  };
 }

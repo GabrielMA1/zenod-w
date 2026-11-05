@@ -1,3 +1,4 @@
+import { locales, localeIds } from '../data/locales.js';
 import { mkdirSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -44,8 +45,8 @@ function pageHtml(page) {
   const canonical = toAbsoluteSiteUrl(page.route);
   const socialImage = (page.type === 'product' ? product?.seo?.image : null) ?? siteConfig.brandAssets.socialImage;
   const socialImageUrl = socialImage ? toAbsoluteSiteUrl(socialImage) ?? toSitePath(socialImage) : null;
-  const languageLinks = siteConfig.baseUrl ? ['en', 'ro', 'x-default'].map((lang) => {
-    const route = lang === 'ro' ? `/ro${page.logicalRoute}` : page.logicalRoute;
+  const languageLinks = siteConfig.baseUrl ? [...localeIds, 'x-default'].map((lang) => {
+    const route = lang !== 'en' && lang !== 'x-default' ? `/${lang}${page.logicalRoute}` : page.logicalRoute;
     return `<link rel="alternate" hreflang="${lang}" href="${escapeHtml(toAbsoluteSiteUrl(route))}">`;
   }).join('\n    ') : '';
   const contextAttributes = [
@@ -55,7 +56,7 @@ function pageHtml(page) {
   ].filter(Boolean).join(' ');
 
   return localizeMarkup(`<!doctype html>
-<html lang="${page.locale === 'ro' ? 'ro' : 'en'}">
+<html lang="${page.locale}">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -66,7 +67,7 @@ function pageHtml(page) {
     <meta name="robots" content="${noindex ? 'noindex, follow' : 'index, follow'}">
     <link rel="canonical"${canonical ? ` href="${escapeHtml(canonical)}"` : ''} data-canonical-path="${escapeHtml(page.route)}">
     ${languageLinks}
-    <meta property="og:locale" content="${page.locale === 'ro' ? 'ro_RO' : 'en_GB'}">
+    <meta property="og:locale" content="${locales[page.locale].og}">
     <meta property="og:site_name" content="${escapeHtml(siteConfig.name)}">
     <meta property="og:type" content="${page.type === 'article' ? 'article' : page.type === 'product' ? 'product' : 'website'}">
     <meta property="og:title" content="${escapeHtml(page.title)}">

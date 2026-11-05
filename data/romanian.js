@@ -2,6 +2,15 @@ import { articles } from "./journal.js";
 import { romanianArticles } from "./journal.ro.js";
 
 export const romanian = {
+  "Product video": "Video de produs",
+  "ZENO Drying Towel product-use video": "Video de utilizare a prosopului ZENO",
+  "2-pack": "Set de 2",
+  "3-pack": "Set de 3",
+  GSM: "GSM",
+  Language: "Limbă",
+  "Delivery region": "Regiune de livrare",
+  "Europe · EUR": "Europa · EUR",
+  "Romania · RON": "România · RON",
   "Explore the drying towel": "Descoperă prosopul de uscare",
   "Explore the towel": "Descoperă prosopul",
   "Product visualisation of the ZENO DETAIL towel on a freshly washed car": "Vizualizare a prosopului ZENO DETAIL pe o mașină proaspăt spălată",

@@ -51,10 +51,10 @@ function renderCartContents(cart) {
     element.hidden = count === 0;
   });
   document.querySelectorAll('[data-open-cart]').forEach((element) => {
-    element.setAttribute('aria-label', `Bag, ${count} ${count === 1 ? 'item' : 'items'}`);
+    element.setAttribute('aria-label', `${translate('Bag')}, ${count}${translate(count === 1 ? ' item' : ' items')}`);
   });
   document.querySelectorAll('[data-cart-count-label]').forEach((element) => {
-    element.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+    element.textContent = `${count}${translate(count === 1 ? ' item' : ' items')}`;
   });
 
   const body = document.querySelector('[data-cart-body]');
@@ -92,8 +92,6 @@ function renderCartContents(cart) {
 function renderCart(cart) {
   renderCartContents(cart);
   for (const target of document.querySelectorAll('[data-cart-body], [data-cart-footer]')) target.innerHTML = localizeMarkup(target.innerHTML);
-  for (const target of document.querySelectorAll('[data-cart-count-label]')) target.textContent = translate(target.textContent);
-  for (const target of document.querySelectorAll('[data-open-cart]')) target.setAttribute('aria-label', translate(target.getAttribute('aria-label')));
 }
 
 function openCart(trigger = document.activeElement) {

@@ -1,26 +1,32 @@
-# Redesign validation
+# Storefront validation
 
-Validated against the production Vite build with `SITE_BASE_PATH=/` and `SITE_BASE_URL=https://zenodetail.com/`.
+The latest production build uses `SITE_BASE_PATH=/` and `SITE_BASE_URL=https://zenodetail.com/`.
 
-- `npm run qa`: production build, source audit and distribution audit passed for all 46 generated routes; all four Node regression tests passed. The sitemap now contains 20 public URLs, including both delivery-information pages.
-- Browser validation: 54 checks passed across English/EUR and Romanian/RON, desktop, mobile and 320-pixel layouts. Coverage includes all public pages, loading every visible image, search, the three-view gallery and zoom, bag quantity/subtotals/removal, persistence, currency switching, mobile navigation and static product content without JavaScript. No browser errors were observed.
-- Accessibility: eight home/product combinations across both languages and desktop/mobile passed with zero violations for WCAG 2 A/AA, 2.1 AA and the additional visible-label/accessibility-name check. Automated scans supplement keyboard and visual review; they do not constitute complete accessibility certification.
-- `git diff --check`: passed.
-- Deployment verification script: shell syntax check passed. The workflow checks the served build-revision against the exact deployed commit, then checks assets, bilingual routes and the custom 404.
+## Current language and market release
 
-Lighthouse 13.6.0 mobile results using simulated throttling:
+The store and all three guides are available in English, Romanian, German, Spanish, Italian, European Portuguese and French. The generator produces 161 HTML routes, with 70 public URLs in the sitemap. Other reserved pages remain noindexed.
 
-| Page | Performance | Accessibility | Best practices | SEO | Largest Contentful Paint | Layout shift |
-| --- | --- | --- | --- | --- | --- | --- |
-| English homepage | 99 | 100 | 100 | 100 | 2.0 seconds | 0 |
-| Romanian product | 96 | 100 | 100 | 100 | 2.7 seconds | 0 |
+Language and market are independent. Romanian direct URLs default to RON; other direct language URLs default to EUR. A chosen market survives language changes and navigation. Browser storage preserves the preference, and URL context provides a fallback when storage is blocked. Checkout remains disabled; the selected client market must never replace validated delivery-country pricing in a future payment service.
 
-These are local lab measurements of the production bundle, not field performance or a search-ranking guarantee.
+Validation:
 
-Current screenshots, browser results and Lighthouse HTML/JSON reports are saved under `/workspace/.cloud-setup/zenod-w/evidence/refined/`; the build/audit log is `/workspace/.cloud-setup/zenod-w/refined-qa.log`. The earlier redesign evidence remains under `evidence/redesign/`. Local evidence and optional QA tools are outside the application repository.
+- Production build, source audit and distribution audit passed for all 161 routes. Coverage includes static content, navigation, assets, schemas, canonical URLs, reciprocal language alternates and absence of long English fallback passages in translated public content.
+- All seven Node regression tests passed. They cover regional amounts and stable identities, safe translation, every language counterpart, persistent bag behavior, market independence, URL preference priority and unavailable-storage fallback.
+- The comprehensive desktop/mobile run passed 155 checks across all seven languages, including all public pages, search, gallery/zoom, bag operations, independent language/market changes and 320-pixel layouts. Its 28 accessibility views had zero violations.
+- After startup optimization, 29 focused checks passed across all seven languages on desktop and mobile, with zero violations in 14 product-page accessibility views.
+- Fourteen additional menu checks passed at 320 and 390 pixels: menu boundaries, keyboard Escape, outside-click dismissal and both market options in every language. The expanded menu now stays inside the viewport.
+- Workflow shell syntax and `git diff --check` passed.
 
-## Publication and ordering
+The optimized German homepage scored **98 performance, 100 accessibility, 100 best practices and 100 SEO** in Lighthouse 13.6.0 mobile simulation. Largest Contentful Paint was 2.3 seconds, Total Blocking Time 50 ms and Cumulative Layout Shift zero. Browser startup prepares only the current locale; metadata and translations are evaluated when needed, and phrase matching considers only relevant entries.
 
-The existing GitHub Pages workflow publishes `main` to `https://zenodetail.com/`. Its final verification job checks the live domain; workflow status can be read from the public GitHub Actions run page. Direct requests to the domain and GitHub API from the current cloud runtime require the saved network additions to be applied. Review and save the environment settings, then publish the environment to apply that configuration. This is separate from the repository's website deployment.
+These are local lab measurements, not field performance or a search-ranking guarantee. Automated accessibility checks supplement keyboard and visual review.
 
-Stripe is selected but not connected. Real orders still require hosted checkout and webhook integration, actual shipping quotes outside Romania, stock and seller information. Warehouse/office details are pending. See [Pricing and ordering handoff](PRICING-AND-LAUNCH.md). Competitor prices remain unverified because the runtime denied access to Flash Detail.
+Current screenshots, comprehensive browser results, menu results and Lighthouse reports are under `/workspace/.cloud-setup/zenod-w/evidence/international/`. Post-optimization interaction results are under `evidence/international-focused/`. The QA output is `/workspace/.cloud-setup/zenod-w/international-qa.log`. Earlier image-redesign evidence remains under `evidence/refined/`. These local artifacts and optional tools are outside the application repository.
+
+## Publication and outstanding inputs
+
+The GitHub Pages workflow checks that the repository Pages source is **GitHub Actions** before publishing, then verifies the served build revision and all 70 public routes. A branch-based Pages source starts a competing publisher and can overwrite the tested Vite output. A successful Git push alone does not verify production publication.
+
+Stripe is selected but not connected. Payments, actual non-Romanian shipping quotes, stock and seller information still require configuration; warehouse and office details are pending. See [Pricing and ordering handoff](PRICING-AND-LAUNCH.md).
+
+The higher European EUR price awaits accessible retailer research; no current competitor prices have been claimed. The owner reported Flash Detail maintenance and deferred its specification lookup. Dimensions, GSM, weave and blend remain unset. Research domains are saved in the cloud configuration draft, but direct research requests remain blocked until that network configuration is applied.

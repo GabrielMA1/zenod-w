@@ -1,5 +1,6 @@
+import { localeIds } from './locales.js';
 import { articles } from './journal.js';
-import { translate } from './localization.js';
+import { translate, currentLocale } from './localization.js';
 
 const suffix = ' | ZENO DETAIL';
 
@@ -101,13 +102,17 @@ for (const article of articles) basePages.push({
   title: `${article.title}${suffix}`, description: article.description, heading: article.title,
 });
 
-export const pages = basePages.flatMap((page) => [
-  { ...page, locale: 'en', logicalRoute: page.route },
-  { ...page, locale: 'ro', logicalRoute: page.route, route: `/ro${page.route}`, output: `ro/${page.output}`, id: `ro-${page.id}`,
-    title: translate(page.title, 'ro'), description: translate(page.description, 'ro'), heading: translate(page.heading, 'ro'), intro: translate(page.intro, 'ro'),
-  },
-]);
+export const pages = basePages.flatMap(page => (typeof window === 'undefined' ? localeIds : [currentLocale()]).map(locale => ({
+  ...page, locale, logicalRoute: page.route,
+  route: locale === 'en' ? page.route : `/${locale}${page.route}`,
+  output: locale === 'en' ? page.output : `${locale}/${page.output}`,
+  id: locale === 'en' ? page.id : `${locale}-${page.id}`,
+  get title() { return translate(page.title, locale); },
+  get description() { return translate(page.description, locale); },
+  get heading() { return translate(page.heading, locale); },
+  get intro() { return translate(page.intro, locale); },
+})));
 
 export function getPage(route) {
-  return pages.find((page) => page.route === route) ?? pages.find((page) => page.id === 'not-found');
+  return pages.find((page) => page.route === route) ?? pages.find((page) => page.type === 'not-found');
 }
