@@ -45,7 +45,7 @@ function read() {
 }
 
 function persist() {
-  localStorage.setItem(storageKey, JSON.stringify(state));
+  try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch { /* Keep the current in-memory bag usable when browser storage is unavailable. */ }
 }
 
 function emit() {

@@ -1,3 +1,5 @@
+import { localizedProduct, currentLocale } from './localization.js';
+
 export const products = [
   {
     id: 'zeno-drying-towel',
@@ -16,9 +18,10 @@ export const products = [
       heading: 'A better final step for every careful wash.',
       body: 'A premium microfiber towel made for vehicle drying, finished in blue with black edging.',
     },
-    price: null,
+    price: 18,
+    regionalPrices: { EUR: 18, RON: 90 },
     compareAt: null,
-    currency: null,
+    currency: 'EUR',
     sku: null,
     barcode: null,
     availability: null,
@@ -53,50 +56,46 @@ export const products = [
     origin: null,
     colors: [{ id: 'zeno-blue', name: 'ZENO blue / black', value: null }],
     variants: [
-      { id: 'single', title: 'Single towel', quantity: 1, enabled: true, price: null, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
+      { id: 'single', title: 'Single towel', quantity: 1, enabled: true, price: 18, regionalPrices: { EUR: 18, RON: 90 }, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
       { id: 'two-pack', title: '2-pack', quantity: 2, enabled: false, price: null, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
       { id: 'three-pack', title: '3-pack', quantity: 3, enabled: false, price: null, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
     ],
     media: [
       {
-        id: 'hero', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: {
-          avif: '/assets/images/products/drying-towel/zeno-drying-towel-hero.avif',
-          webp: '/assets/images/products/drying-towel/zeno-drying-towel-hero.webp',
-          zoom: '/assets/images/products/drying-towel/zeno-drying-towel-hero-zoom.webp',
+        id: 'hero', type: 'image', status: 'illustration', generated: true,
+        src: '/assets/images/editorial/drying-towel-1024.webp',
+        sources: {
+          avif: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/drying-towel-${width}.avif`, width })),
+          webp: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/drying-towel-${width}.webp`, width })),
         },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'Blue ZENO Drying Towel with black edging', caption: 'ZENO Drying Towel', placeholderVariant: 'hero',
+        zoomSrc: '/assets/images/editorial/drying-towel-1024.webp',
+        width: 1024, height: 1024, aspectRatio: '1 / 1',
+        alt: 'Product visualisation of the blue ZENO DETAIL microfiber drying towel with black edging',
+        caption: 'The ZENO drying towel',
       },
       {
-        id: 'front', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: { webp: '/assets/images/products/drying-towel/zeno-drying-towel-front.webp' },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'Full blue ZENO Drying Towel shown flat with black edging', caption: 'Full towel', placeholderVariant: 'front',
+        id: 'detail', type: 'image', status: 'illustration', generated: true,
+        src: '/assets/images/editorial/towel-detail-1024.webp',
+        sources: {
+          avif: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/towel-detail-${width}.avif`, width })),
+          webp: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/towel-detail-${width}.webp`, width })),
+        },
+        zoomSrc: '/assets/images/editorial/towel-detail-1024.webp',
+        width: 1024, height: 1024, aspectRatio: '1 / 1',
+        alt: 'Product visualisation of blue microfiber, black edging and the ZENO DETAIL logo',
+        caption: 'A closer look',
       },
       {
-        id: 'folded', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: { webp: '/assets/images/products/drying-towel/zeno-drying-towel-folded.webp' },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'Folded blue ZENO Drying Towel with black edging', caption: 'Folded profile', placeholderVariant: 'folded',
-      },
-      {
-        id: 'texture', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: { webp: '/assets/images/products/drying-towel/zeno-drying-towel-texture.webp' },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'Close view of the ZENO Drying Towel microfiber texture', caption: 'Microfiber texture', placeholderVariant: 'texture',
-      },
-      {
-        id: 'edge', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: { webp: '/assets/images/products/drying-towel/zeno-drying-towel-edge.webp' },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'Close view of the black edging on the blue ZENO Drying Towel', caption: 'Black edging', placeholderVariant: 'edge',
-      },
-      {
-        id: 'branding', type: 'image', status: 'placeholder', src: null, sources: { avif: [], webp: [] }, zoomSrc: null, focalPoint: { x: 0.5, y: 0.5 },
-        futureSources: { webp: '/assets/images/products/drying-towel/zeno-drying-towel-branding.webp' },
-        width: 1800, height: 1800, aspectRatio: '1 / 1',
-        alt: 'ZENO branding detail on the blue drying towel', caption: 'ZENO branding', placeholderVariant: 'branding',
+        id: 'in-context', type: 'image', status: 'illustration', generated: true,
+        src: '/assets/images/editorial/drying-moment-1536.webp',
+        sources: {
+          avif: [480, 960, 1536].map((width) => ({ src: `/assets/images/editorial/drying-moment-${width}.avif`, width })),
+          webp: [480, 960, 1536].map((width) => ({ src: `/assets/images/editorial/drying-moment-${width}.webp`, width })),
+        },
+        zoomSrc: '/assets/images/editorial/drying-moment-1536.webp',
+        width: 1536, height: 1024, aspectRatio: '3 / 2',
+        alt: 'Product visualisation of the ZENO DETAIL towel on a freshly washed car',
+        caption: 'In your routine',
       },
     ],
     video: {
@@ -118,13 +117,13 @@ export const products = [
     seo: {
       title: 'ZENO Drying Towel | Microfiber Car Drying Towel',
       description: 'Discover the ZENO Drying Towel, made from soft microfiber and finished in blue with black edging.',
-      image: null,
+      image: '/assets/images/editorial/drying-towel-1024.webp',
     },
   },
 ];
 
-export function getProduct(productId) {
-  return products.find((product) => product.id === productId) ?? null;
+export function getProduct(productId, locale = currentLocale()) {
+  return localizedProduct(products.find((product) => product.id === productId), locale);
 }
 
 export function getProductByHandle(handle) {
@@ -139,7 +138,7 @@ export function getVerifiedSpecifications(product) {
   return product.specifications.filter((specification) => specification.verified && specification.value);
 }
 
-export function formatMoney(amount, currency, locale = 'en-US') {
+export function formatMoney(amount, currency, locale = currency === 'RON' ? 'ro-RO' : 'en-IE') {
   if (amount == null || !currency) return null;
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
 }

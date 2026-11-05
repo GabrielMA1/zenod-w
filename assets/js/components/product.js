@@ -4,11 +4,11 @@ import { formatMoney, formatPrice, getPublicVariants, getVerifiedSpecifications 
 import { escapeHtml, attributes, classes } from '../lib/html.js';
 import { icon } from './icons.js';
 
-function sourceMarkup(media) {
+function sourceMarkup(media, sizes) {
   const sources = media.sources ?? {};
   return [
-    sources.avif?.length ? `<source type="image/avif" srcset="${escapeHtml(sources.avif.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}">` : '',
-    sources.webp?.length ? `<source type="image/webp" srcset="${escapeHtml(sources.webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}">` : '',
+    sources.avif?.length ? `<source type="image/avif" srcset="${escapeHtml(sources.avif.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}" sizes="${escapeHtml(sizes)}">` : '',
+    sources.webp?.length ? `<source type="image/webp" srcset="${escapeHtml(sources.webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', '))}" sizes="${escapeHtml(sizes)}">` : '',
   ].join('');
 }
 
@@ -27,15 +27,16 @@ export function productVisualMarkup(product, media = product.media[0], options =
   const variant = media?.placeholderVariant ?? media?.id ?? 'hero';
   const eager = Boolean(options.eager);
   const className = classes('product-visual', options.className);
+  const sizes = options.sizes ?? '(min-width: 64rem) 50vw, 100vw';
 
   if (media?.src) {
     return `<figure class="${className}">
       <picture>
-        ${sourceMarkup(media)}
+        ${sourceMarkup(media, sizes)}
         <img class="product-photo" ${attributes({
           src: toSitePath(media.src),
           srcset: toSiteSrcset(media.srcset),
-          sizes: options.sizes ?? '(min-width: 64rem) 50vw, 100vw',
+          sizes,
           alt: media.alt,
           width: media.width,
           height: media.height,
@@ -53,7 +54,7 @@ export function productVisualMarkup(product, media = product.media[0], options =
 }
 
 export function hasIllustratedMedia(product) {
-  return product.media.some((media) => media.type === 'image' && !media.src);
+  return product.media.some((media) => media.type === 'image' && (media.generated || !media.src));
 }
 
 export function swatchMarkup(product) {
@@ -99,18 +100,18 @@ export function productCardMarkup(product, options = {}) {
   const headingLevel = options.headingLevel ?? 2;
 
   return `<article class="product-listing" data-product-card="${escapeHtml(product.id)}">
-    <a class="product-listing__visual" href="${escapeHtml(toSitePath(product.slug))}" tabindex="-1" aria-label="View ${escapeHtml(product.title)}">
-      ${productVisualMarkup(product, primaryMedia, { className: 'product-listing__art', sizes: '(min-width: 64rem) 48vw, 100vw' })}
+    <a class="product-listing__visual" href="${escapeHtml(toSitePath(product.slug))}" tabindex="-1">
+      ${productVisualMarkup(product, primaryMedia, { className: 'product-listing__art', sizes: '(min-width: 64rem) 48vw, 100vw' })}<span class="visual-caption">Product visualisation</span>
     </a>
     <div class="product-listing__body">
-      <p class="label">${escapeHtml(category?.eyebrow ?? 'Automotive care')}</p>
+      <p class="eyebrow">THE ORIGINAL / ${escapeHtml(category?.eyebrow ?? 'Automotive care')}</p>
       <h${headingLevel} class="product-listing__title"><a href="${escapeHtml(toSitePath(product.slug))}">${escapeHtml(product.title)}</a></h${headingLevel}>
       <p>${escapeHtml(product.shortDescription)}</p>
       ${swatchMarkup(product)}
       <div class="product-listing__action">
         ${price ? `<strong class="product-price"><span>${escapeHtml(price)}</span>${compareAt ? `<del>${escapeHtml(compareAt)}</del>` : ''}</strong>` : ''}
-        <a class="button" href="${escapeHtml(toSitePath(product.slug))}">View the towel ${icon('arrow')}</a>
-        ${canQuickAdd ? `<button class="button button--quiet" type="button" data-add-to-cart="${escapeHtml(product.id)}">Quick add</button>` : ''}
+        <a class="button" href="${escapeHtml(toSitePath(product.slug))}">Explore the towel ${icon('arrow')}</a>
+        ${canQuickAdd ? `<button class="button button--quiet" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to bag ${icon('bag')}</button>` : ''}
       </div>
     </div>
   </article>`;

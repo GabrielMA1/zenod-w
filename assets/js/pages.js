@@ -1,23 +1,28 @@
 import { products, getProduct } from '../../data/products.js';
+import { localizedProduct } from '../../data/localization.js';
+import { journalPageMarkup, articlePageMarkup } from './pages/journal-page.js';
 import { getPage } from '../../data/pages.js';
 import { stripBasePath } from '../../data/deployment.js';
 import { homePageMarkup } from './pages/home.js';
 import { productPageMarkup } from './pages/product-page.js';
 import { collectionPageMarkup } from './pages/collection-page.js';
-import { aboutPageMarkup, faqPageMarkup, unavailablePageMarkup } from './pages/content-pages.js';
+import { aboutPageMarkup, faqPageMarkup, shippingPageMarkup, unavailablePageMarkup } from './pages/content-pages.js';
 
 export function renderPage(page) {
-  const product = page.product ? getProduct(page.product) : products[0];
+  const product = getProduct(page.product ?? products[0].id, page.locale);
   if (page.type === 'home') return homePageMarkup(product);
   if (page.type === 'product' && product) return productPageMarkup(product);
   if (page.type === 'collection') {
     const collectionProducts = page.collection === 'all-products'
       ? products.filter((item) => item.status === 'active')
       : products.filter((item) => item.status === 'active' && item.categoryId === page.collection);
-    return collectionPageMarkup(page, collectionProducts);
+    return collectionPageMarkup(page, collectionProducts.map((item) => localizedProduct(item, page.locale)));
   }
+  if (page.type === 'journal') return journalPageMarkup();
+  if (page.type === 'article') return articlePageMarkup(page);
   if (page.type === 'about') return aboutPageMarkup(product);
   if (page.type === 'faq') return faqPageMarkup(product);
+  if (page.type === 'shipping') return shippingPageMarkup();
   return unavailablePageMarkup();
 }
 

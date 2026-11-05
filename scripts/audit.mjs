@@ -4,11 +4,13 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pages } from '../data/pages.js';
 import {
+  getProduct,
   formatMoney,
   getPublicVariants,
   getVerifiedSpecifications,
   products,
 } from '../data/products.js';
+import { localePath, localizedProduct } from '../data/localization.js';
 import { categories, footerNavigation, primaryNavigation, siteConfig } from '../data/site.js';
 import {
   normalizeBasePath,
@@ -359,7 +361,7 @@ function effectiveProductPrice(product) {
 }
 
 function checkProductSchema(page, html, nodes) {
-  const product = products.find((item) => item.id === page.product);
+  const product = getProduct(page.product, page.locale);
   if (!product) return;
   const productSchemas = schemasOfType(nodes, 'Product');
   if (productSchemas.length !== 1) {
@@ -407,7 +409,7 @@ function checkProductSchema(page, html, nodes) {
   for (const offer of offers) {
     if (Number(offer.price) !== Number(price)) fail(`${page.output}: Product schema offer price does not match visible product data.`);
     if (offer.priceCurrency !== product.currency) fail(`${page.output}: Product schema offer currency does not match product data.`);
-    const formatted = price == null ? null : formatMoney(price, product.currency, siteConfig.locale);
+    const formatted = price == null ? null : formatMoney(price, product.currency, page.locale === 'ro' ? 'ro-RO' : 'en-IE');
     if (formatted && !bodyText.includes(formatted) && !bodyText.includes(String(price))) {
       fail(`${page.output}: Product schema offer price is not visible on the page.`);
     }
@@ -429,8 +431,8 @@ function checkFaqSchema(page, html, nodes) {
 
   const bodyText = visibleBodyText(html);
   const allowedFaqs = page.product
-    ? (products.find((product) => product.id === page.product)?.faqs ?? [])
-    : products.flatMap((product) => ['active', 'published'].includes(product.status) ? product.faqs ?? [] : []);
+    ? (getProduct(page.product, page.locale)?.faqs ?? [])
+    : products.flatMap((product) => ['active', 'published'].includes(product.status) ? localizedProduct(product, page.locale).faqs ?? [] : []);
   const allowedPairs = new Set(allowedFaqs
     .filter((faq) => faq.question?.trim() && faq.answer?.trim())
     .map((faq) => `${normalizeText(faq.question)}\u0000${normalizeText(faq.answer)}`));
@@ -457,7 +459,7 @@ function checkGeneratedPage(page, html) {
   if (title !== page.title) fail(`${page.output}: generated title does not match data/pages.js.`);
   if (descriptionContent !== page.description) fail(`${page.output}: generated meta description does not match data/pages.js.`);
   const language = attribute(html.match(/<html\b([^>]*)>/i)?.[1] ?? '', 'lang');
-  if (language !== siteConfig.locale) fail(`${page.output}: html lang does not match siteConfig.locale.`);
+  if (language !== page.locale) fail(`${page.output}: html lang does not match the page locale.`);
 
   const canonicalLinks = [...html.matchAll(/<link\b([^>]*)>/gi)]
     .filter((match) => attribute(match[1], 'rel')?.toLowerCase().split(/\s+/).includes('canonical'));
@@ -497,13 +499,13 @@ function checkGeneratedPage(page, html) {
   const footerHrefs = anchorHrefs(footer);
   for (const link of primaryNavigation) {
     const expected = link.public !== false && isFeatureEnabled(link.feature);
-    const renderedHref = toSitePath(link.href);
+    const renderedHref = localePath(link.href, page.locale);
     if (expected && !headerHrefs.includes(renderedHref)) fail(`${page.output}: static header is missing public navigation link ${renderedHref}.`);
     if (!expected && headerHrefs.includes(renderedHref)) fail(`${page.output}: static header exposes inactive navigation link ${renderedHref}.`);
   }
   for (const link of Object.values(footerNavigation).flat()) {
     const expected = link.public !== false && isFeatureEnabled(link.feature);
-    const renderedHref = toSitePath(link.href);
+    const renderedHref = localePath(link.href, page.locale);
     if (expected && !footerHrefs.includes(renderedHref)) fail(`${page.output}: static footer is missing public navigation link ${renderedHref}.`);
     if (!expected && footerHrefs.includes(renderedHref)) fail(`${page.output}: static footer exposes inactive navigation link ${renderedHref}.`);
   }

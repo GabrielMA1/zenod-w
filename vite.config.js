@@ -6,6 +6,7 @@ import { siteBasePath, siteBaseUrl } from './data/deployment.js';
 import { pages } from './data/pages.js';
 import { products } from './data/products.js';
 import { siteConfig } from './data/site.js';
+import { images, imageFiles } from './data/media.js';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
@@ -34,7 +35,7 @@ const publishedVideoAssets = products
   .map((asset) => asset.replace(/^\//, ''));
 
 const optionalAssets = [siteConfig.brandAssets.socialImage].filter(Boolean).map((asset) => asset.replace(/^\//, ''));
-const stableAssets = [...new Set([...stableBrandAssets, ...publishedMediaAssets, ...publishedVideoAssets, ...optionalAssets])];
+const stableAssets = [...new Set([...stableBrandAssets, ...publishedMediaAssets, ...publishedVideoAssets, ...optionalAssets, ...Object.values(images).flatMap(imageFiles).map((asset) => asset.slice(1))])];
 
 function copyStableAssets() {
   return {

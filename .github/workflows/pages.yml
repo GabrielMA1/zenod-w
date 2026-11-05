@@ -50,6 +50,9 @@ jobs:
       - name: Audit deployable artifact
         run: npm run audit:dist
 
+      - name: Test localization and bag behavior
+        run: npm test
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
@@ -88,7 +91,7 @@ jobs:
           # build is served or give up after ~10 minutes.
           for attempt in $(seq 1 20); do
             home=$(curl -fsSL --max-time 20 "$base/?v=${GITHUB_SHA}" || true)
-            if grep -q 'class="towel-field' <<<"$home" && grep -q '<link rel="canonical" href="https://zenodetail.com/"' <<<"$home"; then
+            if grep -Fq "name=\"build-revision\" content=\"${GITHUB_SHA}\"" <<<"$home" && grep -q '<link rel="canonical" href="https://zenodetail.com/"' <<<"$home"; then
               break
             fi
             echo "Attempt $attempt: new build not served yet; waiting 30s"
@@ -107,7 +110,9 @@ jobs:
             echo "$code $1"
             [ "$code" = "200" ] || failed=1
           }
-          for path in "$css" "$js" /shop/ /products/drying-towel/ /about/ /faq/ \
+          for path in "$css" "$js" /shop/ /products/drying-towel/ /about/ /faq/ /journal/ \
+                      /ro/ /ro/shop/ /ro/products/drying-towel/ /ro/about/ /ro/faq/ /ro/journal/ \
+                      /shipping-delivery/ /ro/shipping-delivery/ \
                       /robots.txt /sitemap.xml /site.webmanifest \
                       /assets/images/brand/zeno-logo-web-white.svg /assets/images/brand/favicon.svg; do
             check "$path"
@@ -119,6 +124,10 @@ jobs:
 
           product=$(curl -fsSL --max-time 20 "$base/products/drying-towel/?v=${GITHUB_SHA}")
           grep -q 'data-add-to-cart="zeno-drying-towel"' <<<"$product" || { echo "::error::Product page has no add-to-cart control."; failed=1; }
+
+          romanian=$(curl -fsSL --max-time 20 "$base/ro/products/drying-towel/?v=${GITHUB_SHA}")
+          grep -q '<html lang="ro">' <<<"$romanian" || { echo "::error::Romanian product page has the wrong language."; failed=1; }
+          grep -q 'hreflang="en" href="https://zenodetail.com/products/drying-towel/"' <<<"$romanian" || { echo "::error::Romanian product page has no English alternate."; failed=1; }
 
           missing=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$base/this-route-does-not-exist/")
           echo "$missing /this-route-does-not-exist/ (expect 404)"

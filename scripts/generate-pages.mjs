@@ -4,13 +4,13 @@ import { dirname, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { pages } from '../data/pages.js';
+import { localizeMarkup } from '../data/localization.js';
 import { getProduct } from '../data/products.js';
 import { featureEnabled, siteConfig } from '../data/site.js';
 import {
   siteBasePath,
   toAbsoluteSiteUrl,
   toSitePath,
-  toSiteSrcset,
 } from '../data/deployment.js';
 import { announcementMarkup, footerMarkup, headerMarkup, overlayMarkup } from '../assets/js/components/shell.js';
 import { renderPage } from '../assets/js/pages.js';
@@ -18,12 +18,13 @@ import { pageSchemas } from '../assets/js/seo.js';
 import { escapeHtml } from '../assets/js/lib/html.js';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const buildRevision = /^[a-f0-9]{40}$/i.test(process.env.GITHUB_SHA ?? '') ? process.env.GITHUB_SHA : null;
 
 async function writeGeneratedFile(destination, content) {
   const maximumAttempts = 8;
   for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
     try {
-      await writeFile(destination, content, 'utf8');
+      await writeFile(destination, content.replace(/^[ \t]+$/gm, ''), 'utf8');
       return;
     } catch (error) {
       const retryable = ['EBUSY', 'EPERM'].includes(error?.code);
@@ -38,30 +39,36 @@ function pageIsPublic(page) {
 }
 
 function pageHtml(page) {
-  const product = page.product ? getProduct(page.product) : page.type === 'home' || page.type === 'faq' ? getProduct('zeno-drying-towel') : null;
+  const product = page.product ? getProduct(page.product, page.locale) : page.type === 'home' || page.type === 'faq' ? getProduct('zeno-drying-towel', page.locale) : null;
   const noindex = !pageIsPublic(page);
   const canonical = toAbsoluteSiteUrl(page.route);
-  const socialImage = product?.seo?.image ?? siteConfig.brandAssets.socialImage;
+  const socialImage = (page.type === 'product' ? product?.seo?.image : null) ?? siteConfig.brandAssets.socialImage;
   const socialImageUrl = socialImage ? toAbsoluteSiteUrl(socialImage) ?? toSitePath(socialImage) : null;
-  const criticalMedia = ['home', 'product'].includes(page.type) ? product?.media?.[0] : null;
+  const languageLinks = siteConfig.baseUrl ? ['en', 'ro', 'x-default'].map((lang) => {
+    const route = lang === 'ro' ? `/ro${page.logicalRoute}` : page.logicalRoute;
+    return `<link rel="alternate" hreflang="${lang}" href="${escapeHtml(toAbsoluteSiteUrl(route))}">`;
+  }).join('\n    ') : '';
   const contextAttributes = [
     `data-page="${escapeHtml(page.type)}"`, `data-page-id="${escapeHtml(page.id)}"`, `data-route="${escapeHtml(page.route)}"`,
     page.collection ? `data-collection="${escapeHtml(page.collection)}"` : '',
     page.product ? `data-product="${escapeHtml(page.product)}"` : '',
   ].filter(Boolean).join(' ');
 
-  return `<!doctype html>
-<html lang="${escapeHtml(siteConfig.locale)}">
+  return localizeMarkup(`<!doctype html>
+<html lang="${page.locale === 'ro' ? 'ro' : 'en'}">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#090c0f">
+    ${buildRevision ? `<meta name="build-revision" content="${buildRevision}">` : ''}
     <title>${escapeHtml(page.title)}</title>
     <meta name="description" content="${escapeHtml(page.description)}">
     <meta name="robots" content="${noindex ? 'noindex, follow' : 'index, follow'}">
     <link rel="canonical"${canonical ? ` href="${escapeHtml(canonical)}"` : ''} data-canonical-path="${escapeHtml(page.route)}">
+    ${languageLinks}
+    <meta property="og:locale" content="${page.locale === 'ro' ? 'ro_RO' : 'en_GB'}">
     <meta property="og:site_name" content="${escapeHtml(siteConfig.name)}">
-    <meta property="og:type" content="${page.type === 'product' ? 'product' : 'website'}">
+    <meta property="og:type" content="${page.type === 'article' ? 'article' : page.type === 'product' ? 'product' : 'website'}">
     <meta property="og:title" content="${escapeHtml(page.title)}">
     <meta property="og:description" content="${escapeHtml(page.description)}">
     ${canonical ? `<meta property="og:url" content="${escapeHtml(canonical)}" data-canonical-path="${escapeHtml(page.route)}">` : ''}
@@ -74,7 +81,6 @@ function pageHtml(page) {
     <link rel="icon" href="/assets/images/brand/favicon-16.png" sizes="16x16" type="image/png">
     <link rel="apple-touch-icon" href="/assets/images/brand/apple-touch-icon-180.png">
     <link rel="manifest" href="/site.webmanifest">
-    ${criticalMedia?.src ? `<link rel="preload" as="image" href="${escapeHtml(toSitePath(criticalMedia.src))}"${criticalMedia.srcset ? ` imagesrcset="${escapeHtml(toSiteSrcset(criticalMedia.srcset))}"` : ''} imagesizes="(min-width: 64rem) 58vw, 100vw">` : ''}
     <link rel="stylesheet" href="/assets/css/main.css">
     ${pageSchemas(page, product)}
     <script type="module" src="/assets/js/app.js"></script>
@@ -82,14 +88,14 @@ function pageHtml(page) {
   <body ${contextAttributes}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     ${announcementMarkup()}
-    ${headerMarkup(page.route)}
+    ${headerMarkup(page.public === false ? '/' : page.route, page.locale)}
     <main id="main-content">${renderPage(page)}</main>
     ${footerMarkup()}
     ${overlayMarkup(page.route)}
     <div class="sr-only" aria-live="polite" aria-atomic="true" id="site-live-region"></div>
   </body>
 </html>
-`;
+`, page.locale);
 }
 
 for (const page of pages) {

@@ -3,9 +3,11 @@ import { siteConfig } from '../../../data/site.js';
 import { toSitePath } from '../../../data/deployment.js';
 import { addLine, canCheckout, checkout, getCart, initializeCommerce, removeLine, subscribe, updateLine } from '../adapters/commerce.js';
 import { escapeHtml } from '../lib/html.js';
+import { localizeMarkup, translate } from '../../../data/localization.js';
 import { productVisualMarkup } from './product.js';
 
 function announce(message) {
+  message = translate(message);
   const region = document.querySelector('#site-live-region');
   if (!region) return;
   region.textContent = '';
@@ -41,7 +43,7 @@ function lineMarkup(line) {
   </li>`;
 }
 
-function renderCart(cart) {
+function renderCartContents(cart) {
   const lines = cart.lines.map(resolveLine).filter(Boolean);
   const count = lines.reduce((total, line) => total + line.quantity, 0);
   document.querySelectorAll('[data-cart-count]').forEach((element) => {
@@ -49,7 +51,7 @@ function renderCart(cart) {
     element.hidden = count === 0;
   });
   document.querySelectorAll('[data-open-cart]').forEach((element) => {
-    element.setAttribute('aria-label', `Open cart, ${count} ${count === 1 ? 'item' : 'items'}`);
+    element.setAttribute('aria-label', `Bag, ${count} ${count === 1 ? 'item' : 'items'}`);
   });
   document.querySelectorAll('[data-cart-count-label]').forEach((element) => {
     element.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
@@ -83,7 +85,15 @@ function renderCart(cart) {
   footer.innerHTML = `${subtotal ? `<div class="cart-summary-row"><span>Subtotal</span><strong>${escapeHtml(subtotal)}</strong></div>` : ''}
     ${siteConfig.features.shippingReady && siteConfig.shipping.summary ? `<p class="cart-note">${escapeHtml(siteConfig.shipping.summary)}</p>` : ''}
     ${canCheckout() ? '<button class="button button--wide" type="button" data-checkout>Checkout</button>' : ''}
+    ${!canCheckout() ? '<div class="cart-order-note"><strong>Ordering opens soon.</strong><p>Your bag is saved on this device. Shipping and payment options will be available when ordering opens.</p></div>' : ''}
     <a class="button button--quiet button--wide" href="${toSitePath('/products/drying-towel/')}">Continue shopping</a>`;
+}
+
+function renderCart(cart) {
+  renderCartContents(cart);
+  for (const target of document.querySelectorAll('[data-cart-body], [data-cart-footer]')) target.innerHTML = localizeMarkup(target.innerHTML);
+  for (const target of document.querySelectorAll('[data-cart-count-label]')) target.textContent = translate(target.textContent);
+  for (const target of document.querySelectorAll('[data-open-cart]')) target.setAttribute('aria-label', translate(target.getAttribute('aria-label')));
 }
 
 function openCart(trigger = document.activeElement) {

@@ -2,8 +2,11 @@ import { primaryNavigation, siteConfig, visibleFooterNavigation } from '../../..
 import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
 import { icon } from './icons.js';
+import { localePath } from '../../../data/localization.js';
+import { initSearch, searchDialogMarkup } from './search.js';
 
 function currentLink(href, route) {
+  route = route.replace(/^\/ro(?=\/|$)/, '') || '/';
   const target = href.split('#')[0] || '/';
   if (target === '/shop/' && ['/shop/', '/collections/all-products/', '/collections/drying/'].includes(route)) return true;
   if (href === '/' && route === '/') return true;
@@ -29,44 +32,24 @@ export function announcementMarkup() {
   return `<aside class="announcement" aria-label="Store announcement"><p>${content}</p></aside>`;
 }
 
-export function headerMarkup(route) {
-  const cartButton = siteConfig.features.localCart ? `<button class="header-button header-cart" type="button" data-open-cart aria-label="Open cart, 0 items" aria-controls="cart-dialog">
-    Cart<span class="cart-count" data-cart-count hidden>0</span>
-  </button>` : '';
-
-  return `<header class="site-header" data-site-header>
-    <div class="shell header-inner">
-      <a class="brand-lockup" href="${toSitePath('/')}" aria-label="ZENO DETAIL home">
-        <img src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="ZENO DETAIL" width="1180" height="980">
-      </a>
-      <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(route)}</ul></nav>
-      <div class="header-actions">
-        ${cartButton}
-        <button class="header-button mobile-menu-button" type="button" data-open-mobile-menu aria-expanded="false" aria-controls="mobile-menu-dialog">Menu</button>
-      </div>
-    </div>
-  </header>`;
+export function headerMarkup(route, locale = 'en') {
+  const logicalRoute = route.replace(/^\/ro(?=\/|$)/, '') || '/';
+  return `<header class="site-header" data-site-header><div class="shell header-inner">
+    <a class="brand-wordmark" href="${toSitePath('/')}" aria-label="ZENO DETAIL home"><img src="${toSitePath(siteConfig.brandAssets.symbolWhite)}" alt="" width="848" height="524"><span>ZENO <small>DETAIL</small></span></a>
+    <nav class="primary-nav" aria-label="Primary"><ul>${navLinksMarkup(logicalRoute)}</ul></nav>
+    <div class="header-actions"><details class="locale-switch"><summary>${locale === 'ro' ? 'RO / RON' : 'EN / EUR'}<span aria-hidden="true">⌄</span></summary><div><a href="${localePath(logicalRoute, 'en')}" data-language-link hreflang="en" lang="en" ${locale === 'en' ? 'aria-current="true"' : ''}>English · EUR</a><a href="${localePath(logicalRoute, 'ro')}" data-language-link hreflang="ro" lang="ro" ${locale === 'ro' ? 'aria-current="true"' : ''}>Română · RON</a></div></details>
+      <button class="icon-button search-trigger" type="button" data-open-search aria-label="Search the store" aria-controls="search-dialog">${icon('search')}</button>
+      <button class="header-button header-cart" type="button" data-open-cart aria-label="Bag, 0 items" aria-controls="cart-dialog">${icon('bag')}<span class="bag-label">Bag</span><span class="cart-count" data-cart-count hidden>0</span></button>
+      <button class="icon-button mobile-menu-button" type="button" data-open-mobile-menu aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-menu-dialog">${icon('menu')}</button>
+    </div></div></header>`;
 }
 
 export function footerMarkup() {
-  return `<footer class="site-footer">
-    <div class="shell footer-top">
-      <div class="footer-brand">
-        <a class="brand-lockup" href="${toSitePath('/')}" aria-label="ZENO DETAIL home">
-          <img src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="ZENO DETAIL" width="1180" height="980" loading="lazy">
-        </a>
-        <p>Premium car-care essentials, starting with the ZENO Drying Towel.</p>
-      </div>
-      <nav class="footer-nav" aria-label="Footer">${footerColumnsMarkup()}</nav>
-    </div>
-    <div class="shell footer-bottom">
-      <p>© ${new Date().getFullYear()} ZENO DETAIL.</p>
-    </div>
-  </footer>`;
+  return `<footer class="site-footer"><div class="shell footer-top"><div class="footer-brand"><a class="brand-wordmark" href="${toSitePath('/')}" aria-label="ZENO DETAIL home"><img src="${toSitePath(siteConfig.brandAssets.symbolWhite)}" alt="" width="848" height="524"><span>ZENO <small>DETAIL</small></span></a><p>Good care. Great finish.<br>For the love of the drive.</p><span class="footer-brand-name">ZENO DETAIL</span></div><nav class="footer-nav" aria-label="Footer">${footerColumnsMarkup()}</nav></div><div class="shell footer-bottom"><p>© ${new Date().getFullYear()} ZENO DETAIL. All rights reserved.</p><span>CAR CARE. WITH CHARACTER.</span><a href="#main-content">Back to top ↑</a></div><div class="footer-large-word" aria-hidden="true">IT’S IN THE DETAIL.</div></footer>`;
 }
 
 export function overlayMarkup(route) {
-  return `<dialog class="mobile-drawer" id="mobile-menu-dialog" aria-labelledby="mobile-menu-title">
+  return `${searchDialogMarkup()}<dialog class="mobile-drawer" id="mobile-menu-dialog" aria-labelledby="mobile-menu-title">
     <div class="drawer-panel">
       <div class="drawer-header">
         <h2 id="mobile-menu-title" class="label">Menu</h2>
@@ -89,6 +72,7 @@ export function overlayMarkup(route) {
 }
 
 export function initShell() {
+  initSearch();
   const mobileDialog = document.querySelector('#mobile-menu-dialog');
   const menuTrigger = document.querySelector('[data-open-mobile-menu]');
   const header = document.querySelector('[data-site-header]');

@@ -1,5 +1,7 @@
 import { siteConfig } from '../../data/site.js';
 import { toAbsoluteSiteUrl } from '../../data/deployment.js';
+import { translate } from '../../data/localization.js';
+import { getArticle } from '../../data/journal.js';
 import { getVerifiedSpecifications, formatPrice } from '../../data/products.js';
 import { escapeJsonForHtml } from './lib/html.js';
 
@@ -17,6 +19,11 @@ export function pageSchemas(page, product = null) {
     ...(absolute(siteConfig.brandAssets.logoBlack) ? { logo: absolute(siteConfig.brandAssets.logoBlack) } : {}),
   };
   schemas.push(organization);
+  if (page.type === 'home') schemas.push({ '@context': 'https://schema.org', '@type': 'WebSite', name: siteConfig.name, url: absolute(page.route), inLanguage: page.locale === 'ro' ? 'ro-RO' : 'en', description: page.description });
+  if (page.type === 'article') {
+    const article = getArticle(page.article);
+    schemas.push({ '@context': 'https://schema.org', '@type': 'Article', headline: translate(article.title, page.locale), description: page.description, inLanguage: page.locale === 'ro' ? 'ro-RO' : 'en', author: { '@type': 'Organization', name: siteConfig.name }, publisher: organization, mainEntityOfPage: absolute(page.route) });
+  }
 
   if (product && page.type === 'product') {
     const price = formatPrice(product);
@@ -57,9 +64,11 @@ export function pageSchemas(page, product = null) {
     });
   }
 
-  if (siteConfig.baseUrl && page.route !== '/') {
-    const items = [{ name: 'Home', path: '/' }];
-    if (page.type === 'product') items.push({ name: 'Shop', path: '/shop/' });
+  if (siteConfig.baseUrl && page.type !== 'home') {
+    const prefix = page.locale === 'ro' ? '/ro' : '';
+    const items = [{ name: translate('Home', page.locale), path: `${prefix}/` }];
+    if (page.type === 'product') items.push({ name: translate('Shop', page.locale), path: `${prefix}/shop/` });
+    if (page.type === 'article') items.push({ name: translate('Journal', page.locale), path: `${prefix}/journal/` });
     items.push({ name: page.heading, path: page.route });
     schemas.push({
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',

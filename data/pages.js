@@ -1,9 +1,12 @@
+import { articles } from './journal.js';
+import { translate } from './localization.js';
+
 const suffix = ' | ZENO DETAIL';
 
-export const pages = [
+const basePages = [
   {
     route: '/', output: 'index.html', id: 'home', type: 'home',
-    title: 'ZENO DETAIL | Premium Car-Care Products',
+    title: 'ZENO DETAIL | Microfiber Car Care & Drying Essentials',
     description: 'Discover the ZENO Drying Towel, a soft microfiber towel made for vehicle drying.',
     heading: 'A better final step for every careful wash.',
     intro: 'Premium microfiber made for vehicle drying.',
@@ -60,9 +63,10 @@ export const pages = [
     description: 'We couldn’t find the requested contact page.', heading: 'Page not found.', intro: 'We couldn’t find the page you requested.',
   },
   {
-    route: '/shipping-delivery/', output: 'shipping-delivery/index.html', id: 'shipping', type: 'unavailable',
-    feature: 'shippingReady', noindex: true, public: false, title: `Shipping page not found${suffix}`,
-    description: 'We couldn’t find the requested shipping and delivery page.', heading: 'Page not found.', intro: 'We couldn’t find the page you requested.',
+    route: '/shipping-delivery/', output: 'shipping-delivery/index.html', id: 'shipping', type: 'shipping',
+    feature: 'shippingInfoReady', title: `Shipping & delivery in Europe${suffix}`,
+    description: 'Free delivery in Romania. Shipping elsewhere in Europe is priced by address. Read the ZENO DETAIL delivery information.',
+    heading: 'From our collection to your next wash.', intro: 'Delivery across Europe, with free shipping in Romania.',
   },
   {
     route: '/returns/', output: 'returns/index.html', id: 'returns', type: 'unavailable', feature: 'returnsReady',
@@ -85,6 +89,24 @@ export const pages = [
     heading: 'Page not found.', intro: 'We couldn’t find the page you requested.',
   },
 ];
+
+basePages.push({
+  route: '/journal/', output: 'journal/index.html', id: 'journal', type: 'journal', feature: 'guidesReady',
+  title: `Car Care Journal & Practical Drying Guides${suffix}`,
+  description: 'Practical notes on washing, drying and looking after the details.',
+  heading: 'A little knowledge. A better routine.',
+});
+for (const article of articles) basePages.push({
+  route: article.route, output: `${article.route.slice(1)}index.html`, id: article.id, type: 'article', article: article.id, feature: 'guidesReady',
+  title: `${article.title}${suffix}`, description: article.description, heading: article.title,
+});
+
+export const pages = basePages.flatMap((page) => [
+  { ...page, locale: 'en', logicalRoute: page.route },
+  { ...page, locale: 'ro', logicalRoute: page.route, route: `/ro${page.route}`, output: `ro/${page.output}`, id: `ro-${page.id}`,
+    title: translate(page.title, 'ro'), description: translate(page.description, 'ro'), heading: translate(page.heading, 'ro'), intro: translate(page.intro, 'ro'),
+  },
+]);
 
 export function getPage(route) {
   return pages.find((page) => page.route === route) ?? pages.find((page) => page.id === 'not-found');

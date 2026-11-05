@@ -2,6 +2,7 @@ import { getProduct, getPublicVariants, getVerifiedSpecifications, formatPrice, 
 import { siteConfig } from '../../../data/site.js';
 import { toSitePath } from '../../../data/deployment.js';
 import { escapeHtml } from '../lib/html.js';
+import { editorialImage } from '../components/editorial.js';
 import { galleryMarkup } from '../components/gallery.js';
 import { icon } from '../components/icons.js';
 import { faqListMarkup } from '../components/blocks.js';
@@ -39,18 +40,19 @@ function buyBoxMarkup(product) {
   const canAdd = siteConfig.features.localCart && product.purchasable && variants.length;
   return `<div class="pdp-buy-box" data-product-purchase>
     <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="${toSitePath('/')}">Home</a></li><li><a href="${toSitePath('/shop/')}">Shop</a></li><li aria-current="page">${escapeHtml(product.shortTitle)}</li></ol></nav>
-    <h1>${escapeHtml(product.title)}</h1>
+    <p class="eyebrow">THE ZENO ORIGINAL / 01</p><h1>${escapeHtml(product.title)}</h1>
     <p class="pdp-subtitle">${escapeHtml(product.subtitle)}</p>
     ${price ? `<div class="pdp-price" data-product-price><span data-current-price>${escapeHtml(price)}</span><del data-compare-price ${compareAt ? '' : 'hidden'}>${escapeHtml(compareAt ?? '')}</del></div>` : ''}
-    <p class="pdp-description">${escapeHtml(product.description)}</p>
+    <p class="product-availability">${siteConfig.features.checkoutReady ? 'Ready for your next wash' : 'Ordering opens soon'}</p><p class="pdp-description">${escapeHtml(product.description)}</p>
     ${swatchMarkup(product)}
     ${variantsMarkup(product)}
     ${canAdd ? `<div class="purchase-controls">
       ${quantityControlMarkup(1, product.title)}
-      <button class="button button--wide" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to cart ${icon('arrow')}</button>
+      <button class="button button--wide" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to bag ${icon('bag')}</button>
     </div>` : ''}
-    ${siteConfig.features.shippingReady && siteConfig.shipping.summary ? `<p class="buy-reassurance">${icon('check')}${escapeHtml(siteConfig.shipping.summary)}</p>` : ''}
+    ${siteConfig.features.shippingInfoReady && siteConfig.shipping.summary ? `<p class="buy-reassurance">${icon('check')}${escapeHtml(siteConfig.shipping.summary)}</p>` : ''}
     ${siteConfig.features.returnsReady && siteConfig.returns.summary ? `<p class="buy-reassurance">${icon('check')}${escapeHtml(siteConfig.returns.summary)}</p>` : ''}
+    ${!siteConfig.features.checkoutReady ? '<p class="purchase-note">Save your selection in your bag. Online ordering is not open yet.</p>' : ''}
     <ul class="buy-facts" aria-label="Product highlights">
       ${product.benefits.map((benefit) => `<li><strong>${escapeHtml(benefit.title)}.</strong> ${escapeHtml(benefit.body)}</li>`).join('')}
     </ul>
@@ -58,11 +60,11 @@ function buyBoxMarkup(product) {
 }
 
 function detailsMarkup(product) {
-  const label = productLabelMarkup(product, { showPending: true });
+  const label = productLabelMarkup(product);
   return `<section class="pdp-details" aria-labelledby="pdp-details-title">
     <div class="shell pdp-details__grid">
       <div class="pdp-details__copy">
-        <h2 id="pdp-details-title">Drying deserves its own tool.</h2>
+        <p class="eyebrow">THE LITTLE THINGS, CONSIDERED</p><h2 id="pdp-details-title">A proper finish.<br>A dedicated essential.</h2>
         <p class="lede">Once the wash is complete, the drying towel becomes the point of contact.</p>
         <p>ZENO gives that step a dedicated soft microfiber format with a distinct blue-and-black finish: blue microfiber, black edging and clean ZENO branding.</p>
       </div>
@@ -130,6 +132,7 @@ export function productPageMarkup(product) {
     </div>
   </section>
 
+  <div class="product-story-banner">${editorialImage('detail')}<div class="shell"><p class="eyebrow">THAT LAST LOOK BACK.</p><h2>That’s the feeling.</h2></div></div>
   ${detailsMarkup(product)}
   ${usageMarkup(product)}
   ${careMarkup(product)}
@@ -140,6 +143,6 @@ export function productPageMarkup(product) {
 
   ${canAdd ? `<div class="mobile-purchase-bar" data-sticky-purchase hidden>
     <div><span>${escapeHtml(product.shortTitle)}</span>${formatPrice(product) ? `<strong data-sticky-price>${escapeHtml(formatPrice(product))}</strong>` : ''}</div>
-    <button class="button" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to cart</button>
+    <button class="button" type="button" data-add-to-cart="${escapeHtml(product.id)}">Add to bag</button>
   </div>` : ''}`;
 }

@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Set SITE_BASE_URL to emit production-absolute sitemap URLs. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>/</loc></url>
-  <url><loc>/shop/</loc></url>
-  <url><loc>/products/drying-towel/</loc></url>
-  <url><loc>/about/</loc></url>
-  <url><loc>/faq/</loc></url>
+  <url><loc>https://zenodetail.com/</loc></url>
+  <url><loc>https://zenodetail.com/ro/</loc></url>
+  <url><loc>https://zenodetail.com/shop/</loc></url>
+  <url><loc>https://zenodetail.com/ro/shop/</loc></url>
+  <url><loc>https://zenodetail.com/products/drying-towel/</loc></url>
+  <url><loc>https://zenodetail.com/ro/products/drying-towel/</loc></url>
+  <url><loc>https://zenodetail.com/about/</loc></url>
+  <url><loc>https://zenodetail.com/ro/about/</loc></url>
+  <url><loc>https://zenodetail.com/faq/</loc></url>
+  <url><loc>https://zenodetail.com/ro/faq/</loc></url>
+  <url><loc>https://zenodetail.com/shipping-delivery/</loc></url>
+  <url><loc>https://zenodetail.com/ro/shipping-delivery/</loc></url>
+  <url><loc>https://zenodetail.com/journal/</loc></url>
+  <url><loc>https://zenodetail.com/ro/journal/</loc></url>
+  <url><loc>https://zenodetail.com/journal/how-to-dry-your-car/</loc></url>
+  <url><loc>https://zenodetail.com/ro/journal/how-to-dry-your-car/</loc></url>
+  <url><loc>https://zenodetail.com/journal/microfiber-towel-care/</loc></url>
+  <url><loc>https://zenodetail.com/ro/journal/microfiber-towel-care/</loc></url>
+  <url><loc>https://zenodetail.com/journal/choosing-a-drying-towel/</loc></url>
+  <url><loc>https://zenodetail.com/ro/journal/choosing-a-drying-towel/</loc></url>
 </urlset>
