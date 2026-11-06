@@ -22,7 +22,7 @@ The storefront is built and every image slot already exists at its final positio
    ```bash
    npm run images:process -- <slot> path/to/file.png
    ```
-   This validates the ratio and size, writes AVIF and WebP widths to the destination, keeps the original in `media-source/<slot>/` with a checksum, and marks the slot `Ready for review`. `--crop --focal=x,y` crops a mismatched ratio around a focal point instead of failing.
+   This validates the ratio and size, writes AVIF and WebP widths to the destination, keeps the original in `media-source/<slot>/` with a checksum, and marks the slot `Ready for review`. `--crop --focal=x,y` crops a mismatched ratio instead of failing. `focal` is a CSS object-position pair from 0 to 1 (0 aligns the left/top edge, 1 the right/bottom edge), used both for that crop and for every responsive crop on the site.
 3. After visual review: `npm run images:approve -- <slot>`, then `npm run generate`. The page switches from the fallback to the final asset; nothing else changes. `npm run images:status` lists every slot.
 
 ## The ZENO towel — keep it identical in every image
@@ -36,7 +36,7 @@ Paste this description into every prompt (it is already included below). Attach 
 - `assets/images/brand/zeno-logo-white-transparent-bg.png` — the authentic white ZENO DETAIL logo (do not let the generator redraw it from memory)
 - For close-ups also `assets/images/editorial/towel-detail-1024.webp`
 
-**Logo rule.** Check the label against `assets/images/brand/zeno-logo-web-white.svg`. The Z must be two sharp blades, ZENO must be wide and squared, DETAIL must be widely spaced. If the generator distorts any letter, regenerate with the label **blank** (replace the logo sentence with "a small plain black woven label with no marks") and send me that version: I will composite the authentic vector onto the label with a perspective transform so it sits flat on the fabric at the right scale, rather than looking pasted on.
+**Logo rule.** Check the label against `assets/images/brand/zeno-logo-web-white.svg`. The Z must be two sharp blades, ZENO must be wide and squared, DETAIL must be widely spaced. If the generator distorts any letter, regenerate with the label **blank** (replace the logo sentence with "a small plain black woven label with no marks") and send me that version: I will composite the authentic logo onto the label with a perspective transform so it sits flat on the fabric at the right scale, rather than looking pasted on (`scripts/composite-logo-on-label.py`, which can also erase and replace malformed lettering on an existing label).
 
 **Photographic look for every image.** Natural, soft daylight from a large window or open roller door; neutral white balance (about 5500 K); true-to-life contrast; real optical depth of field; fine natural grain allowed. Commercial product photography, not CGI, not a render, not an illustration.
 
@@ -44,12 +44,23 @@ Paste this description into every prompt (it is already included below). Attach 
 
 ---
 
+## Delivered so far
+
+| Slot | Received | Review notes |
+| --- | --- | --- |
+| `home-hero` | 1536 × 1024 | Composition, colour, binding, bonnet and reflections pass. The generator malformed "DETAIL" on the label (barred D, broken L), so the authentic logo was composited onto the label with a perspective warp; only the label area changed. Both the original and the corrected file are in `media-source/home-hero/`. Crop alignment set to `focal: [0.75, 0.45]` so the square phone crop keeps the whole towel. |
+| `product-folded` | 1254 × 1254 | Passes. Label matches the logo. Side margins are tighter (≈5%) than the 10–15% requested; acceptable in the square gallery frame. |
+| `product-edge-label` | 1254 × 1254 | Passes. Label letterforms match the logo; stitching and pile are believable. |
+| `social-default` | composed | 630 × 630 crop of `product-folded` beside the authentic white logo on ink. |
+
+The 1536-pixel square widths were not produced because the sources are 1254 px; the site serves 480, 768 and 1024 for those slots.
+
 ## Priority 1
 
 ### 1. `zeno-home-hero` — Home page opening image
 | | |
 | --- | --- |
-| Slot | `home-hero` · status **Awaiting user image** |
+| Slot | `home-hero` · status **Implemented** (6 November 2026) |
 | Where | Home page first screen: left of the product tag on desktop (cropped to 4:3), first element on phones (cropped to 1:1) |
 | Output filename | `zeno-home-hero.png` |
 | Destination | `assets/images/campaign/zeno-home-hero-{640,1024,1536,2048}.{avif,webp}` |
@@ -81,7 +92,7 @@ Avoid: any text, prices, badges, watermarks or extra logos; car-maker emblems, g
 ### 2. `zeno-drying-towel-folded` — Product gallery image 1, shop, bag
 | | |
 | --- | --- |
-| Slot | `product-folded` · status **Awaiting user image** |
+| Slot | `product-folded` · status **Implemented** (6 November 2026) |
 | Where | First image of the product gallery, shop listing, bag thumbnail, home close-up (small) |
 | Output filename | `zeno-drying-towel-folded.png` |
 | Destination | `assets/images/products/drying-towel/zeno-drying-towel-folded-{480,768,1024,1536}.{avif,webp}` |
@@ -113,7 +124,7 @@ Avoid: text, prices, badges, watermarks, extra logos; more than one towel; exagg
 ### 3. `zeno-drying-towel-edge-label` — Product gallery image 2, home close-up
 | | |
 | --- | --- |
-| Slot | `product-edge-label` · status **Awaiting user image** |
+| Slot | `product-edge-label` · status **Implemented** (6 November 2026) |
 | Where | Product gallery image 2; large image in the home "close-up" section |
 | Output filename | `zeno-drying-towel-edge-label.png` |
 | Destination | `assets/images/products/drying-towel/zeno-drying-towel-edge-label-{480,768,1024,1536}.{avif,webp}` |
@@ -285,8 +296,8 @@ Create a realistic close-up photograph, 3:2 landscape: one hand (natural skin, s
 ### 10. `zeno-og` — social sharing card
 | | |
 | --- | --- |
-| Slot | `social-default` · status **Interim** (`assets/images/social/zeno-og-interim.jpg`, composed from the existing towel visual and the authentic logo PNG) |
-| Output | No generation needed. Once `product-folded` is approved, I recompose the 1200 × 630 card from it and the white logo, process it with `npm run images:process -- social-default card.jpg` and approve it. |
+| Slot | `social-default` · status **Implemented** (6 November 2026): composed from the approved `product-folded` image and the authentic white logo PNG |
+| Output | No generation needed. Recompose it the same way whenever `product-folded` changes. |
 
 ## Blocked — do not generate yet
 

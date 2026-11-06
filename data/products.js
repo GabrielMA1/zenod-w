@@ -1,6 +1,6 @@
 import { locales, markets } from './locales.js';
 import { localizedProduct, currentLocale } from './localization.js';
-import { productGallerySlots, resolveImage } from './media.js';
+import { productGallerySlots, socialImagePath } from './media.js';
 
 export const products = [
   {
@@ -89,7 +89,7 @@ export const products = [
     seo: {
       title: 'ZENO 850 GSM Drying Towel | Microfiber Car Care',
       description: 'ZENO Drying Towel: 850 GSM blue microfiber with black edging, for drying your car after washing. Free delivery in Romania; shipping elsewhere in Europe priced by address.',
-      image: resolveImage('product-folded').src,
+      image: socialImagePath(),
     },
   },
 ];

@@ -35,11 +35,13 @@ Visual review screenshots were taken at 390, 768, 1024, 1280, 1440 and 1920 px, 
 
 | Page | Mode | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Home `/` | Mobile | 95 | 100 | 100 | 100 | 2.7 s | 0 ms | 0.001 |
-| Product | Mobile | 95 | 100 | 100 | 100 | 2.7 s | 0 ms | 0.001 |
-| Polish home `/pl/` | Mobile | 94 | 100 | 100 | 100 | 2.8 s | 0 ms | 0.028 |
+| Home `/` | Mobile | 95 | 100 | 100 | 100 | 2.8 s | 0 ms | 0.031 |
+| Product | Mobile | 94 | 100 | 100 | 100 | 2.9 s | 0 ms | 0.001 |
+| Romanian home `/ro/` | Mobile | 94 | 100 | 100 | 100 | 2.9 s | 0 ms | 0 |
 | Home `/` | Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 ms | 0.004 |
-| Product | Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 ms | 0.009 |
+| Product | Desktop | 100 | 100 | 100 | 100 | 0.5 s | 0 ms | 0.009 |
+
+Re-measured on 6 November 2026 after the first three final visualisations replaced the fallbacks (5 November, with fallbacks: mobile 94–95, LCP 2.7–2.8 s). The browser suite (65 checks) and all audits and tests passed again on that build.
 
 Mobile LCP in Lighthouse's simulated slow 4G sits just above the 2.5 s "good" threshold; 74% of it is render delay behind the single stylesheet (7.6 kB gzipped). Inlining the stylesheet was tried and did not improve the result in this setup, so the cacheable stylesheet was kept. Field data on GitHub Pages should be checked after deployment.
 

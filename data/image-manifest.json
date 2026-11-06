@@ -1,5 +1,5 @@
 {
-  "$comment": "Every website image slot. The renderer uses a slot's own files only when status is 'implemented'; otherwise it shows the named fallback from 'library', or a neutral placeholder where the layout requires one. Process supplied images with: npm run images:process -- <slot> <file>. Prompts and validation criteria: docs/IMAGE-PRODUCTION-QUEUE.md.",
+  "$comment": "Every website image slot. The renderer uses a slot's own files only when status is 'implemented'; otherwise it shows the named fallback from 'library', or a neutral placeholder where the layout requires one. Process supplied images with: npm run images:process -- <slot> <file>. Prompts and validation criteria: docs/IMAGE-PRODUCTION-QUEUE.md. 'focal' and 'fallbackFocal' are CSS object-position percentages (0 = align left/top edge, 1 = right/bottom), not the subject's coordinates: a subject at 60% across a 3:2 image needs about 0.75 to stay centred in a square crop.",
   "statuses": {
     "awaiting-user-image": "Prompt delivered; waiting for the owner's ChatGPT Images output",
     "needs-generation": "Prompt written; not yet requested",
@@ -78,18 +78,28 @@
       "widths": [
         640,
         1024,
-        1536,
-        2048
+        1536
       ],
       "focal": [
-        0.68,
-        0.42
+        0.75,
+        0.45
       ],
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": "drying-moment",
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of the blue ZENO DETAIL drying towel folded on the bonnet of a freshly washed graphite car"
+      "alt": "Product visualisation of the blue ZENO DETAIL drying towel folded on the bonnet of a freshly washed graphite car",
+      "width": 1536,
+      "height": 1024,
+      "source": {
+        "file": "media-source/home-hero/zeno-home-hero.png",
+        "sha256": "f3a8d3bfe58cf12e3ceb1b4cf1f3fea5267301ae9a291d4601fe9be4e513d7fc",
+        "original": [
+          1536,
+          1024
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "product-folded": {
       "priority": 1,
@@ -106,8 +116,7 @@
       "widths": [
         480,
         768,
-        1024,
-        1536
+        1024
       ],
       "focal": [
         0.5,
@@ -115,11 +124,22 @@
       ],
       "gallery": 1,
       "caption": "Folded",
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": "drying-towel",
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of the blue ZENO DETAIL microfiber drying towel, folded, with black edging and the ZENO DETAIL label"
+      "alt": "Product visualisation of the blue ZENO DETAIL microfiber drying towel, folded, with black edging and the ZENO DETAIL label",
+      "width": 1024,
+      "height": 1024,
+      "source": {
+        "file": "media-source/product-folded/zeno-drying-towel-folded.webp",
+        "sha256": "a5d5b0fdb8f98da71db7f0c7b46656b0fcd7516559a34bbcea8afc5db7cce547",
+        "original": [
+          1254,
+          1254
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "product-edge-label": {
       "priority": 1,
@@ -136,8 +156,7 @@
       "widths": [
         480,
         768,
-        1024,
-        1536
+        1024
       ],
       "focal": [
         0.55,
@@ -145,11 +164,22 @@
       ],
       "gallery": 2,
       "caption": "Edge and label",
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": "towel-detail",
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of the black edging and ZENO DETAIL label on blue microfiber"
+      "alt": "Product visualisation of the black edging and ZENO DETAIL label on blue microfiber",
+      "width": 1024,
+      "height": 1024,
+      "source": {
+        "file": "media-source/product-edge-label/zeno-drying-towel-edge-label.webp",
+        "sha256": "7288d7f4269e6eeeb7cd3b7534e8037fdbc8ab73002ad72ab1decc1444694918",
+        "original": [
+          1254,
+          1254
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "product-on-paint": {
       "priority": 2,
@@ -358,12 +388,22 @@
       "widths": [
         1200
       ],
-      "status": "interim",
+      "status": "implemented",
       "fallback": null,
-      "interimFile": "assets/images/social/zeno-og-interim.jpg",
       "generated": true,
       "product": true,
-      "alt": "ZENO DETAIL drying towel with the ZENO DETAIL logo"
+      "alt": "ZENO DETAIL drying towel with the ZENO DETAIL logo",
+      "width": 1200,
+      "height": 630,
+      "source": {
+        "file": "media-source/social-default/zeno-og.png",
+        "sha256": "e9227e6aeeef43d1ce7d7d15bc374f031fb087cb334f5e3f02c5002dc1c754b7",
+        "original": [
+          1200,
+          630
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "product-flat": {
       "priority": 5,

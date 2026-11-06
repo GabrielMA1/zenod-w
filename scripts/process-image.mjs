@@ -3,6 +3,7 @@
 //
 //   npm run images:process -- <slot> <file> [--crop] [--focal=0.5,0.5] [--photo]
 //     --photo marks a real photograph of the product (removes the visualisation caption)
+//     --focal is a CSS object-position pair (0–1), e.g. 0.75,0.45 keeps a right-of-centre subject in a square crop
 //   npm run images:approve -- <slot>          (after visual review: renders it on the site)
 //   npm run images:status                     (lists every slot and its status)
 //
@@ -69,10 +70,11 @@ async function processImage(id, file) {
     const [fx, fy] = (flags.focal ?? (slot.focal ?? [0.5, 0.5]).join(',')).split(',').map(Number);
     if (actual > target) { width = Math.round(oriented.height * target); height = oriented.height; }
     else { width = oriented.width; height = Math.round(oriented.width / target); }
-    const left = Math.max(0, Math.min(oriented.width - width, Math.round(fx * oriented.width - width / 2)));
-    const top = Math.max(0, Math.min(oriented.height - height, Math.round(fy * oriented.height - height / 2)));
+    // Same meaning as CSS object-position: 0 aligns the left/top edge, 1 the right/bottom edge.
+    const left = Math.round(Math.min(1, Math.max(0, fx)) * (oriented.width - width));
+    const top = Math.round(Math.min(1, Math.max(0, fy)) * (oriented.height - height));
     pipeline = pipeline.extract({ left, top, width, height });
-    console.log(`Cropped to ${width} × ${height} around focal ${fx}, ${fy}.`);
+    console.log(`Cropped to ${width} × ${height} at object-position ${fx}, ${fy}.`);
   }
   const buffer = await pipeline.toColourspace('srgb').toBuffer();
   const widths = slot.widths.filter((candidate) => candidate <= width);

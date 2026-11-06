@@ -114,8 +114,10 @@ h3 {
   letter-spacing: -0.012em;
   text-wrap: balance;
   overflow-wrap: break-word;
-  hyphens: auto;
 }
+
+/* Long compounds (German, Dutch, Polish) need hyphenation in narrow columns; English does not. */
+:is(:lang(de), :lang(nl), :lang(pl)) :is(h1, h2, h3) { hyphens: auto; }
 
 h1 { font-size: var(--text-3xl); }
 h2 { font-size: var(--text-2xl); }
