@@ -1,50 +1,60 @@
 /*
-  ZENO visual system: the towel is the brand.
-  Blue field = the product surface. Black edge = binding, structure and every
-  control you take hold of. Everything else stays quiet so those two can carry it.
+  ZENO DETAIL tokens. See DESIGN.md.
+  The wash bay in daylight (ground), the towel's blue (one accent, for the product and
+  the action that buys it) and its black binding (header, footer, product tag).
 */
 :root {
   color-scheme: light;
 
-  /* The towel */
-  --zeno-blue: #1677c0;          /* field; white text passes AA (4.7:1) */
-  --zeno-blue-deep: #0f62a2;     /* hover, pressed, link on light ground */
-  --zeno-blue-tint: #dcebf6;     /* selection, quiet emphasis */
-  --edge: #0b0d0f;               /* the black edging */
-
-  /* Grounds */
-  --ground: #eef0ef;             /* clean panel grey: the page */
-  --ground-raised: #f8f9f8;      /* label and drawer surfaces */
-  --line: #c9cecd;               /* the only rule colour */
-
-  /* Text */
-  --text: #0b0d0f;
-  --text-muted: #4d545a;         /* 6.6:1 on --ground */
-  --text-on-blue: #ffffff;
-  --text-on-blue-muted: #dbe9f5;
-
-  --error: #a82b22;
-  --success: #15744a;
+  --ink: #17181a;
+  --ink-raised: #222427;
+  --ground: #efeeeb;
+  --paper: #f9f9f7;
+  --concrete: #dedbd5;
+  --muted: #55575b;
+  --rule: #cfccc6;
+  --control-line: #7d7f83;
+  --cobalt: #2348b4;
+  --cobalt-deep: #1a3a96;
+  --cobalt-tint: #dfe5f6;
+  --on-ink: #f9f9f7;
+  --on-ink-muted: #a9abaf;
+  --on-ink-rule: #3a3c40;
+  --on-ink-accent: #9db2f2;
+  --status-open: #1d7a4b;
+  --status-soon: #9a6a16;
 
   --font: 'Archivo Variable', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --wide: 118%;                  /* display width, close to the wordmark */
-  --semi-wide: 108%;
+  --display-width: 120%;
+  --display-width-tight: 112%;
 
-  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.86rem);
-  --step-0: clamp(1rem, 0.96rem + 0.18vw, 1.08rem);
-  --step-1: clamp(1.13rem, 1.06rem + 0.33vw, 1.32rem);
-  --step-2: clamp(1.35rem, 1.2rem + 0.7vw, 1.8rem);
-  --step-3: clamp(1.75rem, 1.4rem + 1.5vw, 2.7rem);
-  --step-4: clamp(2.2rem, 1.6rem + 2.6vw, 3.9rem);
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: clamp(1.125rem, 1.08rem + 0.25vw, 1.25rem);
+  --text-xl: clamp(1.35rem, 1.2rem + 0.6vw, 1.6rem);
+  --text-2xl: clamp(1.65rem, 1.35rem + 1.3vw, 2.15rem);
+  --text-3xl: clamp(2rem, 1.45rem + 2.4vw, 3.1rem);
 
-  --edge-width: clamp(0.75rem, 1.5vw, 1.4rem);
-  --gutter: clamp(1rem, 4vw, 3.5rem);
-  --radius: 3px;                 /* controls: barely softened, like a cut edge */
-  --radius-towel: 10px;          /* the towel's own sewn corner */
-  --container: 86rem;
-  --measure: 38rem;
-  --header-height: 4.5rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --section: clamp(3rem, 1.75rem + 4.5vw, 5.75rem);
 
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --container: 88rem;
+  --measure: 40rem;
+  --header-height: 4.25rem;
+
+  --radius-control: 3px;
+  --radius-label: 6px;
+
+  --shadow-float: 0 18px 48px rgb(23 24 26 / 0.18), 0 2px 6px rgb(23 24 26 / 0.12);
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --duration: 180ms;
 }

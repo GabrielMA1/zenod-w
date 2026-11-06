@@ -6,7 +6,7 @@ import { siteBasePath, siteBaseUrl } from './data/deployment.js';
 import { pages } from './data/pages.js';
 import { products } from './data/products.js';
 import { siteConfig } from './data/site.js';
-import { images, imageFiles } from './data/media.js';
+import { publishedImageFiles } from './data/media.js';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
@@ -15,6 +15,8 @@ const stableBrandAssets = [
   'assets/images/brand/zeno-logo-web-white.svg',
   'assets/images/brand/zeno-symbol-black.svg',
   'assets/images/brand/zeno-symbol-white.svg',
+  'assets/images/brand/zeno-wordmark-black.svg',
+  'assets/images/brand/zeno-wordmark-white.svg',
   'assets/images/brand/favicon.svg',
   'assets/images/brand/favicon-16.png',
   'assets/images/brand/favicon-32.png',
@@ -35,7 +37,7 @@ const publishedVideoAssets = products
   .map((asset) => asset.replace(/^\//, ''));
 
 const optionalAssets = [siteConfig.brandAssets.socialImage].filter(Boolean).map((asset) => asset.replace(/^\//, ''));
-const stableAssets = [...new Set([...stableBrandAssets, ...publishedMediaAssets, ...publishedVideoAssets, ...optionalAssets, ...Object.values(images).flatMap(imageFiles).map((asset) => asset.slice(1))])];
+const stableAssets = [...new Set([...stableBrandAssets, ...publishedMediaAssets, ...publishedVideoAssets, ...optionalAssets, ...publishedImageFiles().map((asset) => asset.slice(1))])];
 
 function copyStableAssets() {
   return {

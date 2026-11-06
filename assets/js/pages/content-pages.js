@@ -1,27 +1,86 @@
-import { toSitePath } from "../../../data/deployment.js";
-import { icon } from "../components/icons.js";
-import { faqListMarkup } from "../components/blocks.js";
-import { editorialImage, closingCta } from "../components/editorial.js";
+import { toSitePath } from '../../../data/deployment.js';
+import { siteConfig, storeFaqs } from '../../../data/site.js';
+import { escapeHtml } from '../lib/html.js';
+import { faqListMarkup, deliveryFactsMarkup, guideListMarkup } from '../components/blocks.js';
+import { productTagMarkup, productActionsMarkup } from '../components/product.js';
+import { preferencesToggleMarkup } from '../components/preferences.js';
 
-export function aboutPageMarkup(product) {
-  return `<section class="page-intro about-intro"><div class="shell"><p class="eyebrow">THE ZENO POINT OF VIEW</p><h1>Some see a car.<br>We see <em>the details.</em></h1><p class="lede">For the early starts, the weekend washes and the second look on the way inside.</p></div></section><div class="shell about-cover">${editorialImage("hero", { eager: true })}<span>FOR THE LOVE OF THE DRIVE.</span></div>
-  <section class="section-space"><div class="shell about-story-grid"><div><p class="eyebrow">WHY WE EXIST</p><h2>Care is in<br>the small things.</h2></div><div><p class="lede">Looking after your car can be one of the best parts of owning it.</p><p>ZENO DETAIL is a car-care brand built around that idea. We start with a clear job, choose the details that serve it and make the product straightforward to understand.</p><p>Our first essential is the ZENO Drying Towel: soft microfiber, a distinctive blue-and-black finish and one purpose in your wash routine. It is the beginning of a considered collection.</p><a class="text-link" href="${toSitePath("/products/drying-towel/")}">Meet our first essential ${icon("arrow")}</a></div></div></section>
-  <section class="values-section"><div class="shell"><p class="eyebrow">THE WAY WE THINK</p><div class="routine-grid"><div class="routine-step"><span>01</span><h3>Purpose comes first.</h3><p>Give each product a useful role in the way you care for your car.</p></div><div class="routine-step"><span>02</span><h3>Make the details count.</h3><p>From the materials to the way a product is explained, small choices deserve attention.</p></div><div class="routine-step"><span>03</span><h3>Keep value clear.</h3><p>Show the product, its price and the facts. Help people choose with confidence.</p></div></div></div></section>${closingCta()}`;
+export function pageHeadMarkup(page, { breadcrumbs = null, lede = page.intro } = {}) {
+  return `<div class="shell page-head">
+    ${breadcrumbs ? `<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>${breadcrumbs}</ol></nav>` : ''}
+    <h1>${escapeHtml(page.heading)}</h1>
+    ${lede ? `<p class="lede">${escapeHtml(lede)}</p>` : ''}
+  </div>`;
 }
 
-export function faqPageMarkup(product) {
-  return `<section class="page-intro"><div class="shell"><p class="eyebrow">A LITTLE CLARITY</p><h1>Good questions.<br>Clear answers.</h1><p class="lede">Get to know your next drying essential.</p></div></section><section class="faq-band faq-band--page"><div class="shell faq-layout"><aside class="faq-aside"><p class="eyebrow">THE DRYING TOWEL</p><p>Looking for a better wash routine? Our journal covers the little things that matter.</p><a class="text-link" href="${toSitePath("/journal/")}">Explore the care guides ${icon("arrow")}</a></aside>${faqListMarkup(product.faqs)}</div></section>${closingCta()}`;
+export function aboutPageMarkup(page, product) {
+  return `${pageHeadMarkup(page)}
+  <section class="shell about" aria-label="About ZENO DETAIL">
+    <div class="about__mark">
+      <img src="${toSitePath(siteConfig.brandAssets.logoWhite)}" alt="ZENO DETAIL logo" width="1180" height="980">
+    </div>
+    <div class="about__text prose">
+      <h2>What we make</h2>
+      <p>We start with the tools you touch at the end of a wash. Our first product is the ZENO Drying Towel: 850 GSM microfiber in blue with black edging, priced for each shopping region.</p>
+      <h2>How we describe products</h2>
+      <p>We publish a specification once it is confirmed, and leave it out until it is. Prices are shown in your shopping region’s currency, and delivery terms are explained before you order. We do not use invented reviews, countdowns or crossed-out prices.</p>
+      <h2>Where we deliver</h2>
+      <p>We deliver across Europe. Delivery within Romania is free; elsewhere, shipping is calculated for the delivery address.</p>
+      <div class="about__product">${productTagMarkup(product, { headingLevel: 2, actions: productActionsMarkup(product) })}</div>
+    </div>
+  </section>`;
 }
 
-export function shippingPageMarkup() {
-  return `<section class="page-intro"><div class="shell"><p class="eyebrow">SHIPPING & DELIVERY</p><h1>From our collection<br>to your next wash.</h1><p class="lede">Delivery across Europe, with free shipping in Romania.</p></div></section>
-  <section class="delivery-section"><div class="shell delivery-grid">
-    <article class="delivery-card"><span class="eyebrow">01 / ROMANIA</span><h2>Free delivery.</h2><p>Shipping to addresses in Romania is free.</p><p>There is no delivery charge to add to your product total.</p></article>
-    <article class="delivery-card"><span class="eyebrow">02 / EUROPE</span><h2>Priced for your address.</h2><p>We deliver across Europe. Outside Romania, shipping depends on the delivery address.</p><p>Your delivery charge must be confirmed before payment. We do not apply a single flat rate to every European destination.</p></article>
-    <article class="delivery-card"><span class="eyebrow">03 / ORDERING</span><h2>Getting ready for your first order.</h2><p>Online ordering is not open yet. You can explore the towel and save it in your bag.</p><p>Delivery estimates, dispatch details and complete ordering information will be available before purchases open.</p></article>
-  </div><div class="shell delivery-help"><p>For now, get to know the product and the routine it belongs in.</p><a class="text-link" href="${toSitePath('/products/drying-towel/')}">Explore the towel ${icon('arrow')}</a></div></section>${closingCta()}`;
+export function faqPageMarkup(page, product) {
+  return `${pageHeadMarkup(page)}
+  <div class="shell faq-page">
+    <section class="faq-page__group" aria-labelledby="faq-towel-title">
+      <h2 id="faq-towel-title">The towel</h2>
+      ${faqListMarkup(product.faqs)}
+    </section>
+    <section class="faq-page__group" aria-labelledby="faq-store-title">
+      <h2 id="faq-store-title">Prices, delivery and ordering</h2>
+      ${faqListMarkup(storeFaqs, { openFirst: false })}
+    </section>
+    <aside class="faq-page__aside">
+      <h2>Looking for technique?</h2>
+      <p>Our care guides cover drying a car, washing microfiber and choosing a drying towel.</p>
+      <a class="text-link" href="${toSitePath('/journal/')}">Explore the care guides</a>
+    </aside>
+  </div>`;
+}
+
+export function shippingPageMarkup(page, locale) {
+  return `${pageHeadMarkup(page)}
+  <div class="shell split delivery-page">
+    <div class="split__head">
+      <h2>Your shopping region</h2>
+      <p>Prices and delivery terms follow the shopping region you choose. You can change it at any time.</p>
+      ${preferencesToggleMarkup(locale, 'prefs-toggle prefs-toggle--inline')}
+    </div>
+    ${deliveryFactsMarkup()}
+  </div>
+  <section class="section" aria-labelledby="delivery-next-title">
+    <div class="shell split">
+      <div class="split__head"><h2 id="delivery-next-title">Before ordering opens</h2></div>
+      <div class="prose">
+        <p>Delivery estimates, dispatch details and complete ordering information will be available before purchases open.</p>
+        <p>For now, get to know the product and the routine it belongs in.</p>
+        <a class="text-link" href="${toSitePath('/products/drying-towel/')}">View the towel</a>
+      </div>
+    </div>
+  </section>`;
 }
 
 export function unavailablePageMarkup() {
-  return `<section class="not-found-page"><div class="shell"><p class="eyebrow">A SMALL DETOUR / 404</p><h1>Let’s get you<br>back on track.</h1><p>We couldn’t find the page you requested.</p><div class="actions"><a class="button button--blue" href="${toSitePath("/")}">Back home ${icon("arrow")}</a><a class="text-link" href="${toSitePath("/shop/")}">Explore the collection</a></div></div></section>`;
+  return `<section class="shell not-found">
+    <h1>Page not found.</h1>
+    <p class="lede">We couldn’t find the page you requested.</p>
+    <div class="not-found__actions">
+      <a class="button button--primary" href="${toSitePath('/')}">Back home</a>
+      <a class="button button--secondary" href="${toSitePath('/products/drying-towel/')}">View the towel</a>
+    </div>
+    <h2>Care guides</h2>
+    ${guideListMarkup()}
+  </section>`;
 }

@@ -1,32 +1,54 @@
 # Storefront validation
 
-The latest production build uses `SITE_BASE_PATH=/` and `SITE_BASE_URL=https://zenodetail.com/`.
+Measured on 5 November 2026 against the redesigned storefront, Node 24.22.1, production settings `SITE_BASE_PATH=/` and `SITE_BASE_URL=https://zenodetail.com/`. These are local lab results, not field data or a ranking guarantee.
 
-## Current language and market release
+## Build, audits and tests
 
-The store and all three guides are available in English, Romanian, German, Spanish, Italian, European Portuguese and French. The generator produces 161 HTML routes, with 70 public URLs in the sitemap. Other reserved pages remain noindexed.
+| Check | Result |
+| --- | --- |
+| `npm run qa` (build, source audit, distribution audit, tests) | Passed |
+| Generated routes | 207 (23 per language × 9 languages) |
+| Sitemap | 90 public URLs (10 per language); reserved pages noindexed |
+| Source audit | Passed: navigation, links, assets, headings (one H1), landmarks, accessible names, canonical/hreflang, schema parity, unique titles and descriptions, no English left in translated pages |
+| Distribution audit | Passed for all 207 routes and their assets |
+| Node tests | 15 passed (8 existing, 7 new): nine languages, exact translation coverage for every visible string, approved markets only, explicit-vs-default market logic, per-page market markup and both regional prices, selector contents, image-manifest integrity |
+| Translation coverage (`npm run i18n:check`) | 0 missing strings in ro, de, fr, es, it, pt, pl, nl (305 keys each), including image alt texts for slots not yet live |
 
-Language and market are independent. Romanian direct URLs default to RON; other direct language URLs default to EUR. A chosen market survives language changes and navigation. Browser storage preserves the preference, and URL context provides a fallback when storage is blocked. Checkout remains disabled; the selected client market must never replace validated delivery-country pricing in a future payment service.
+Baseline before the redesign (same commands, same checkout): 161 routes, 70 sitemap URLs, audits passed, 8 tests passed.
 
-Validation:
+## Browser checks (Playwright + Chromium, production preview)
 
-- Production build, source audit and distribution audit passed for all 161 routes. Coverage includes static content, navigation, assets, schemas, canonical URLs, reciprocal language alternates and absence of long English fallback passages in translated public content.
-- All eight Node regression tests passed. They cover regional amounts and stable identities, safe translation, every language counterpart, persistent bag behavior, market independence, URL preference priority, unavailable-storage fallback and branch-release integrity.
-- The comprehensive desktop/mobile run passed 155 checks across all seven languages, including all public pages, search, gallery/zoom, bag operations, independent language/market changes and 320-pixel layouts. Its 28 accessibility views had zero violations.
-- After startup optimization, 29 focused checks passed across all seven languages on desktop and mobile, with zero violations in 14 product-page accessibility views.
-- Fourteen additional menu checks passed at 320 and 390 pixels: menu boundaries, keyboard Escape, outside-click dismissal and both market options in every language. The expanded menu now stays inside the viewport.
-- Workflow shell syntax and `git diff --check` passed.
+65 of 65 checks passed:
 
-The optimized German homepage scored **98 performance, 100 accessibility, 100 best practices and 100 SEO** in Lighthouse 13.6.0 mobile simulation. Largest Contentful Paint was 2.3 seconds, Total Blocking Time 50 ms and Cumulative Layout Shift zero. Browser startup prepares only the current locale; metadata and translations are evaluated when needed, and phrase matching considers only relevant entries.
+- All nine languages on the product page at 390 px: correct `lang`, default market (RON for `/ro/`, EUR elsewhere), price, no horizontal overflow, no console errors.
+- Root first visit: English · EUR, no redirect. Direct `/ro/`: RON and the Romanian delivery notice.
+- German page → Romania region: prices, sticky bar and bag re-priced in place without reload (2 × €22.85 → 180,00 RON); the delivery row is marked as the visitor's region; focus moves into the panel on open and returns on Escape.
+- Then Polish via the selector: lands on `/pl/products/drying-towel/`, keeps RON and the bag; the region persists on navigation and the bag on reload.
+- Română + Europe from the English root: Romanian pages with EUR. Returning to the root from outside restores Romanian; direct English URLs and internal links to the root are not redirected; choosing English again stops the redirect.
+- Browser storage blocked: the explicit region travels in `?market=` and through internal links; no script errors.
+- Gallery next/previous and arrow keys; zoom closes with Escape and returns focus; search finds the product and guides; Dutch mobile menu and the preferences bottom sheet; `404.html`.
+- axe-core 4.10 (WCAG 2.0/2.1/2.2 A and AA rules): zero violations on 12 views (8 desktop, 4 mobile, across en/pl/de/ro/nl) plus the open preferences panel. One contrast defect (product tag inside long-form text on About) was found and fixed during this run.
 
-These are local lab measurements, not field performance or a search-ranking guarantee. Automated accessibility checks supplement keyboard and visual review.
+Visual review screenshots were taken at 390, 768, 1024, 1280, 1440 and 1920 px, including German, Polish, Spanish and Dutch headers. Before/after comparisons are in `docs/screenshots/`.
 
-Current screenshots, comprehensive browser results, menu results and Lighthouse reports are under `/workspace/.cloud-setup/zenod-w/evidence/international/`. Post-optimization interaction results are under `evidence/international-focused/`. The QA output is `/workspace/.cloud-setup/zenod-w/international-qa.log`. Earlier image-redesign evidence remains under `evidence/refined/`. These local artifacts and optional tools are outside the application repository.
+## Lighthouse 12.8.2 (production preview, Chromium 1243)
 
-## Publication and outstanding inputs
+| Page | Mode | Performance | Accessibility | Best practices | SEO | LCP | TBT | CLS |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Home `/` | Mobile | 95 | 100 | 100 | 100 | 2.8 s | 0 ms | 0.031 |
+| Product | Mobile | 94 | 100 | 100 | 100 | 2.9 s | 0 ms | 0.001 |
+| Romanian home `/ro/` | Mobile | 94 | 100 | 100 | 100 | 2.9 s | 0 ms | 0 |
+| Home `/` | Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 ms | 0.004 |
+| Product | Desktop | 100 | 100 | 100 | 100 | 0.5 s | 0 ms | 0.009 |
 
-The GitHub Pages workflow supports both the existing `main` / root branch source and the GitHub Actions source. In branch mode, a clean source commit is built and tested locally; a second commit contains the compiled HTML, bundles, metadata, `.nojekyll` and a checksummed release manifest. Both commits are pushed together, so the branch publisher receives the compiled release. CI checks its source parent and file integrity, then verifies the served source revision and all public routes. The custom deployment job runs only in Actions mode, preventing competing publishers. A push alone still does not establish a successful live-domain verification.
+Re-measured on 6 November 2026 after the first three final visualisations replaced the fallbacks (5 November, with fallbacks: mobile 94–95, LCP 2.7–2.8 s). The browser suite (65 checks) and all audits and tests passed again on that build. After the texture image and the three guide covers were added the same day: product mobile 93 (LCP 2.9 s), guide mobile 96 (LCP 2.5 s), guide desktop 100; 65 of 65 browser checks passed. With every non-blocked slot implemented (on-paint and in-use added), the browser suite again passed 65 of 65. The fifth gallery thumbnail first pushed product-page mobile LCP to 3.3 s (score 90–91) because visible thumbnails loaded at high priority alongside the main image; marking thumbnails `fetchpriority="low"` brought it to 2.7–2.8 s (94–95). Home mobile: 93, LCP 2.9 s.
 
-Stripe is selected but not connected. Payments, actual non-Romanian shipping quotes, stock and seller information still require configuration; warehouse and office details are pending. See [Pricing and ordering handoff](PRICING-AND-LAUNCH.md).
+Mobile LCP in Lighthouse's simulated slow 4G sits just above the 2.5 s "good" threshold; 74% of it is render delay behind the single stylesheet (7.6 kB gzipped). Inlining the stylesheet was tried and did not improve the result in this setup, so the cacheable stylesheet was kept. Field data on GitHub Pages should be checked after deployment.
 
-The higher European EUR price awaits accessible retailer research; no current competitor prices have been claimed. The owner reported Flash Detail maintenance and deferred its specification lookup. The owner supplied 850 GSM; dimensions, weave and blend remain unset. Research domains are saved in the cloud configuration draft, but direct research requests remain blocked until that network configuration is applied.
+JavaScript: the main bundle is 44.7 kB (15.3 kB gzipped), down from 320 kB before the dictionaries were split (the previous release was 260 kB). Pages are translated in static HTML, so the browser fetches only the current language's dictionary (about 12 kB gzipped; none for English).
+
+## Not verified here
+
+- The live domain after deployment (the workflow's verify job covers all nine languages once it runs).
+- Real-device testing on iOS Safari and Android Chrome; screen-reader passes beyond automated checks.
+- Impeccable's detector was not run: its npm package downloads a compiled engine binary that could not be reviewed as source. The design was audited manually against the Design Slop catalogue and the frontend-design checklist instead.

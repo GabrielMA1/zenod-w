@@ -9,11 +9,11 @@ The owner requested a price target 25% below an equivalent Flash Detail product,
 
 These are independently configured regional prices in `data/products.js`, not a live currency conversion. The owner selected the European price of €22.85; it is not an exchange-rate quotation or verified competitor comparison. The owner’s example did not verify the competitor’s current listing, specification or delivered price.
 
-Reading `https://flashdetail.ro/` was blocked by the cloud network policy (proxy CONNECT 403). Required domain entries `flashdetail.ro` and `www.flashdetail.ro` were saved to the environment draft. The competitor’s live design and prices have **not** been inspected. After access is applied, compare the matching towel’s dimensions, material, quantity, taxes and delivered cost. Recalculate the target as `comparable current price × 0.75` and check it against landed cost, payment fees, shipping contribution and the required margin. Do not present a competitor’s price as ZENO’s former price: `compareAt` remains null and no discount percentage or competitor claim is published.
+Competitor listings were inspected on 5 November 2026 (see **Competitor research** below). Recalculate any target as `comparable current price × 0.75` only against a genuinely equivalent towel, and check it against landed cost, payment fees, shipping contribution and the required margin. Do not present a competitor’s price as ZENO’s former price: `compareAt` remains null and no discount percentage or competitor claim is published.
 
 ## What works now
 
-The product can be added to a browser-local bag. Quantity changes, subtotals, removal and persistence work in both languages. Switching languages preserves product IDs, quantities and the selected market. Language no longer determines price: the independent market selector controls EUR versus RON. A Romanian-speaking customer in another European destination can use Romanian with EUR; a German-speaking customer in Romania can use German with RON. In a real checkout, derive prices and shipping from the validated delivery country, not a client-supplied market or price.
+The product can be added to a browser-local bag. Quantity changes, subtotals, removal and persistence work in every language. Switching languages preserves product IDs, quantities and the selected market. Language no longer determines price: the independent market selector controls EUR versus RON. A Romanian-speaking customer in another European destination can use Romanian with EUR; a German-speaking customer in Romania can use German with RON. In a real checkout, derive prices and shipping from the validated delivery country, not a client-supplied market or price.
 
 ## Approved delivery and payment choices
 
@@ -44,3 +44,21 @@ The owner subsequently reported that flashdetail.com is under maintenance for Bl
 ## Owner-provided GSM specification
 
 The current specification is **850 GSM**, supplied by the owner. It is published in every language, including the product subtitle, description, verified-specification table and Product/FAQ structured data. This source records owner approval rather than an independent test. GSM describes fabric mass per area; no absorption-capacity, scratch-safety or durability result is inferred from it. Confirm the supplied inventory matches 850 GSM before activating sales.
+
+## Competitor research (observed 5 November 2026)
+
+Sources were the retailers’ own public product data (Shopify product JSON for Flash Detail) and a product page; prices are as displayed on that date, during Flash Detail’s announced Black Friday period (6–15 November, “up to −40%”). `flashdetail.ro` was unreachable from the research environment (proxy 502); `flashdetail.com` and `www.flashdetail.eu` were reachable.
+
+| Retailer / product | Stated specification | Current price | Reference (“compare-at”) price | Delivery terms shown |
+| --- | --- | --- | --- | --- |
+| Flash Detail RO — *Prosop Flash Detail 850GSM – 90×70 cm* (`flashdetail.com/products/prosop-flash-detail-v2`) | 850 GSM, 90 × 70 cm, twisted-loop microfiber, 700 g shipping weight | **85.00 RON** | 120.00 RON | Free shipping over 120 lei |
+| Flash Detail EU — *Flash Detail Towel* (`flashdetail.eu/products/flash-detail-towel`) | 850 GSM, 90 × 70 cm, twisted loop | **€18.00** | €26.00 | Free EU shipping over €100; DHL Express or Packeta 2–6 business days |
+| Gyeon Q²M SilkDryer EVO 70 × 90 cm (carparts.koeln, DE) | 530 GSM, 70 × 90 cm | **€26.00** incl. 19% VAT | — | Shipping extra |
+
+**What this means for the configured prices (unchanged: 90 RON / €22.85).**
+
+- Romania: 90 RON is exactly 25% below Flash Detail’s 120 RON reference price, the owner’s original target. Against Flash Detail’s current promotional 85 RON it is 5.9% higher. For a single towel the delivered comparison is closer: ZENO delivers free in Romania, while Flash Detail charges shipping below 120 lei (its shipping fee was not visible in the data).
+- Europe: €22.85 is 12% below both the Flash Detail EU reference price (€26.00) and the Gyeon SilkDryer EVO 70 × 90 (€26.00 + shipping), and 27% above Flash Detail’s promotional €18.00. ZENO’s shipping outside Romania is still unpriced, so a delivered comparison is not yet possible.
+- Equivalence is **not established**: ZENO’s dimensions, weave and blend are unconfirmed. Until they are, the store makes no comparative or “percent below” claim.
+
+**Recommendation.** Keep the approved prices. Revisit after Black Friday (Flash Detail’s reference prices may themselves be promotional anchors) and once ZENO’s dimensions, landed cost and EU shipping rates are known. If the owner wants to stay below Flash Detail’s *promotional* level in Romania, that would require 80 RON or less — a margin decision, not a design one.

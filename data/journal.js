@@ -6,7 +6,7 @@ export const articles = [
     teaser: "A little patience. A clean towel. A better finish to your wash.",
     category: "The routine",
     readingTime: "4 min read",
-    image: "hero",
+    cover: "guide-drying",
     description:
       "Learn a careful car-drying routine: work in the shade, inspect your microfiber towel, dry from the roof down and keep dirty towels off clean paint.",
     sections: [
@@ -48,7 +48,7 @@ export const articles = [
       "Keep your drying towel ready for the next wash, and the one after that.",
     category: "Care notes",
     readingTime: "3 min read",
-    image: "towel",
+    cover: "guide-microfiber-care",
     description:
       "Practical microfiber towel care: separate dirty towels, follow the care label, avoid fabric softener, and store clean towels away from dust.",
     sections: [
@@ -89,7 +89,7 @@ export const articles = [
       "Look beyond a big number. Choose the towel that fits your routine.",
     category: "Buying well",
     readingTime: "4 min read",
-    image: "detail",
+    cover: "guide-choosing",
     description:
       "Compare car drying towels by intended use, dimensions, construction, care requirements and total delivered price, without relying on unsupported claims.",
     sections: [

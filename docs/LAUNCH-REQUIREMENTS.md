@@ -1,5 +1,7 @@
 # ZENO DETAIL launch requirements
 
+> **Update, November 2026.** Product media are now generated from `data/image-manifest.json` (see `docs/IMAGE-PRODUCTION-QUEUE.md`); `products[].media[]` is derived from it and should not be edited by hand. Pricing markets are defined in `data/locales.js` (`markets`: EU → EUR, RO → RON) and regional amounts in `products[].regionalPrices`. Nine languages are published (en, ro, de, fr, es, it, pt, pl, nl).
+
 > **Internal only. Never render this document or unresolved values on the storefront.** This is a launch-data contract, not legal advice and not evidence that an input is approved.
 
 ## Schema key

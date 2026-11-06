@@ -1,18 +1,11 @@
-# ZENO Drying Towel media directory
+# ZENO Drying Towel images
 
-Place only approved, web-optimized derivatives here. Keep RAW files, layered masters, releases and color references outside the website repository.
+Website derivatives for the product slots in [`data/image-manifest.json`](../../../../data/image-manifest.json) are written here by the processing script — do not add files by hand:
 
-The complete capture, crop, lighting, responsive-output and claim-safety specification is in [`../../../../docs/PRODUCT-PHOTOGRAPHY-BRIEF.md`](../../../../docs/PRODUCT-PHOTOGRAPHY-BRIEF.md).
+```bash
+npm run images:process -- <slot> path/to/source.png   # validates, writes AVIF/WebP, marks ready-for-review
+npm run images:approve -- <slot>                      # after visual review, renders it on the site
+npm run images:status
+```
 
-The active media contract lives in [`../../../../data/products.js`](../../../../data/products.js). Its canonical slots are:
-
-- `zeno-drying-towel-hero.*`
-- `zeno-drying-towel-front.*`
-- `zeno-drying-towel-folded.*`
-- `zeno-drying-towel-texture.*`
-- `zeno-drying-towel-edge.*`
-- `zeno-drying-towel-branding.*`
-
-For every approved slot, populate `src`, responsive `sources.avif` / `sources.webp`, intrinsic `width` / `height`, optional `zoomSrc`, focal point and accurate alt text. Set `status: 'published'` only after every referenced file exists and has been visually checked. The first PDP/home image is prioritized; later media remains lazy-loaded.
-
-Do not publish concept packaging, generated product photography, baked-in marketing text or visuals that imply unverified performance.
+Prompts, attachments and validation criteria are in [`docs/IMAGE-PRODUCTION-QUEUE.md`](../../../../docs/IMAGE-PRODUCTION-QUEUE.md). Capture standards for real photography are in [`docs/PRODUCT-PHOTOGRAPHY-BRIEF.md`](../../../../docs/PRODUCT-PHOTOGRAPHY-BRIEF.md). Originals are kept in `media-source/<slot>/`; RAW files, layered masters and releases stay outside the repository.

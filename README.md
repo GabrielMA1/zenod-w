@@ -1,10 +1,10 @@
 # ZENO DETAIL storefront
 
-A static Vite storefront for ZENO DETAIL in seven languages: English, Romanian, German, Spanish, Italian, European Portuguese and French. English is served at `/`; other languages use `/ro/`, `/de/`, `/es/`, `/it/`, `/pt/` and `/fr/`. The store, delivery information and three care guides are translated in every language. Polish and Dutch are suggested future additions, not published language versions.
+A static Vite storefront for ZENO DETAIL in nine languages: English (`/`), Romanian (`/ro/`), German (`/de/`), French (`/fr/`), Spanish (`/es/`), Italian (`/it/`), European Portuguese (`/pt/`), Polish (`/pl/`) and Dutch (`/nl/`). Every page, the bag, search, delivery information and the three care guides are translated in every language. The art direction is documented in [DESIGN.md](DESIGN.md); persistent project notes for coding sessions are in [CLAUDE.md](CLAUDE.md).
 
 ## Development
 
-Use Node.js 24 and npm, matching CI. Each cloud task is already isolated; use the existing checkout rather than creating a worktree unless explicitly requested.
+Use Node.js 24 and npm, matching CI.
 
 ```bash
 npm ci
@@ -18,58 +18,64 @@ SITE_BASE_PATH=/ SITE_BASE_URL=https://zenodetail.com/ npm run qa
 npm run preview
 ```
 
-`qa` regenerates the HTML, builds `dist/`, audits generated and built pages, and runs the Node regression tests. `npm test` runs the regression tests against the current generated files. `SITE_BASE_PATH` supports a deployment subdirectory; `SITE_BASE_URL` must have the matching path. The GitHub Pages workflow supplies the production values from its existing configuration.
+`qa` regenerates the HTML, builds `dist/`, audits generated and built pages, and runs the Node regression tests. `npm test` runs the tests against the current generated files; `npm run i18n:check` reports any visible string missing from a language. `SITE_BASE_PATH` supports a deployment subdirectory; `SITE_BASE_URL` must have the matching path.
 
 ## Where to edit
 
 | File | Purpose |
 | --- | --- |
-| `data/products.js` | Product facts, media and regional prices. Current display prices: €22.85 / 90 RON, as selected by the owner. |
-| `data/site.js` | Navigation, brand assets and integration/launch feature gates. |
-| `data/pages.js` | Routes generated for all seven languages. |
-| `data/romanian.js` | Romanian UI, product and guide copy. |
-| `data/journal.js`, `data/journal.ro.js` | English and Romanian care guides. |
-| `data/locales.js` | Supported languages, formatting and market defaults. |
-| `data/translations/*.json` | German, Spanish, Italian, Portuguese and French dictionaries, including guides. |
-| `data/localization.js` | Locale routing, product pricing and translation of visible/accessible content. |
-| `assets/js/pages/` | Page templates. |
-| `assets/js/components/` | Navigation, search, product gallery and bag. |
-| `assets/css/storefront.css` | The new responsive visual system, layered on the shared foundational styles. |
+| `data/products.js` | Product facts, verified specifications and regional prices (€22.85 / 90 RON, owner-selected). |
+| `data/site.js` | Navigation, store FAQs, announcement, brand assets and launch feature gates. |
+| `data/pages.js` | Routes, titles and descriptions generated for every language. |
+| `data/locales.js` | Languages, formatting, pricing markets and market defaults. |
+| `data/translations/<lang>.json` | One dictionary per language, keyed by the exact English string (UI, product, guides, metadata). |
+| `data/localization.js`, `data/dictionaries.js` | Translation and locale routing; Node registers every dictionary, the browser loads only the current one. |
+| `data/journal.js` | Care guides (English source; translations live in the dictionaries). |
+| `data/image-manifest.json`, `data/media.js` | Every image slot: destination, ratio, focal point, status, fallback and alt text. |
+| `assets/js/pages/`, `assets/js/components/` | Page templates; header, preferences selector, gallery, bag, search. |
+| `assets/css/` | `tokens`, `base`, `shell`, `components`, `pages`. |
 | `scripts/generate-pages.mjs` | Static HTML, metadata, language alternates, sitemap and manifest. |
 | `assets/js/seo.js` | Organization, WebSite, Product, FAQ, Article and Breadcrumb structured data. |
 
-HTML is generated from data and templates. Development and QA regenerate HTML inputs; the publication procedure commits compiled HTML and assets for branch-based hosting. Every language contains its content in the initial HTML. Language and market are independent choices in the header menu. Direct Romanian URLs default to the Romanian market; other direct language URLs default to the European market. Explicit market selections persist across language changes, reloads and navigation. The market determines the displayed currency and price; bag storage retains stable IDs and quantities. The optional `?market=RO` or `?market=EU` URL parameter also works when browser storage is unavailable. Canonical URLs exclude this display parameter.
+## Language, region and currency
 
-## Images and SEO
+Language and shopping region are independent choices in the **Language and region** selector (header on larger screens, mobile menu, footer and delivery page). The current choice is shown as, for example, `English · Europe · EUR €`.
 
-Four original visuals are delivered as responsive AVIF/WebP assets. The towels use the supplied Z symbol and full ZENO DETAIL lockup. See [Generated visuals](docs/GENERATED-VISUALS.md) for provenance and the distinction between artwork and verified product photography.
+- First visit to `/`: English, Europe / International, EUR. Nobody is redirected by IP address or browser language.
+- Direct language URLs are always respected. `/ro/` defaults to the Romania region (RON); every other language defaults to Europe (EUR).
+- An explicit region choice persists in browser storage across pages, reloads and language changes; without storage it travels in a `?market=` URL parameter (canonical URLs exclude it). A default is never treated as a choice.
+- Changing region updates every price and the bag in place; changing language opens the equivalent page and keeps the region and the bag.
+- A visitor who explicitly chose another language returns to it when they arrive at the English root from outside the site.
+- Only approved markets exist: EUR (Europe / International) and RON (Romania).
 
-The production build has individual canonical URLs, reciprocal `hreflang` links, `x-default`, localized titles/descriptions, Open Graph metadata, structured data, and a sitemap containing 70 public URLs. Empty categories and incomplete legal/support pages remain noindexed and out of navigation. There are 161 generated routes including those reserved pages.
+## Images
+
+Every image position is a slot in `data/image-manifest.json`. Until a final asset is approved, a slot shows one of the four existing generated visualisations (captioned "Product visualisation") or stays out of the page. Prompts, reference attachments, destinations and validation criteria for the ChatGPT Images production are in [docs/IMAGE-PRODUCTION-QUEUE.md](docs/IMAGE-PRODUCTION-QUEUE.md).
+
+```bash
+npm run images:status
+npm run images:process -- <slot> path/to/image.png   # AVIF + WebP widths, original kept in media-source/
+npm run images:approve -- <slot>                     # after visual review
+```
+
+See [docs/GENERATED-VISUALS.md](docs/GENERATED-VISUALS.md) for provenance and [docs/PRODUCT-PHOTOGRAPHY-BRIEF.md](docs/PRODUCT-PHOTOGRAPHY-BRIEF.md) for real photography.
+
+## SEO
+
+Each language page has its own canonical URL, reciprocal `hreflang` links for all nine languages plus `x-default`, localized titles and descriptions, Open Graph metadata and structured data. The production build generates 207 routes; the sitemap contains the 90 public URLs (10 per language). Empty categories and unfinished legal/support pages remain noindexed and out of navigation. Product structured data has no `offers` until availability and ordering are real.
 
 ## Ordering and pricing
 
-This is a prepared storefront, not a connected checkout. Search, the gallery and local bag work; Stripe is the selected payment provider; its account connection and hosted checkout service still need to be configured. Approved delivery terms are free shipping in Romania and address-based rates elsewhere in Europe. The delivery page publishes these terms while operational shipping rates and order processing remain disabled. The store clearly communicates that ordering is not open. See [Pricing and launch handoff](docs/PRICING-AND-LAUNCH.md) for the proposed prices, competitor-access limitation and the exact remaining inputs.
-
-The previous [launch requirements](docs/LAUNCH-REQUIREMENTS.md) and [photography brief](docs/PRODUCT-PHOTOGRAPHY-BRIEF.md) retain the detailed inventory and operational requirements. Do not enable unconfigured features or publish unsupported specifications, reviews, shipping promises or discount claims.
+This is a prepared storefront, not a connected checkout. Search, the gallery and the local bag work; Stripe is the selected payment provider, but its account connection and a hosted server-side checkout still need to be built. Approved delivery terms are free shipping in Romania and address-based rates elsewhere in Europe. The store says clearly that ordering is not open. See [docs/PRICING-AND-LAUNCH.md](docs/PRICING-AND-LAUNCH.md) for the competitor research and the remaining inputs, and [docs/LAUNCH-REQUIREMENTS.md](docs/LAUNCH-REQUIREMENTS.md) for the full launch-data contract. Do not enable unconfigured features or publish unsupported specifications, reviews, shipping promises or discount claims.
 
 ## Validation
 
-- Source and distribution audits cover all 161 routes, local links/assets, structured-data parity, headings, accessible labels, navigation and deployment paths.
-- `tests/storefront.test.mjs` covers independent regional prices, safe translation of DOM hooks and schema, reciprocal language metadata, and a persistent bag across a language change.
-- Browser validation during the redesign exercises all seven languages on desktop, mobile and narrow screens, including search, gallery navigation, quantity/subtotals, reload persistence and locale switching. Current browser evidence is under `/workspace/.cloud-setup/zenod-w/evidence/international/`.
-
-See [Redesign validation](docs/REDESIGN-VALIDATION.md) for the measured results and their limits.
+See [docs/REDESIGN-VALIDATION.md](docs/REDESIGN-VALIDATION.md) for measured results and [docs/REDESIGN-PROGRESS.md](docs/REDESIGN-PROGRESS.md) for decisions and open work.
 
 ## Publication
 
-The repository supports its existing **Pages branch source at `main` / root**, as well as the optional GitHub Actions source. Only one publisher runs in either mode. The configured custom domain remains `https://zenodetail.com/`.
+The live site at `https://zenodetail.com/` is currently published by **GitHub Actions**: on a push to `main`, `.github/workflows/pages.yml` builds `dist/`, runs the audits and tests, deploys, and then verifies every language route on the live domain. (Checked on 5 November 2026: the live `build-revision` matched the `main` commit and its bundle was built by the workflow, not taken from the repository.)
 
-For the current branch source:
+The workflow also still supports the older **branch source** (`main` / root). In that mode `npm run publish:branch` builds a checksummed release from a clean source commit into the repository root, and CI validates it before the live checks. The `assets/app-*` bundles and `.pages-release.json` at the root are leftovers of that mode and are not served while Actions publishing is active.
 
-1. Commit source changes locally, without pushing yet.
-2. Run `npm run publish:branch`. It requires a clean checkout, runs all QA, builds with the source revision, and copies the compiled production files to the publishing root. Source code and assets remain in their existing folders. The script cleans only obsolete bundle files it previously owned.
-3. Commit the generated release files, then push the source and release commits together. The built-in Pages branch publisher serves the compiled release, with `.nojekyll` enabled.
-
-The release manifest records the source revision and file checksums. CI validates that the release was built from its preceding source commit before running the normal audits and live-domain checks. The published HTML carries that source revision; the enclosing artifact commit has its own Git hash. Running generation or QA rewrites generated HTML, so finish a publishing session by preparing and committing a fresh branch release.
-
-If Pages is changed to **GitHub Actions** later, the same workflow builds and deploys `dist/` directly. The separate branch-artifact preparation is then optional. Website publication does not enable Stripe checkout.
+Website publication never enables Stripe checkout.

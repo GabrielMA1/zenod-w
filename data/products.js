@@ -1,5 +1,6 @@
-import { locales } from './locales.js';
+import { locales, markets } from './locales.js';
 import { localizedProduct, currentLocale } from './localization.js';
+import { productGallerySlots, socialImagePath } from './media.js';
 
 export const products = [
   {
@@ -39,9 +40,9 @@ export const products = [
     specifications: [
       { key: 'productType', label: 'Product type', value: 'Automotive drying towel', verified: true },
       { key: 'material', label: 'Material', value: 'Soft microfiber construction', verified: true },
-      { key: 'color', label: 'Color', value: 'Blue with black edging', verified: true },
+      { key: 'color', label: 'Colour', value: 'Blue with black edging', verified: true },
       { key: 'dimensions', label: 'Dimensions', value: null, verified: false },
-      { key: 'gsm', label: 'GSM', value: '850 GSM', verified: true, source: 'Owner-provided specification' },
+      { key: 'gsm', label: 'Fabric weight', value: '850 GSM', verified: true, source: 'Owner-provided specification' },
       { key: 'blend', label: 'Microfiber blend', value: null, verified: false },
       { key: 'weave', label: 'Pile / weave', value: null, verified: false },
       { key: 'edge', label: 'Edge construction', value: null, verified: false },
@@ -61,44 +62,13 @@ export const products = [
       { id: 'two-pack', title: '2-pack', quantity: 2, enabled: false, price: null, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
       { id: 'three-pack', title: '3-pack', quantity: 3, enabled: false, price: null, compareAt: null, perUnitPrice: null, savings: null, badge: null, sku: null, barcode: null, availability: null, inventory: null, shippingClass: null },
     ],
-    media: [
-      {
-        id: 'hero', type: 'image', status: 'illustration', generated: true,
-        src: '/assets/images/editorial/drying-towel-1024.webp',
-        sources: {
-          avif: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/drying-towel-${width}.avif`, width })),
-          webp: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/drying-towel-${width}.webp`, width })),
-        },
-        zoomSrc: '/assets/images/editorial/drying-towel-1024.webp',
-        width: 1024, height: 1024, aspectRatio: '1 / 1',
-        alt: 'Product visualisation of the blue ZENO DETAIL microfiber drying towel with black edging',
-        caption: 'The ZENO drying towel',
-      },
-      {
-        id: 'detail', type: 'image', status: 'illustration', generated: true,
-        src: '/assets/images/editorial/towel-detail-1024.webp',
-        sources: {
-          avif: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/towel-detail-${width}.avif`, width })),
-          webp: [480, 768, 1024].map((width) => ({ src: `/assets/images/editorial/towel-detail-${width}.webp`, width })),
-        },
-        zoomSrc: '/assets/images/editorial/towel-detail-1024.webp',
-        width: 1024, height: 1024, aspectRatio: '1 / 1',
-        alt: 'Product visualisation of blue microfiber, black edging and the ZENO DETAIL logo',
-        caption: 'A closer look',
-      },
-      {
-        id: 'in-context', type: 'image', status: 'illustration', generated: true,
-        src: '/assets/images/editorial/drying-moment-1536.webp',
-        sources: {
-          avif: [480, 960, 1536].map((width) => ({ src: `/assets/images/editorial/drying-moment-${width}.avif`, width })),
-          webp: [480, 960, 1536].map((width) => ({ src: `/assets/images/editorial/drying-moment-${width}.webp`, width })),
-        },
-        zoomSrc: '/assets/images/editorial/drying-moment-1536.webp',
-        width: 1536, height: 1024, aspectRatio: '3 / 2',
-        alt: 'Product visualisation of the ZENO DETAIL towel on a freshly washed car',
-        caption: 'In your routine',
-      },
-    ],
+    // Resolved from data/image-manifest.json: approved assets replace fallbacks automatically.
+    media: productGallerySlots().map((image) => ({
+      id: image.slotId, slot: image.slotId, type: 'image', status: image.kind, generated: image.generated,
+      src: image.src, sources: image.sources, zoomSrc: image.src,
+      width: image.width, height: image.height, aspectRatio: `${image.width} / ${image.height}`,
+      focal: image.focal, alt: image.alt, caption: image.caption,
+    })),
     video: {
       id: 'product-video', enabled: false, type: 'video', src: null, mimeType: null,
       poster: null, captions: null, width: 1920, height: 1080,
@@ -110,7 +80,7 @@ export const products = [
       { question: 'What does 850 GSM mean?', answer: 'GSM means grams per square metre. The fabric weight specified for this towel is 850 GSM.' },
       { question: 'What is the ZENO Drying Towel for?', answer: 'It is designed for drying vehicles after washing.' },
       { question: 'What is it made from?', answer: 'The towel has a soft microfiber construction.' },
-      { question: 'What color is the towel?', answer: 'It is blue with black edging and ZENO branding.' },
+      { question: 'What colour is the towel?', answer: 'It is blue with black edging and ZENO branding.' },
     ],
     reviews: { enabled: false, provider: null, rating: null, count: 0, items: [] },
     bundles: [],
@@ -118,8 +88,8 @@ export const products = [
     comparison: { enabled: false, columns: [], rows: [] },
     seo: {
       title: 'ZENO 850 GSM Drying Towel | Microfiber Car Care',
-      description: 'Discover the 850 GSM ZENO Drying Towel: blue microfiber with black edging.',
-      image: '/assets/images/editorial/drying-towel-1024.webp',
+      description: 'ZENO Drying Towel: 850 GSM blue microfiber with black edging, for drying your car after washing. Free delivery in Romania; shipping elsewhere in Europe priced by address.',
+      image: socialImagePath(),
     },
   },
 ];
@@ -148,4 +118,14 @@ export function formatMoney(amount, currency, locale = typeof window !== 'undefi
 export function formatPrice(product, variant = null) {
   const selectedVariant = variant ?? getPublicVariants(product)[0] ?? null;
   return formatMoney(selectedVariant?.price ?? product.price, product.currency, locales[product.locale ?? 'en'].format);
+}
+
+// The configured price in every approved market, formatted for one language. The page
+// renders the default market's price; the client swaps it when another market is chosen.
+export function marketPrices(product, variant = null, locale = product.locale ?? 'en') {
+  const selectedVariant = variant ?? getPublicVariants(product)[0] ?? null;
+  const regional = selectedVariant?.regionalPrices ?? product.regionalPrices ?? {};
+  return Object.fromEntries(Object.values(markets).map((market) => [
+    market.id, formatMoney(regional[market.currency], market.currency, locales[locale].format),
+  ]));
 }

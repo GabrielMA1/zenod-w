@@ -54,7 +54,7 @@ export function pageSchemas(page, product = null) {
     schemas.push(productSchema);
   }
 
-  if (product && ['home', 'product', 'faq'].includes(page.type) && product.faqs.length) {
+  if (product && ['product', 'faq'].includes(page.type) && product.faqs.length) {
     schemas.push({
       '@context': 'https://schema.org', '@type': 'FAQPage',
       mainEntity: product.faqs.map((item) => ({
@@ -68,7 +68,7 @@ export function pageSchemas(page, product = null) {
     const prefix = page.locale === 'en' ? '' : `/${page.locale}`;
     const items = [{ name: translate('Home', page.locale), path: `${prefix}/` }];
     if (page.type === 'product') items.push({ name: translate('Shop', page.locale), path: `${prefix}/shop/` });
-    if (page.type === 'article') items.push({ name: translate('Journal', page.locale), path: `${prefix}/journal/` });
+    if (page.type === 'article') items.push({ name: translate('Care guides', page.locale), path: `${prefix}/journal/` });
     items.push({ name: page.heading, path: page.route });
     schemas.push({
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',

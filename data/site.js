@@ -1,4 +1,5 @@
 import { siteBaseUrl } from './deployment.js';
+import { socialImagePath } from './media.js';
 
 export const siteConfig = {
   name: 'ZENO DETAIL',
@@ -15,7 +16,15 @@ export const siteConfig = {
   privacyEmail: null,
   phone: null,
   socialLinks: [],
-  announcement: { enabled: true, text: 'GOOD CARE. GREAT FINISH.', link: null },
+  // Market-specific notice shown above the header. Plain operational facts only.
+  announcement: {
+    enabled: true,
+    byMarket: {
+      RO: 'Free delivery in Romania. Online ordering opens soon.',
+      EU: 'Delivery across Europe, priced for your address. Online ordering opens soon.',
+    },
+    link: '/shipping-delivery/',
+  },
   features: {
     localCart: true,
     commerceReady: false,
@@ -47,15 +56,15 @@ export const siteConfig = {
     logoWhite: '/assets/images/brand/zeno-logo-web-white.svg',
     symbolBlack: '/assets/images/brand/zeno-symbol-black.svg',
     symbolWhite: '/assets/images/brand/zeno-symbol-white.svg',
-    socialImage: '/assets/images/editorial/workshop-car-1536.webp',
+    socialImage: socialImagePath(),
     socialImageFuturePath: '/assets/images/social/zeno-og.webp',
   },
 };
 
 export const primaryNavigation = [
-  { label: 'Shop', href: '/shop/' },
-  { label: 'Drying Towel', href: '/products/drying-towel/' },
-  { label: 'Journal', href: '/journal/' },
+  { label: 'Drying towel', href: '/products/drying-towel/' },
+  { label: 'Guides', href: '/journal/' },
+  { label: 'Delivery', href: '/shipping-delivery/', feature: 'shippingInfoReady' },
   { label: 'About', href: '/about/' },
   { label: 'FAQ', href: '/faq/' },
 ];
@@ -63,18 +72,17 @@ export const primaryNavigation = [
 export const footerNavigation = {
   Shop: [
     { label: 'ZENO Drying Towel', href: '/products/drying-towel/' },
-    { label: 'Shop', href: '/shop/' },
+    { label: 'All products', href: '/shop/' },
   ],
-  Explore: [
-    { label: 'Why ZENO', href: '/#why-zeno' },
-    { label: 'About ZENO', href: '/about/' },
-    { label: 'Care guides', href: '/journal/' },
+  Help: [
+    { label: 'Delivery', href: '/shipping-delivery/', feature: 'shippingInfoReady' },
     { label: 'FAQ', href: '/faq/' },
-  ],
-  Support: [
+    { label: 'Care guides', href: '/journal/' },
     { label: 'Contact', href: '/contact/', feature: 'contactReady' },
-    { label: 'Shipping & delivery', href: '/shipping-delivery/', feature: 'shippingInfoReady' },
     { label: 'Returns', href: '/returns/', feature: 'returnsReady' },
+  ],
+  Company: [
+    { label: 'About ZENO', href: '/about/' },
   ],
   Legal: [
     { label: 'Privacy policy', href: '/privacy/', feature: 'legalReady' },
@@ -112,3 +120,11 @@ export function visibleFooterNavigation() {
       .filter(([, links]) => links.length),
   );
 }
+
+// Store questions shown on the FAQ page. Facts only: each answer reflects current configuration.
+export const storeFaqs = [
+  { question: 'Can I order now?', answer: 'Not yet. Online ordering has not opened. You can add the towel to your bag, and it stays saved on this device until ordering opens.' },
+  { question: 'How much does delivery cost?', answer: 'Delivery within Romania is free. For other European addresses, shipping is calculated for the delivery address; there is no single flat rate.' },
+  { question: 'Which currency are prices shown in?', answer: 'Prices are shown in RON for the Romania shopping region and in EUR for Europe / International. You can change the shopping region at any time under Language and region.' },
+  { question: 'Can I read the site in one language and shop in another region?', answer: 'Yes. Language and shopping region are separate settings. For example, you can read the site in Romanian and see European prices in EUR.' },
+];
