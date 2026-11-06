@@ -230,8 +230,7 @@
       "widths": [
         480,
         768,
-        1024,
-        1536
+        1024
       ],
       "focal": [
         0.5,
@@ -239,11 +238,22 @@
       ],
       "gallery": 4,
       "caption": "Microfiber close-up",
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": null,
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of the blue microfiber pile of the ZENO Drying Towel in close-up"
+      "alt": "Product visualisation of the blue microfiber pile of the ZENO Drying Towel in close-up",
+      "width": 1024,
+      "height": 1024,
+      "source": {
+        "file": "media-source/product-texture/zeno-drying-towel-texture.webp",
+        "sha256": "b3cfbd69b08715e76344349d8755a70944091af00a1938db348786e42550dc90",
+        "original": [
+          1254,
+          1254
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "drying-in-use": {
       "priority": 2,
@@ -301,7 +311,7 @@
         0.5,
         0.5
       ],
-      "status": "needs-generation",
+      "status": "implemented",
       "fallback": "workshop-car",
       "fallbackFocal": [
         0.72,
@@ -309,7 +319,18 @@
       ],
       "generated": true,
       "product": false,
-      "alt": "Water beading on the bonnet of a freshly rinsed graphite car in a daylight wash bay"
+      "alt": "Water beading on the bonnet of a freshly rinsed graphite car in a daylight wash bay",
+      "width": 1536,
+      "height": 1024,
+      "source": {
+        "file": "media-source/guide-drying/zeno-guide-drying.webp",
+        "sha256": "867416e7b54d5b07eb1b2fa1f7e0f485b59381c9e6ffc8541579a3b7f00daf81",
+        "original": [
+          1536,
+          1024
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "guide-microfiber-care": {
       "priority": 3,
@@ -332,7 +353,7 @@
         0.5,
         0.5
       ],
-      "status": "needs-generation",
+      "status": "implemented",
       "fallback": "drying-towel",
       "fallbackFocal": [
         0.5,
@@ -340,7 +361,18 @@
       ],
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of a clean, folded ZENO DETAIL towel on a shelf beside a laundry basket"
+      "alt": "Product visualisation of a clean, folded ZENO DETAIL towel on a shelf beside a laundry basket",
+      "width": 1536,
+      "height": 1024,
+      "source": {
+        "file": "media-source/guide-microfiber-care/zeno-guide-microfiber-care.webp",
+        "sha256": "f63fc0cea819fdba96911c93bd69aacf9dfd179ace12e2e8d39768ad9ed93f5d",
+        "original": [
+          1536,
+          1024
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "guide-choosing": {
       "priority": 3,
@@ -361,9 +393,9 @@
       ],
       "focal": [
         0.5,
-        0.5
+        0.55
       ],
-      "status": "needs-generation",
+      "status": "implemented",
       "fallback": "towel-detail",
       "fallbackFocal": [
         0.6,
@@ -371,7 +403,18 @@
       ],
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of a hand feeling the blue microfiber pile at the edge of the ZENO DETAIL towel"
+      "alt": "Product visualisation of a hand feeling the blue microfiber pile at the edge of the ZENO DETAIL towel",
+      "width": 1536,
+      "height": 1024,
+      "source": {
+        "file": "media-source/guide-choosing/zeno-guide-choosing.webp",
+        "sha256": "0b6f7728c46a4212714c77289ae9da18bfe31ef6e4b5c813414804da29925d52",
+        "original": [
+          1536,
+          1024
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "social-default": {
       "priority": 4,
@@ -397,7 +440,7 @@
       "height": 630,
       "source": {
         "file": "media-source/social-default/zeno-og.png",
-        "sha256": "e9227e6aeeef43d1ce7d7d15bc374f031fb087cb334f5e3f02c5002dc1c754b7",
+        "sha256": "8268a819f0013320d79fdcdae4c6c11f818b9052785526de4162923f438f843e",
         "original": [
           1200,
           630

@@ -34,7 +34,7 @@ Add a language only with a complete, reviewed dictionary: add it to `data/locale
 
 ## Open items
 
-1. **Images (owner):** Priority 1 is done (hero, folded, edge and label, social card — 6 November). Next: Priority 2 (`product-on-paint`, `product-texture`, `drying-in-use`), then the three guide covers. The product gallery's third image and the home routine image still use older fallbacks.
+1. **Images (owner):** done on 6 November: hero, folded, edge and label, texture, the three guide covers and the social card. Remaining: `product-on-paint` (revised prompt; the first attempt was rejected) and `drying-in-use`. The product gallery's third image and the home routine image still use older fallbacks.
 2. **Owner confirmation:** the horizontal symbol + wordmark arrangement in the header; the label/branding method on the real towel (the visualisations show a woven black label).
 3. **Before launch:** real product photographs; dimensions, blend, weave; VAT treatment and price display wording; EU shipping rates and destinations; seller identity, contact, returns and legal pages; Stripe server-side checkout. See `docs/LAUNCH-REQUIREMENTS.md`.
 4. **Clean-up:** the root `assets/app-*` bundles and `.pages-release.json` belong to the old branch-publishing mode and are unused while GitHub Actions publishes; remove them only once branch mode is retired.

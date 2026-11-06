@@ -41,7 +41,7 @@ Visual review screenshots were taken at 390, 768, 1024, 1280, 1440 and 1920 px, 
 | Home `/` | Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 ms | 0.004 |
 | Product | Desktop | 100 | 100 | 100 | 100 | 0.5 s | 0 ms | 0.009 |
 
-Re-measured on 6 November 2026 after the first three final visualisations replaced the fallbacks (5 November, with fallbacks: mobile 94–95, LCP 2.7–2.8 s). The browser suite (65 checks) and all audits and tests passed again on that build.
+Re-measured on 6 November 2026 after the first three final visualisations replaced the fallbacks (5 November, with fallbacks: mobile 94–95, LCP 2.7–2.8 s). The browser suite (65 checks) and all audits and tests passed again on that build. After the texture image and the three guide covers were added the same day: product mobile 93 (LCP 2.9 s), guide mobile 96 (LCP 2.5 s), guide desktop 100; 65 of 65 browser checks passed.
 
 Mobile LCP in Lighthouse's simulated slow 4G sits just above the 2.5 s "good" threshold; 74% of it is render delay behind the single stylesheet (7.6 kB gzipped). Inlining the stylesheet was tried and did not improve the result in this setup, so the cacheable stylesheet was kept. Field data on GitHub Pages should be checked after deployment.
 

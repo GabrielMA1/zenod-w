@@ -31,10 +31,10 @@ Paste this description into every prompt (it is already included below). Attach 
 
 > The ZENO DETAIL drying towel: a plush automotive microfiber drying towel in a deep royal cobalt blue (in neutral daylight close to #2A4FBF — not cyan, not navy, not purple), with a dense, even, slightly looped pile and a soft matte surface. Its entire perimeter is finished with a narrow black fabric binding, about 1 cm wide, with neat matching stitching and gently rounded corners. A small square black woven label is sewn just inside one corner; it carries the white ZENO DETAIL logo exactly as in the attached logo file — the angular two-blade Z symbol above the wide ZENO wordmark, with DETAIL spaced out underneath. No other text, tags or logos anywhere on the towel.
 
-**Attach to every product image:**
-- `assets/images/editorial/drying-towel-1024.webp` — towel colour, pile, binding and label reference
+**Attach to every product image** (approved references since 6 November 2026):
+- `media-source/product-folded/zeno-drying-towel-folded.webp` — towel colour, pile, binding and label reference
+- `media-source/product-edge-label/zeno-drying-towel-edge-label.webp` — pile loops, binding width and stitching
 - `assets/images/brand/zeno-logo-white-transparent-bg.png` — the authentic white ZENO DETAIL logo (do not let the generator redraw it from memory)
-- For close-ups also `assets/images/editorial/towel-detail-1024.webp`
 
 **Logo rule.** Check the label against `assets/images/brand/zeno-logo-web-white.svg`. The Z must be two sharp blades, ZENO must be wide and squared, DETAIL must be widely spaced. If the generator distorts any letter, regenerate with the label **blank** (replace the logo sentence with "a small plain black woven label with no marks") and send me that version: I will composite the authentic logo onto the label with a perspective transform so it sits flat on the fabric at the right scale, rather than looking pasted on (`scripts/composite-logo-on-label.py`, which can also erase and replace malformed lettering on an existing label).
 
@@ -51,7 +51,12 @@ Paste this description into every prompt (it is already included below). Attach 
 | `home-hero` | 1536 × 1024 | Composition, colour, binding, bonnet and reflections pass. The generator malformed "DETAIL" on the label (barred D, broken L), so the authentic logo was composited onto the label with a perspective warp; only the label area changed. Both the original and the corrected file are in `media-source/home-hero/`. Crop alignment set to `focal: [0.75, 0.45]` so the square phone crop keeps the whole towel. |
 | `product-folded` | 1254 × 1254 | Passes. Label matches the logo. Side margins are tighter (≈5%) than the 10–15% requested; acceptable in the square gallery frame. |
 | `product-edge-label` | 1254 × 1254 | Passes. Label letterforms match the logo; stitching and pile are believable. |
-| `social-default` | composed | 630 × 630 crop of `product-folded` beside the authentic white logo on ink. |
+| `social-default` | composed | Owner's layout: authentic white logo on ink at left, the approved `product-folded` image (630 × 630) at right. |
+| `product-texture` | 1254 × 1254 | Passes. Looped pile consistent with the other images; no logo. |
+| `guide-drying` | 1536 × 1024 | Passes. No badges or recognisable model; believable beading. |
+| `guide-microfiber-care` | 1536 × 1024 | Passes. One towel, label matches the logo, no third-party brands. |
+| `guide-choosing` | 1536 × 1024 | Passes. Five correctly formed digits; label matches the logo. Crop alignment `focal: [0.5, 0.55]` keeps the hand and label in the wide article cover. |
+| *(not used)* towel laid flat on a roof | 1536 × 1024 | Rejected for `product-on-paint`: the pile is flat and fleece-like with a thinner binding, unlike every approved image, and it shows the whole towel outline (unverified proportions). See the revised prompt below. |
 
 The 1536-pixel square widths were not produced because the sources are 1254 px; the site serves 480, 768 and 1024 for those slots.
 
@@ -153,41 +158,40 @@ Avoid: text other than the logo, printed-sticker look, distorted letters, frayed
 
 ## Priority 2
 
-### 4. `zeno-drying-towel-on-paint` — Product gallery image 3
+### 4. `zeno-drying-towel-on-paint` — Product gallery image 3 (revised prompt)
 | | |
 | --- | --- |
-| Slot | `product-on-paint` · status **Awaiting user image** |
+| Slot | `product-on-paint` · status **Awaiting user image** (fallback: `drying-moment`) |
 | Where | Product gallery image 3 (square) |
 | Output filename | `zeno-drying-towel-on-paint.png` |
 | Destination | `assets/images/products/drying-towel/zeno-drying-towel-on-paint-{480,768,1024,1536}.{avif,webp}` |
 | Aspect ratio | 1:1 |
-| Composition | Towel draped half-folded over the edge of a wet graphite car roof, with one end hanging just over the roof edge; camera slightly above roof height looking along the roof; towel centred, label visible; water beads on the roof in front. |
-| Lighting | Soft daylight from behind-left; long soft reflection along the roof. |
-| Environment | Same wash bay as image 1, out of focus. |
-| Attachments | `drying-towel-1024.webp`, `zeno-logo-white-transparent-bg.png`, `drying-moment-1536.webp` |
+| Composition | Towel folded in half and draped over the edge of a wet graphite car roof, one end hanging just over the edge. The full outline of the towel must never be visible. Camera slightly above roof height looking along the roof; towel centred; label visible; water beads in front. |
+| Why revised | The first attempt laid the towel flat (showing its full proportions) and drew a flat fleece pile with a thin binding. The prompt now forbids both and names the approved references. |
+| Attachments | `zeno-drying-towel-folded.webp`, `zeno-drying-towel-edge-label.webp` (from `media-source/`), `zeno-logo-white-transparent-bg.png`, and `media-source/home-hero/zeno-home-hero.png` for the car and light |
 
 **Prompt**
 ```
 Create a realistic commercial photograph, square 1:1.
 
-Subject: the ZENO DETAIL drying towel draped half-folded over the edge of the roof of a freshly washed dark graphite car, one end hanging just over the roof edge. The ZENO DETAIL drying towel: a plush automotive microfiber drying towel in a deep royal cobalt blue (in neutral daylight close to #2A4FBF — not cyan, not navy, not purple), with a dense, even, slightly looped pile and a soft matte surface. Its entire perimeter is finished with a narrow black fabric binding, about 1 cm wide, with neat matching stitching and gently rounded corners. A small square black woven label is sewn just inside one corner; it carries the white ZENO DETAIL logo exactly as in the attached logo file — the angular two-blade Z symbol above the wide ZENO wordmark, with DETAIL spaced out underneath. No other text, tags or logos anywhere on the towel. Match the attached product reference.
+Subject: the ZENO DETAIL drying towel, folded in half and draped over the edge of the roof of a freshly washed dark graphite car, so that one folded end hangs just over the roof edge. Only part of the towel is visible: never show its complete outline, and never lay it out flat. The towel must be identical to the attached approved references: a plush automotive microfiber drying towel in a deep royal cobalt blue (in neutral daylight close to #2A4FBF — not cyan, not navy, not purple) with a dense, clearly looped, slightly shaggy pile exactly like the attached close-up — not a flat fleece or velvet surface. Its perimeter is finished with a black fabric binding about 1 cm wide, as thick as in the references, with neat matching stitching and gently rounded corners. A small square black woven label sewn just inside one corner carries the white ZENO DETAIL logo exactly as in the attached logo file — the angular two-blade Z symbol above the wide ZENO wordmark, with DETAIL spaced out underneath. No other text, tags or logos.
 
-Composition: camera slightly above roof height looking along the roof; the towel is centred and sharp with the label visible; realistic water beads on the roof in the foreground; the roof edge and side window curve away naturally.
+Composition: camera slightly above roof height looking along the roof; the folded towel is centred and sharp with the label visible near the front; realistic water beads of varied size on the roof in the foreground; the roof edge and side window curve away naturally.
 
-Lighting: soft daylight from behind and to the left, one long soft reflection along the roof, gentle shadow where the towel touches the paint.
+Lighting: soft daylight from behind and to the left, one long soft reflection along the roof, a gentle shadow where the towel touches the paint. Match the light and paint of the attached hero image.
 
 Environment: a clean daylight wash bay, softly out of focus.
 
 Style: real photograph, natural depth of field, restrained colour. Not CGI.
 
-Avoid: text, badges, car-maker emblems, recognisable models, warped roof lines, impossible reflections, HDR, glow, blue cast, splashes, more than one towel.
+Avoid: a flat or fully spread towel, the whole towel outline, flat fleece texture, a thin binding, text, badges, car-maker emblems, recognisable models, warped roof lines, impossible reflections, HDR, glow, blue cast, splashes, more than one towel.
 ```
-**Validation:** roof and window geometry believable; towel drape physically plausible; consistent towel identity with images 1–3.
+**Validation:** pile and binding indistinguishable from the folded and edge images; no complete outline; roof geometry believable; label exact.
 
 ### 5. `zeno-drying-towel-texture` — Product gallery image 4 (added automatically)
 | | |
 | --- | --- |
-| Slot | `product-texture` · status **Awaiting user image** (currently not shown: no fallback) |
+| Slot | `product-texture` · status **Implemented** (6 November 2026) |
 | Where | Product gallery image 4 |
 | Output filename | `zeno-drying-towel-texture.png` |
 | Destination | `assets/images/products/drying-towel/zeno-drying-towel-texture-{480,768,1024,1536}.{avif,webp}` |
@@ -221,14 +225,14 @@ Avoid: text, logos, fibres that look like fur or plastic, exaggerated pile lengt
 | Composition | Two hands and forearms (plain black long-sleeve top, no logos, no face) lay the unfolded towel flat on the roof of a washed graphite car and draw it slowly towards the camera. Action in the centre of the frame; the label visible at the towel's near corner. Ahead of the towel, beads of water; behind it, a slightly darker, damp but not mirror-dry path. Camera at shoulder height on the far side of the car. |
 | Lighting | Soft daylight from the open bay door behind the car; natural reflection on the roof. |
 | Environment | Same wash bay; background softly out of focus. |
-| Attachments | `drying-towel-1024.webp`, `zeno-logo-white-transparent-bg.png`, `drying-moment-1536.webp` |
+| Attachments | `media-source/product-folded/zeno-drying-towel-folded.webp`, `media-source/product-edge-label/zeno-drying-towel-edge-label.webp`, `zeno-logo-white-transparent-bg.png`, and `media-source/home-hero/zeno-home-hero.png` for the car and light |
 | Restrictions | Exactly two anatomically correct hands with five fingers each; light, flat contact (no scrubbing gesture); water state realistic — do not show a perfectly dry streak. |
 
 **Prompt**
 ```
 Create a realistic documentary-style commercial photograph, 3:2 landscape, with the action inside the centre square of the frame.
 
-Subject: two hands and forearms in a plain black long-sleeve top (no logos, no face visible) lay the unfolded ZENO DETAIL drying towel flat on the roof of a freshly washed dark graphite car and draw it slowly towards the camera with light, flat contact. The ZENO DETAIL drying towel: a plush automotive microfiber drying towel in a deep royal cobalt blue (in neutral daylight close to #2A4FBF — not cyan, not navy, not purple), with a dense, even, slightly looped pile and a soft matte surface. Its entire perimeter is finished with a narrow black fabric binding, about 1 cm wide, with neat matching stitching and gently rounded corners. A small square black woven label is sewn just inside one corner; it carries the white ZENO DETAIL logo exactly as in the attached logo file — the angular two-blade Z symbol above the wide ZENO wordmark, with DETAIL spaced out underneath. No other text, tags or logos anywhere on the towel. Match the attached product reference.
+Subject: two hands and forearms in a plain black long-sleeve top (no logos, no face visible) lay the unfolded ZENO DETAIL drying towel flat on the roof of a freshly washed dark graphite car and draw it slowly towards the camera with light, flat contact. The ZENO DETAIL drying towel: a plush automotive microfiber drying towel in a deep royal cobalt blue (in neutral daylight close to #2A4FBF — not cyan, not navy, not purple), with a dense, even, slightly looped pile and a soft matte surface. Its entire perimeter is finished with a narrow black fabric binding, about 1 cm wide, with neat matching stitching and gently rounded corners. A small square black woven label is sewn just inside one corner; it carries the white ZENO DETAIL logo exactly as in the attached logo file — the angular two-blade Z symbol above the wide ZENO wordmark, with DETAIL spaced out underneath. No other text, tags or logos anywhere on the towel. The pile must be dense and clearly looped exactly like the attached close-up, never flat fleece, and the binding as wide as in the references. Match the attached product references.
 
 Composition: camera at shoulder height on the far side of the car looking across the roof. The label is visible at the towel's near corner. In front of the towel there are realistic water beads; behind it the paint is darker and damp, not mirror-dry.
 
@@ -249,7 +253,7 @@ Keep everything important inside the middle 60% of the height: desktop article c
 ### 7. `zeno-guide-drying` — "How to dry your car after washing"
 | | |
 | --- | --- |
-| Slot | `guide-drying` · status **Needs generation** (fallback: `workshop-car`) |
+| Slot | `guide-drying` · status **Implemented** (6 November 2026) |
 | Output filename | `zeno-guide-drying.png` |
 | Destination | `assets/images/guides/zeno-guide-drying-{480,960,1536}.{avif,webp}` |
 | Aspect ratio | 3:2 |
@@ -264,7 +268,7 @@ Create a realistic photograph, 3:2 landscape: water beading on the bonnet of a f
 ### 8. `zeno-guide-microfiber-care` — "A better routine for your microfiber"
 | | |
 | --- | --- |
-| Slot | `guide-microfiber-care` · status **Needs generation** (fallback: `drying-towel`) |
+| Slot | `guide-microfiber-care` · status **Implemented** (6 November 2026) |
 | Output filename | `zeno-guide-microfiber-care.png` |
 | Destination | `assets/images/guides/zeno-guide-microfiber-care-{480,960,1536}.{avif,webp}` |
 | Aspect ratio | 3:2 |
@@ -279,7 +283,7 @@ Create a realistic photograph, 3:2 landscape, of one clean, neatly folded ZENO D
 ### 9. `zeno-guide-choosing` — "What matters in a car drying towel?"
 | | |
 | --- | --- |
-| Slot | `guide-choosing` · status **Needs generation** (fallback: `towel-detail`) |
+| Slot | `guide-choosing` · status **Implemented** (6 November 2026) |
 | Output filename | `zeno-guide-choosing.png` |
 | Destination | `assets/images/guides/zeno-guide-choosing-{480,960,1536}.{avif,webp}` |
 | Aspect ratio | 3:2 |
