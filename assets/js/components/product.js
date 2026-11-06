@@ -23,7 +23,7 @@ export function productVisualMarkup(product, media = product.media[0], options =
       src: toSitePath(media.src),
       srcset: webp.length ? webp.map((item) => `${toSitePath(item.src)} ${item.width}w`).join(', ') : toSiteSrcset(media.srcset),
       sizes, alt: options.alt ?? media.alt, width: media.width, height: media.height,
-      loading: eager ? 'eager' : 'lazy', fetchpriority: eager ? 'high' : null, decoding: eager ? 'sync' : 'async',
+      loading: eager ? 'eager' : 'lazy', fetchpriority: eager ? 'high' : options.priority ?? null, decoding: eager ? 'sync' : 'async',
     })}></picture>
   </span>`;
 }

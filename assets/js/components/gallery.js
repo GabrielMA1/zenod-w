@@ -35,7 +35,7 @@ export function galleryMarkup(product) {
     </div>
     ${many ? `<div class="gallery__thumbs" aria-label="Choose a product view">
       ${media.map((item, index) => `<button class="gallery__thumb" type="button" data-gallery-thumbnail="${escapeHtml(item.id)}" aria-label="${escapeHtml(mediaLabel(item, index, media.length))}" ${index === 0 ? 'aria-current="true"' : ''}>
-        ${productVisualMarkup(product, item, { className: 'gallery__thumb-media', sizes: '6rem', alt: '' })}
+        ${productVisualMarkup(product, item, { className: 'gallery__thumb-media', sizes: '6rem', alt: '', priority: 'low' })}
       </button>`).join('')}
     </div>` : ''}
     ${hasIllustratedMedia(product) ? '<p class="gallery__note">Product visualisations. Final product details may vary.</p>' : ''}

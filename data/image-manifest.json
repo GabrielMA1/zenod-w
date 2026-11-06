@@ -196,8 +196,7 @@
       "widths": [
         480,
         768,
-        1024,
-        1536
+        1024
       ],
       "focal": [
         0.5,
@@ -205,7 +204,7 @@
       ],
       "gallery": 3,
       "caption": "On paint",
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": "drying-moment",
       "fallbackFocal": [
         0.74,
@@ -213,7 +212,18 @@
       ],
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of the ZENO DETAIL towel resting on wet graphite paint"
+      "alt": "Product visualisation of the ZENO DETAIL towel resting on wet graphite paint",
+      "width": 1024,
+      "height": 1024,
+      "source": {
+        "file": "media-source/product-on-paint/zeno-drying-towel-on-paint.webp",
+        "sha256": "30377d3c9eb8396d4da32822a73f5de6a0697b6110418f3745d14afdb55034e1",
+        "original": [
+          1254,
+          1254
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "product-texture": {
       "priority": 2,
@@ -270,17 +280,16 @@
       "widths": [
         640,
         1024,
-        1536,
-        2048
+        1536
       ],
       "focal": [
-        0.45,
+        0.8,
         0.5
       ],
       "gallery": 5,
       "galleryOnlyWhenImplemented": true,
       "caption": "In use",
-      "status": "awaiting-user-image",
+      "status": "implemented",
       "fallback": "workshop-car",
       "fallbackFocal": [
         0.72,
@@ -288,7 +297,18 @@
       ],
       "generated": true,
       "product": true,
-      "alt": "Product visualisation of a hand drying the roof of a washed graphite car with the blue ZENO DETAIL towel"
+      "alt": "Product visualisation of a hand drying the roof of a washed graphite car with the blue ZENO DETAIL towel",
+      "width": 1536,
+      "height": 1024,
+      "source": {
+        "file": "media-source/drying-in-use/zeno-drying-in-use.webp",
+        "sha256": "95ce5c38152d3c9b846b7084faccfe90f14bb34f1326fa9a0a1e24000f167d77",
+        "original": [
+          1536,
+          1024
+        ],
+        "processedAt": "2026-11-06"
+      }
     },
     "guide-drying": {
       "priority": 3,

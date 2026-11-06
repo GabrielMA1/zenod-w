@@ -83,7 +83,18 @@
   color: var(--on-ink);
 }
 
+.routine__media .media { position: relative; }
 .routine__media .media__frame { aspect-ratio: 4 / 3; }
+/* On the ink band the visualisation note sits on the image, legible and out of the layout flow. */
+.routine__media .media__note {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-control);
+  background: rgb(23 24 26 / 0.78);
+  color: var(--on-ink);
+}
 
 .routine__body {
   display: grid;

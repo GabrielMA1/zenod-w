@@ -1,5 +1,7 @@
 # ZENO DETAIL — image production queue
 
+**Status, 6 November 2026: every non-blocked slot is implemented.** Only `product-flat` and `product-packaging` remain, and both wait for real product facts and photography.
+
 The storefront is built and every image slot already exists at its final position. Each slot is defined in [`data/image-manifest.json`](../data/image-manifest.json) with its ratio, crop focal point, destination, alt text and a temporary fallback. Until a final asset is approved, the site shows the fallback (one of the four existing visualisations) or, where nothing suitable exists, keeps the slot out of the page.
 
 **Everything produced with ChatGPT Images is a product visualisation.** The site captions it as such. It never establishes dimensions, weave, blend, absorbency, paint safety or packaging. Real photographs of the manufactured towel are still required before launch (see the end of this file).
@@ -57,6 +59,8 @@ Paste this description into every prompt (it is already included below). Attach 
 | `guide-microfiber-care` | 1536 × 1024 | Passes. One towel, label matches the logo, no third-party brands. |
 | `guide-choosing` | 1536 × 1024 | Passes. Five correctly formed digits; label matches the logo. Crop alignment `focal: [0.5, 0.55]` keeps the hand and label in the wide article cover. |
 | *(not used)* towel laid flat on a roof | 1536 × 1024 | Rejected for `product-on-paint`: the pile is flat and fleece-like with a thinner binding, unlike every approved image, and it shows the whole towel outline (unverified proportions). See the revised prompt below. |
+| `product-on-paint` (revised prompt) | 1254 × 1254 | Passes. Looped pile and wide binding match the approved close-up; folded over the roof edge, outline never shown; label matches the logo. |
+| `drying-in-use` | 1536 × 1024 | Passes. Two natural hands, no face; unbranded bottles and buckets; label matches the logo. It shows the spread towel's rough proportions (the pose the prompt asked for); it is captioned as a visualisation and dimensions remain unpublished. `focal: [0.8, 0.5]` keeps the hands and label in the square gallery crop. |
 
 The 1536-pixel square widths were not produced because the sources are 1254 px; the site serves 480, 768 and 1024 for those slots.
 
@@ -161,7 +165,7 @@ Avoid: text other than the logo, printed-sticker look, distorted letters, frayed
 ### 4. `zeno-drying-towel-on-paint` — Product gallery image 3 (revised prompt)
 | | |
 | --- | --- |
-| Slot | `product-on-paint` · status **Awaiting user image** (fallback: `drying-moment`) |
+| Slot | `product-on-paint` · status **Implemented** (6 November 2026) |
 | Where | Product gallery image 3 (square) |
 | Output filename | `zeno-drying-towel-on-paint.png` |
 | Destination | `assets/images/products/drying-towel/zeno-drying-towel-on-paint-{480,768,1024,1536}.{avif,webp}` |
@@ -217,7 +221,7 @@ Avoid: text, logos, fibres that look like fur or plastic, exaggerated pile lengt
 ### 6. `zeno-drying-in-use` — Home routine section; gallery image 5 once approved
 | | |
 | --- | --- |
-| Slot | `drying-in-use` · status **Awaiting user image** (fallback: `workshop-car`) |
+| Slot | `drying-in-use` · status **Implemented** (6 November 2026) |
 | Where | Home page "Drying a car, in four steps" (fills the left half on desktop, 4:3 on phones); product gallery image 5 (square crop) once implemented |
 | Output filename | `zeno-drying-in-use.png` |
 | Destination | `assets/images/campaign/zeno-drying-in-use-{640,1024,1536,2048}.{avif,webp}` |

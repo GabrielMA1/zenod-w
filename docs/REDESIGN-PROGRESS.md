@@ -34,7 +34,7 @@ Add a language only with a complete, reviewed dictionary: add it to `data/locale
 
 ## Open items
 
-1. **Images (owner):** done on 6 November: hero, folded, edge and label, texture, the three guide covers and the social card. Remaining: `product-on-paint` (revised prompt; the first attempt was rejected) and `drying-in-use`. The product gallery's third image and the home routine image still use older fallbacks.
+1. **Images:** every non-blocked slot was filled with an approved visualisation on 6 November (hero, five gallery images, home routine image, three guide covers, social card). The four original visuals in `assets/images/editorial/` remain as fallbacks but are no longer shipped. Remaining: real product photography before launch, then `product-flat` (needs dimensions) and `product-packaging` (needs real packaging).
 2. **Owner confirmation:** the horizontal symbol + wordmark arrangement in the header; the label/branding method on the real towel (the visualisations show a woven black label).
 3. **Before launch:** real product photographs; dimensions, blend, weave; VAT treatment and price display wording; EU shipping rates and destinations; seller identity, contact, returns and legal pages; Stripe server-side checkout. See `docs/LAUNCH-REQUIREMENTS.md`.
 4. **Clean-up:** the root `assets/app-*` bundles and `.pages-release.json` belong to the old branch-publishing mode and are unused while GitHub Actions publishes; remove them only once branch mode is retired.

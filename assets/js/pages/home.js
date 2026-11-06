@@ -30,7 +30,7 @@ export function homePageMarkup(product) {
   </section>
 
   <section class="routine" aria-labelledby="routine-title">
-    <div class="routine__media">${imageMarkup('drying-in-use', { sizes: '(min-width: 64rem) 55vw, 100vw', caption: false })}</div>
+    <div class="routine__media">${imageMarkup('drying-in-use', { sizes: '(min-width: 64rem) 55vw, 100vw' })}</div>
     <div class="routine__body">
       <h2 id="routine-title">Drying a car, in four steps</h2>
       <ol class="steps">

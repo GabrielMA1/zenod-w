@@ -60,7 +60,12 @@ export function productGallerySlots() {
 // Every file the renderer can reference, for the build's asset copy step.
 export function publishedImageFiles() {
   const files = [];
-  for (const entry of Object.values(manifest.library)) {
+  // Library visuals ship only while a slot still falls back to them.
+  const usedFallbacks = new Set(Object.values(manifest.slots)
+    .filter((slot) => slot.status !== 'implemented' && slot.fallback)
+    .map((slot) => slot.fallback));
+  for (const [id, entry] of Object.entries(manifest.library)) {
+    if (!usedFallbacks.has(id)) continue;
     const { avif, webp } = filesFor(entry.path, entry.widths);
     files.push(...avif.map((item) => item.src), ...webp.map((item) => item.src));
   }
